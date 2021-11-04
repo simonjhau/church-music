@@ -1,0 +1,14 @@
+#GET http://ricktactoe.com:5000/api/game
+
+POST http://ricktactoe.com:5000/api/game
+
+//GET http://localhost:5000/api/game/VURMY
+
+
+# PUT http://localhost:5000/api/game/EAESP
+# content-type: application/json
+
+# {
+#     "name": "sample",
+#     "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+# }
