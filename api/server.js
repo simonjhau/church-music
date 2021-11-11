@@ -1,8 +1,8 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const logger = require("./middleware/logger");
+import express from 'express';
+import cors from 'cors';
+import upload from './routes/upload.js';
 
+// Init express
 const app = express();
 
 // Cors
@@ -10,9 +10,10 @@ app.use(cors());
 
 // Body parser middleware
 app.use(express.json());
+//app.use(express.urlencoded({ extended: false}));
 
-// Game API Routes
-app.use("/api/songs", require("./api/songs"));
+// API Routes
+app.use('/api/upload', upload);
 
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

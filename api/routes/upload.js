@@ -1,10 +1,41 @@
-const express = require("express");
+import express from 'express';
 const router = express.Router();
 
-const idFilter = (req) => (game) => game.id === req.params.id;
+import multer from 'multer';
+const upload = multer({ dest: 'upload/' });
+
+import fs from 'fs';
+import util from 'util';
+const unlinkFile = util.promisify(fs.unlink);
+
+import { uploadFile, getFile, getListOfFiles } from '../middleware/s3.js';
 
 // Get all game data
-router.get("/", (req, res) => res.json("Songs"));
+// router.post('/', (req, res) => {
+//   console.log('received!');
+//   res.json('Songs');
+// });
+
+router.post('/', upload.single('image'), async (req, res) => {
+  const file = req.file;
+  console.log(file);
+  const result = await uploadFile(file);
+  await unlinkFile(file.path);
+  console.log(result);
+  const description = req.body.description;
+  res.send({ imagePath: `/upload/${result.Key}` });
+});
+
+router.get('/', (req, res) => {
+  console.log('here');
+  const readStream = getFile('music/This Is My Body Music LD 627.pdf');
+  readStream.pipe(res);
+});
+
+router.get('/list', (req, res) => {
+  const readStream = getListOfFiles();
+  readStream.pipe(res);
+});
 
 // // Create new game
 // router.post("/", (req, res) => {
@@ -123,4 +154,4 @@ router.get("/", (req, res) => res.json("Songs"));
 //   return id;
 // }
 
-module.exports = router;
+export default router;
