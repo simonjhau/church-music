@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import upload from './routes/upload.js';
+import { dbConnect } from './middleware/db.js';
 
 // Init express
 const app = express();
+dbConnect();
 
 // Cors
 app.use(cors());

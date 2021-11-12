@@ -1,3 +1,4 @@
+import './Upload.css';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -16,9 +17,11 @@ const postImage = async ({ image, description }) => {
   return result.data;
 };
 
+// on page load, get the available books for the list
+
 const Upload = () => {
   const [file, setFile] = useState();
-  const [description, setDescription] = useState('');
+  const [hymnName, setHymnName] = useState('');
   const [image, setImage] = useState();
 
   const submit = async (event) => {
@@ -39,12 +42,31 @@ const Upload = () => {
 
   return (
     <div className="Upload">
-      <form onSubmit={submit}>
+      <form className="uploadForm" onSubmit={submit}>
         <input onChange={fileSelected} type="file" accept="image/*"></input>
-        <input
-          onChange={(e) => setDescription(e.target.value)}
-          type="text"
-        ></input>
+        <br />
+        <label className="hymnNameLabel">
+          Hymn Name:
+          <input
+            onChange={(e) => setHymnName(e.target.value)}
+            type="text"
+          ></input>
+        </label>
+        <br />
+        <label className="bookLabel">
+          Book:
+          {/* make this a dropdown with the list of available books*/}
+          <input
+            //onChange={(e) => setDescription(e.target.value)}
+            type="text"
+          ></input>
+        </label>
+        <br />
+        <label className="hymnNumberLabel">
+          Hymn Number:
+          <input type="text"></input>
+        </label>
+        <br />
         <button type="submit">Submit</button>
       </form>
       {image && <img src={image} alt="img" />}

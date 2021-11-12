@@ -1,9 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
 /* Base styles */
 * {
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: #333;
 }
 
@@ -18,11 +18,10 @@
 }
 .navbar h1 {
   color: #f1356d;
-  font-size: 40px;
-  
+  font-size: 30px;
 }
 .navbar a {
-  margin-left: 20px;
+  margin-left: 10px;
   text-decoration: none;
   padding: 6px;
 }
@@ -40,7 +39,7 @@
 
 .home button,
 .online-game-setup button,
-.join-game [type="submit"] {
+.join-game [type='submit'] {
   background-color: #f1356d;
   color: white;
   border: none;

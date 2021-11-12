@@ -9,6 +9,7 @@ import util from 'util';
 const unlinkFile = util.promisify(fs.unlink);
 
 import { uploadFile, getFile, getListOfFiles } from '../middleware/s3.js';
+import { sendQuery } from '../middleware/db.js';
 
 // Get all game data
 // router.post('/', (req, res) => {
@@ -35,6 +36,12 @@ router.get('/', (req, res) => {
 router.get('/list', (req, res) => {
   const readStream = getListOfFiles();
   readStream.pipe(res);
+});
+
+router.get('/db', (req, res) => {
+  console.log('db!');
+  sendQuery();
+  res.send('all good');
 });
 
 // // Create new game
