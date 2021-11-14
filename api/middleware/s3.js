@@ -13,7 +13,6 @@ const s3 = new S3({
   secretAccessKey,
 });
 
-// uploads a file to s3
 export const uploadFile = (file) => {
   const fileStream = fs.createReadStream(file.path);
 
@@ -35,7 +34,6 @@ export const getFile = (name) => {
 };
 
 export const getListOfFiles = () => {
-  console.log(bucketName);
   const params = {
     Bucket: bucketName,
   };
