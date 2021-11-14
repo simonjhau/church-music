@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { getHymns } from '../middleware/db.js';
+import { getHymns } from '../models/hymns.js';
 
 // Todo - input sanitisation
 
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     const hymns = await getHymns(query);
     res.json(hymns);
   } else {
-    res.status(510).send('No query parameter');
+    res.status(400).send('No query parameter sent');
   }
 });
 
@@ -21,17 +21,6 @@ router.get('/:id', (req, res) => {
   console.log({ req });
   console.log('id');
   const query = req.query.query;
-});
-
-// Add a hymn to the database
-router.post('/', async (req, res) => {
-  const file = req.file;
-  console.log(file);
-  const result = await uploadFile(file);
-  await unlinkFile(file.path);
-  console.log(result);
-  const description = req.body.description;
-  res.send({ imagePath: `/upload/${result.Key}` });
 });
 
 // Update hymn record

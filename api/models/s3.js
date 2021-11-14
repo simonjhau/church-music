@@ -13,16 +13,16 @@ const s3 = new S3({
   secretAccessKey,
 });
 
-export const uploadFile = (file) => {
+export const s3UploadFile = async (file, id) => {
   const fileStream = fs.createReadStream(file.path);
 
-  const uploadParams = {
+  const params = {
     Bucket: bucketName,
     Body: fileStream,
-    Key: file.filename,
+    Key: `music/${id}`,
   };
 
-  return s3.upload(uploadParams).promise();
+  return s3.upload(params).promise();
 };
 
 export const getFile = (name) => {
