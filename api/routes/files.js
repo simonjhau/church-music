@@ -1,36 +1,55 @@
 import express from 'express';
 const router = express.Router();
-import multer from 'multer';
-import path from 'path';
-import { uploadFile } from '../middleware/files.js';
-
-// Set multer disk storage settings
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-// Multer settings
-var upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    if (path.extname(file.originalname) !== '.pdf') {
-      return cb(new Error('Only pdfs are allowed'));
-    }
-    cb(null, true);
-  },
-});
+import {
+  multerUpload,
+  uploadFile,
+  deleteLocalFile,
+} from '../middleware/files.js';
+import { getListOfFiles } from '../models/files.js';
 
 // Todo - input sanitisation
 
 // Upload a file
-router.post('/', upload.single('file'), uploadFile, async (req, res) => {});
+router.post(
+  '/',
+  (req, res, next) => {
+    let file = req.file;
+    if (!file) {
+      res.status(400).send('Ensure pdf file is attached');
+      return;
+    }
 
-// Get list of hymns that match search query
-router.get('/', async (req, res) => {});
+    // Ensure all parameters are present
+    let fileParams = req.body;
+    const fileParamsRequirements = [
+      'hymnId',
+      'fileTypeId',
+      'bookId',
+      'hymnNum',
+      'comment',
+    ];
+    for (const param of fileParamsRequirements) {
+      if (!fileParams[param]) {
+        res.status(400).send(`Missing parameter '${param}'`);
+        return;
+      }
+    }
+  },
+  multerUpload.single('file'),
+  uploadFile,
+  deleteLocalFile
+);
+
+// Get list of files associated with a hymn
+router.get('/:id', async (req, res) => {
+  const hymnId = req.params.id;
+  try {
+    const files = await getListOfFiles(hymnId);
+    console.log(files);
+    res.status(200).json(files);
+  } catch (e) {
+    res.status(400).send(`Error getting list of files from db: \n ${e}`);
+  }
+});
 
 export default router;

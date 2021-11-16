@@ -16,13 +16,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get list of files for selected hymn
-router.get('/:id', (req, res) => {
-  console.log({ req });
-  console.log('id');
-  const query = req.query.query;
-});
-
 // Update hymn record
 router.put('/:id', async (req, res) => {});
 

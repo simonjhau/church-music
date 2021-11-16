@@ -7,49 +7,8 @@
   color: #333;
 }
 
-/* Nav bar*/
-.navbar {
-  padding: 20px 20px 20px;
-  display: flex;
-  align-items: center;
-  max-width: 800px;
-  margin: 0 auto;
-  border-bottom: 1px solid #f2f2f2;
-}
-.navbar h1 {
-  color: #f1356d;
-  font-size: 30px;
-}
-.navbar a {
-  margin-left: 10px;
-  text-decoration: none;
-  padding: 6px;
-}
-.navbar a:hover {
-  color: #a51d46;
-}
-
 .content {
-  padding: 40px 40px 40px 40px;
-  display: flex;
-  align-items: center;
-  max-width: 800px;
   margin: auto;
-}
-
-.home button,
-.online-game-setup button,
-.join-game [type='submit'] {
-  background-color: #f1356d;
-  color: white;
-  border: none;
-  font-size: 20px;
-  padding: 15px;
-  margin: 5px;
-  border-radius: 7px;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  vertical-align: center;
-  width: 200px;
+  width: 600px;
+  padding: 30px;
 }

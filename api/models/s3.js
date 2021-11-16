@@ -19,7 +19,7 @@ export const s3UploadFile = async (file, id) => {
   const params = {
     Bucket: bucketName,
     Body: fileStream,
-    Key: `music/${id}`,
+    Key: `music/${id}.pdf`,
   };
 
   return s3.upload(params).promise();

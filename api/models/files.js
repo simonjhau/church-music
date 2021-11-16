@@ -15,19 +15,8 @@ export const dbAddFile = async (fileParams) => {
   return file.rows;
 };
 
-export const getFileId = async (fileParams) => {
-  const sqlQuery = `SELECT * FROM files WHERE 
-                    hymn_id = '${fileParams.hymnId}' AND
-                    file_type_id = '${fileParams.file_type_id}' AND
-                    book_id = '${fileParams.book_id}'`;
-  if (fileParams.book_id) {
-    sqlQuery += `AND book_num = '${fileParams.book_num}'`;
-  }
-  if (fileParams.comment) {
-    sqlQuery += `comment = '${fileParams.comment}'`;
-  }
-  sqlQuery += `;`;
-  console.log(sqlQuery);
-  const file = await dbQuery(sqlQuery);
-  return file.row;
+export const getListOfFiles = async (hymnId) => {
+  const sqlQuery = `SELECT * FROM files WHERE hymn_id = '${hymnId}';`;
+  const files = await dbQuery(sqlQuery);
+  return files.rows;
 };
