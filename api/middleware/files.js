@@ -40,6 +40,7 @@ export const uploadFile = async (req, res, next) => {
 
   // Add file to db
   const newId = uuidv4();
+  let fileParams = req.body;
   fileParams['id'] = newId;
   try {
     var uploadedFile = await dbAddFile(fileParams);
@@ -51,7 +52,7 @@ export const uploadFile = async (req, res, next) => {
 
   // Add file to s3
   try {
-    await s3UploadFile(file, newId);
+    await s3UploadFile(req.file, newId);
     dbCommit();
     res.status(200).json(uploadedFile);
   } catch (e) {

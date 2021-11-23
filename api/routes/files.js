@@ -12,6 +12,7 @@ import { getListOfFiles } from '../models/files.js';
 // Upload a file
 router.post(
   '/',
+  multerUpload.single('file'),
   (req, res, next) => {
     let file = req.file;
     if (!file) {
@@ -21,27 +22,26 @@ router.post(
 
     // Ensure all parameters are present
     let fileParams = req.body;
-    const fileParamsRequirements = [
-      'hymnId',
-      'fileTypeId',
-      'bookId',
-      'hymnNum',
-      'comment',
-    ];
+    const fileParamsRequirements = ['hymnId', 'fileTypeId', 'bookId'];
     for (const param of fileParamsRequirements) {
       if (!fileParams[param]) {
         res.status(400).send(`Missing parameter '${param}'`);
         return;
       }
     }
+    if (fileParams['bookId'] === 4 && !fileParams['hymnNum']) {
+      res.status(400).send(`Missing parameter 'hymnNum'`);
+      return;
+    }
+    next();
   },
-  multerUpload.single('file'),
   uploadFile,
   deleteLocalFile
 );
 
 // Get list of files associated with a hymn
 router.get('/:id', async (req, res) => {
+  console.log('here');
   const hymnId = req.params.id;
   try {
     const files = await getListOfFiles(hymnId);
