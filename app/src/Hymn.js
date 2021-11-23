@@ -1,16 +1,14 @@
-import './Files.css';
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import {} from 'dotenv/config';
-import Form from 'react-bootstrap/Form';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { FileTypesContext, BooksContext } from './Hymns';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useFileTypes, useBooks } from './FileTypesAndBooksContext';
+import './Hymn.css';
 
 const Hymn = ({ hymn }) => {
-  const fileTypes = useContext(FileTypesContext);
-  const books = useContext(BooksContext);
+  const fileTypes = useFileTypes();
+  const books = useBooks();
+
   const [files, setFiles] = useState([{}]);
-  console.log(fileTypes);
 
   // Runs on component load
   useEffect(() => {
@@ -18,7 +16,6 @@ const Hymn = ({ hymn }) => {
     axios
       .get(`/files/${hymn.id}`)
       .then((res) => {
-        console.log(res.data);
         setFiles(res.data);
       })
       .catch(console.log('failed'));
@@ -27,18 +24,28 @@ const Hymn = ({ hymn }) => {
   return (
     <div>
       <h1>{hymn.name}</h1>
-      {files &&
-        files.map((file) => {
-          console.log(file);
-          return (
-            <div key={file.id}>
-              <h3>
-                {fileTypes[file.file_type_id]?.type} {' - '}
-                {books[file.book_id]?.name} - {file.comment}
-              </h3>
-            </div>
-          );
-        })}
+      <h3>{hymn.altName ? `(${hymn.altName})` : ''}</h3>
+      <br />
+      <h4>Music Files</h4>
+      {files && (
+        <p>
+          {files.map((file) => {
+            return (
+              <div key={file.fileId}>
+                {fileTypes[file.fileTypeId]?.type} {' - '}
+                {books[file.bookId]?.name} - {file.comment}
+              </div>
+            );
+          })}
+        </p>
+      )}
+      {hymn.lyrics && (
+        <div className="lyrics">
+          <br />
+          <h4>Lyrics</h4>
+          <p>{hymn.lyrics}</p>
+        </div>
+      )}
     </div>
   );
 };

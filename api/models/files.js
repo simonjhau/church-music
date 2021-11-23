@@ -18,7 +18,16 @@ export const dbAddFile = async (fileParams) => {
 };
 
 export const getListOfFiles = async (hymnId) => {
-  const sqlQuery = `SELECT * FROM files INNER JOIN hymns ON files.hymn_id = hymns.id WHERE hymn_id = $1;`;
+  const sqlQuery = `SELECT 
+                    files.id AS "fileId", 
+                    hymns.id AS "hymnId",
+                    hymns.name AS "hymnName",
+                    hymns.alt_name AS "altName",
+                    file_type_id AS "fileTypeId", 
+                    book_id AS "bookId", 
+                    hymn_num AS "hymnNum", 
+                    comment AS "comment"
+                    FROM files INNER JOIN hymns ON files.hymn_id = hymns.id WHERE hymn_id = $1;`;
   const values = [hymnId];
   const files = await dbQuery(sqlQuery, values);
   return files.rows;

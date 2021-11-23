@@ -41,11 +41,9 @@ router.post(
 
 // Get list of files associated with a hymn
 router.get('/:id', async (req, res) => {
-  console.log('here');
   const hymnId = req.params.id;
   try {
     const files = await getListOfFiles(hymnId);
-    console.log(files);
     res.status(200).json(files);
   } catch (e) {
     res.status(400).send(`Error getting list of files from db: \n ${e}`);
