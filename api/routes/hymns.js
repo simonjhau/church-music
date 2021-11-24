@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { getHymns, getFilesForHymn } from '../models/hymns.js';
+import { getHymns } from '../models/hymns.js';
 
 // Todo - input sanitisation
 
