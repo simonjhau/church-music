@@ -1,35 +1,21 @@
 import './Files.css';
-import { useState, useEffect, useRef, React } from 'react';
+import { useState, useRef, React } from 'react';
 import axios from 'axios';
-import {} from 'dotenv/config';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import {
+  useFileTypes,
+  useBooks,
+  useOtherBookId,
+} from './FileTypesAndBooksContext';
 
 const Upload = () => {
-  const [fileTypes, setFileTypes] = useState([{ id: 0, name: '' }]);
-  const [books, setBooks] = useState([{ id: 0, name: '' }]);
-  const otherBookId = useRef(4);
-
-  // Runs on page load
-  useEffect(() => {
-    // Get list of file types
-    axios
-      .get('/fileTypes')
-      .then((res) => setFileTypes(res.data))
-      .catch(setFileTypes([{ id: 0, name: '' }]));
-
-    // Get list of books
-    axios
-      .get('/books')
-      .then((res) => {
-        setBooks(res.data);
-        otherBookId.current = res.data.find((book) => book.name === 'Other').id;
-      })
-      .catch(setBooks([{ id: 0, name: '' }]));
-  }, [setFileTypes, setBooks]);
+  const fileTypes = useFileTypes();
+  const books = useBooks();
+  const otherBookId = useOtherBookId();
 
   const [file, setFile] = useState(null);
   const handleFileSelect = (e) => {

@@ -19,7 +19,7 @@ export const dbAddFile = async (fileParams) => {
 
 export const getListOfFiles = async (hymnId) => {
   const sqlQuery = `SELECT 
-                    files.id AS "fileId", 
+                    files.id AS "id", 
                     hymns.id AS "hymnId",
                     hymns.name AS "hymnName",
                     hymns.alt_name AS "altName",

@@ -1,14 +1,8 @@
-import './Files.css';
-import { useState, useEffect, useRef, createContext } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import {} from 'dotenv/config';
 import Form from 'react-bootstrap/Form';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { FileTypeAndBookProvider } from './FileTypesAndBooksContext';
 import Hymn from './Hymn';
-
-export const FileTypesContext = createContext();
-export const BooksContext = createContext();
 
 const Hymns = () => {
   const [selectedHymn, setSelectedHymn] = useState({});
@@ -45,27 +39,25 @@ const Hymns = () => {
 
   return (
     <div className="Upload">
-      <FileTypeAndBookProvider>
-        <Form>
-          <Form.Group controlId="formFile" className="mb-3">
-            <Form.Label>Search for hymns</Form.Label>
-            <AsyncTypeahead
-              id="hymnNameSearch"
-              isLoading={isLoading}
-              labelKey="name"
-              onSearch={handleHymnNameSearch}
-              onChange={handleHymnNameChange}
-              options={hymnNameOptions}
-              placeholder="Hymn Name"
-              renderMenuItemChildren={(option) => <p>{option.name}</p>}
-            />
-          </Form.Group>
-        </Form>
+      <Form>
+        <Form.Group controlId="formFile" className="mb-3">
+          <Form.Label>Search for hymns</Form.Label>
+          <AsyncTypeahead
+            id="hymnNameSearch"
+            isLoading={isLoading}
+            labelKey="name"
+            onSearch={handleHymnNameSearch}
+            onChange={handleHymnNameChange}
+            options={hymnNameOptions}
+            placeholder="Hymn Name"
+            renderMenuItemChildren={(option) => <p>{option.name}</p>}
+          />
+        </Form.Group>
+      </Form>
 
-        {Object.keys(selectedHymn).length > 0 && (
-          <Hymn hymn={selectedHymn}></Hymn>
-        )}
-      </FileTypeAndBookProvider>
+      {Object.keys(selectedHymn).length > 0 && (
+        <Hymn hymn={selectedHymn}></Hymn>
+      )}
     </div>
   );
 };

@@ -13,7 +13,7 @@ export const useBooks = () => {
   return useContext(BooksContext);
 };
 
-export const useOtherBook = () => {
+export const useOtherBookId = () => {
   return useContext(OtherBookIdContext);
 };
 

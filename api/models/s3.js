@@ -25,12 +25,12 @@ export const s3UploadFile = async (file, id) => {
   return s3.upload(params).promise();
 };
 
-export const getFile = (name) => {
-  const downloadParams = {
-    Key: name,
+export const getFile = (id) => {
+  const params = {
+    Key: `music/${id}.pdf`,
     Bucket: bucketName,
   };
-  return s3.getObject(downloadParams).createReadStream();
+  return s3.getObject(params).createReadStream();
 };
 
 export const getListOfFiles = () => {
