@@ -57,12 +57,12 @@ const Upload = () => {
       .catch('makeAndHandleRequest failed');
   };
 
-  const [fileTypeId, setFileTypeId] = useState(fileTypes[0]);
+  const [fileTypeId, setFileTypeId] = useState(fileTypes[0].id);
   const handleFileTypeSelect = (e) => {
     setFileTypeId(parseInt(e.target.value));
   };
 
-  const [bookId, setBookId] = useState(books[0]);
+  const [bookId, setBookId] = useState(books[0].id);
   const handleBookSelect = (e) => {
     const bookId = parseInt(e.target.value);
     setBookId(bookId);

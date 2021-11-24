@@ -8,7 +8,9 @@ const Hymn = ({ hymn }) => {
   const fileTypes = useFileTypes();
   const books = useBooks();
 
-  const [files, setFiles] = useState([{ id: null }]);
+  const [files, setFiles] = useState([
+    { id: null, fileType: null, bookId: null, hymnNum: null, comment: null },
+  ]);
 
   // Runs on component load
   useEffect(() => {
@@ -31,7 +33,7 @@ const Hymn = ({ hymn }) => {
       <h3>{hymn.altName ? `(${hymn.altName})` : ''}</h3>
       <br />
       <h4>Music Files</h4>
-      {files &&
+      {files.length > 0 &&
         files.map((file) => {
           return (
             <div key={file.id}>
@@ -39,10 +41,11 @@ const Hymn = ({ hymn }) => {
                 {
                   fileTypes.find((fileType) => fileType.id === file.fileTypeId)
                     ?.type
-                }{' '}
+                }
                 {' - '}
-                {books.find((book) => book.id === file.bookId)?.name} -{' '}
-                {file.comment}
+                {books.find((book) => book.id === file.bookId)?.name}
+                {file.hymnNum ? ` - ${file.hymnNum}` : ''}
+                {file.comment ? ` - ${file.comment}` : ''}
               </Button>
               <br />
             </div>

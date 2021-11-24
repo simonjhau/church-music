@@ -27,7 +27,9 @@ export const getListOfFiles = async (hymnId) => {
                     book_id AS "bookId", 
                     hymn_num AS "hymnNum", 
                     comment AS "comment"
-                    FROM files INNER JOIN hymns ON files.hymn_id = hymns.id WHERE hymn_id = $1;`;
+                    FROM files INNER JOIN hymns ON files.hymn_id = hymns.id 
+                    WHERE hymn_id = $1
+                    ORDER BY file_type_id;`;
   const values = [hymnId];
   const files = await dbQuery(sqlQuery, values);
   return files.rows;
