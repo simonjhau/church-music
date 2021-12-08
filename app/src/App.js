@@ -3,7 +3,8 @@ import NavigationBar from './NavigationBar';
 import Home from './Home';
 import Hymns from './Hymns';
 import Files from './Files';
-import { FileTypeAndBookProvider } from './FileTypesAndBooksContext';
+import Masses from './Masses';
+import { TypeAndBookProvider } from './TypesAndBooksContext.js';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NotFound from './NotFound';
@@ -14,14 +15,15 @@ function App() {
       <div className="App">
         <NavigationBar />
         <div className="content">
-          <FileTypeAndBookProvider>
+          <TypeAndBookProvider>
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path="/hymns" element={<Hymns />} />
               <Route exact path="/files" element={<Files />} />
+              <Route exact path="/masses" element={<Masses />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </FileTypeAndBookProvider>
+          </TypeAndBookProvider>
         </div>
       </div>
     </Router>

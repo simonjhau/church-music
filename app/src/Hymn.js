@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
-import { useFileTypes, useBooks } from './FileTypesAndBooksContext';
+import { useFileTypes, useBooks } from './TypesAndBooksContext';
 import './Hymn.css';
 
 const Hymn = ({ hymn }) => {

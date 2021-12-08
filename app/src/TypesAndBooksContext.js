@@ -2,11 +2,16 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import axios from 'axios';
 
 const FileTypesContext = React.createContext();
+const HymnTypesContext = React.createContext();
 const BooksContext = React.createContext();
 const OtherBookIdContext = React.createContext();
 
 export const useFileTypes = () => {
   return useContext(FileTypesContext);
+};
+
+export const useHymnTypes = () => {
+  return useContext(HymnTypesContext);
 };
 
 export const useBooks = () => {
@@ -17,8 +22,9 @@ export const useOtherBookId = () => {
   return useContext(OtherBookIdContext);
 };
 
-export const FileTypeAndBookProvider = ({ children }) => {
+export const TypeAndBookProvider = ({ children }) => {
   const [fileTypes, setFileTypes] = useState([{ id: 0, name: '' }]);
+  const [hymnTypes, setHymnTypes] = useState([{ id: 0, name: '' }]);
   const [books, setBooks] = useState([{ id: 0, name: '' }]);
   const otherBookId = useRef(4);
 
@@ -32,6 +38,14 @@ export const FileTypeAndBookProvider = ({ children }) => {
       })
       .catch(setFileTypes([{ id: 0, name: '' }]));
 
+    // Get list of hymn types
+    axios
+      .get('/hymnTypes')
+      .then((res) => {
+        setHymnTypes(res.data);
+      })
+      .catch(setHymnTypes([{ id: 0, name: '' }]));
+
     // Get list of books
     axios
       .get('/books')
@@ -44,11 +58,13 @@ export const FileTypeAndBookProvider = ({ children }) => {
 
   return (
     <FileTypesContext.Provider value={fileTypes}>
-      <BooksContext.Provider value={books}>
-        <OtherBookIdContext.Provider value={otherBookId}>
-          {children}
-        </OtherBookIdContext.Provider>
-      </BooksContext.Provider>
+      <HymnTypesContext.Provider value={hymnTypes}>
+        <BooksContext.Provider value={books}>
+          <OtherBookIdContext.Provider value={otherBookId}>
+            {children}
+          </OtherBookIdContext.Provider>
+        </BooksContext.Provider>
+      </HymnTypesContext.Provider>
     </FileTypesContext.Provider>
   );
 };

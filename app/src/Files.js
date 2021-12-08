@@ -1,16 +1,12 @@
 import './Files.css';
-import { useState, useRef, React } from 'react';
+import { useEffect, useState, useRef, React } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import {
-  useFileTypes,
-  useBooks,
-  useOtherBookId,
-} from './FileTypesAndBooksContext';
+import { useFileTypes, useBooks, useOtherBookId } from './TypesAndBooksContext';
+import SearchBox from './SearchBox.js';
 
 const Upload = () => {
   const fileTypes = useFileTypes();
@@ -22,41 +18,8 @@ const Upload = () => {
     setFile(e.target.files[0]);
   };
 
-  const [hymnName, setHymnName] = useState('');
-  const [hymnId, setHymnId] = useState('');
-  const handleHymnNameChange = (hymn) => {
-    if (hymn.length > 0) {
-      setHymnName(hymn[0].name);
-      setHymnId(hymn[0].id);
-    } else {
-      setHymnName('');
-    }
-  };
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [hymnNameOptions, setOptions] = useState([]);
-  const handleHymnNameSearch = (query) => {
-    setHymnName(query);
-    setIsLoading(true);
-    makeAndHandleRequest(query)
-      .then((options) => {
-        setIsLoading(false);
-        setOptions(options);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const makeAndHandleRequest = (query) => {
-    return axios
-      .get('/hymns', { params: { q: query } })
-      .then((res) => {
-        setOptions(res.data);
-      })
-      .catch('makeAndHandleRequest failed');
-  };
-
+  const [selectedHymn, setSelectedHymn] = useState({});
+  console.log(fileTypes);
   const [fileTypeId, setFileTypeId] = useState(fileTypes[0].id);
   const handleFileTypeSelect = (e) => {
     setFileTypeId(parseInt(e.target.value));
@@ -70,6 +33,11 @@ const Upload = () => {
       setHymnNumber('');
     }
   };
+
+  useEffect(() => {
+    setFileTypeId(fileTypes[0].id);
+    setBookId(books[0].id);
+  }, [fileTypes, books]);
 
   const [hymnNumber, setHymnNumber] = useState('');
   const handleHymnNumberChange = (e) => {
@@ -94,12 +62,12 @@ const Upload = () => {
       formValid = false;
     }
 
-    if (hymnName === '') {
+    if (selectedHymn.name === '') {
       errors['Hymn Name'] = 'Hymn name cannot be blank';
       formValid = false;
     }
 
-    if (hymnId === '') {
+    if (selectedHymn.id === '') {
       errors['Hymn Id'] = 'Hymn ID not valid';
       formValid = false;
     }
@@ -129,7 +97,7 @@ const Upload = () => {
     if (formValid()) {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('hymnId', hymnId);
+      formData.append('hymnId', selectedHymn.id);
       formData.append('fileTypeId', fileTypeId);
       formData.append('bookId', bookId);
       formData.append('hymnNum', hymnNumber);
@@ -169,15 +137,10 @@ const Upload = () => {
             Hymn Name:
           </Form.Label>
           <Col sm="9">
-            <AsyncTypeahead
-              id="hymnNameSearch"
-              isLoading={isLoading}
-              labelKey="name"
-              onSearch={handleHymnNameSearch}
-              onChange={handleHymnNameChange}
-              options={hymnNameOptions}
+            <SearchBox
+              setSelected={setSelectedHymn}
+              apiPath="/hymns"
               placeholder="Hymn Name"
-              renderMenuItemChildren={(option) => <p>{option.name}</p>}
             />
           </Col>
         </Form.Group>
