@@ -2,8 +2,9 @@ import { dbQuery } from './db.js';
 
 export const getMasses = async (query) => {
   let sqlQuery = `SELECT 
-                  id, 
-                  name
+                  id AS "id", 
+                  name AS "name", 
+                  date_time AS "dateTime"
                   FROM masses 
                   WHERE LOWER(name) LIKE LOWER('%' || $1 || '%');`;
   let values = [query];
@@ -11,13 +12,46 @@ export const getMasses = async (query) => {
   return masses.rows;
 };
 
-export const getMass = async (massId) => {
-  let sqlQuery = `SELECT 
-                  id, 
-                  name
-                  FROM masses 
-                  WHERE LOWER(name) LIKE LOWER('%' || $1 || '%');`;
+export const getMass = async (query) => {
+  const sqlQuery = `SELECT 
+                  mass_id AS "massId", 
+                  mass.name AS "massName",
+                  hymn_pos AS "hymnPos",
+                  hymn_type_id AS "hymnTypeId",
+                  hymn_id AS "hymnId",
+                  file_Ids AS "fileIds"
+                  FROM mass_hymns 
+                  INNER JOIN masses mass ON mass_hymns.mass_id = mass.id 
+                  WHERE mass_id = $1
+                  ORDER BY hymn_pos;`;
+
   let values = [query];
+  const mass = await dbQuery(sqlQuery, values);
+  return mass.rows;
+};
+
+export const addMass = async (massParams) => {
+  const { massId, massName, massDateTime } = massParams;
+  let sqlQuery = `INSERT INTO masses (id, name, date_time) 
+                  VALUES ($1, $2, $3)
+                  RETURNING *`;
+  let values = [massId, massName, massDateTime];
   const masses = await dbQuery(sqlQuery, values);
   return masses.rows;
+};
+
+export const addMassHymns = async (massParams) => {
+  for (const [hymnIndex, hymn] of massParams.hymns.entries()) {
+    let sqlQuery = `INSERT INTO mass_hymns 
+                    (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
+                    VALUES ($1, $2, $3, $4, $5)`;
+    let values = [
+      massParams.massId,
+      hymnIndex,
+      hymn.hymnTypeId,
+      hymn.id,
+      hymn.fileIds,
+    ];
+    await dbQuery(sqlQuery, values);
+  }
 };

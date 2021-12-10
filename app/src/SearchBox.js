@@ -15,7 +15,7 @@ const SearchBox = ({ setSelected, apiPath, placeholder }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const handleSearch = (query) => {
-    // setSelected(query);
+    setSelected({ name: query });
     setIsLoading(true);
     makeAndHandleRequest(query)
       .then((options) => {

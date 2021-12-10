@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
+import { postMass } from '../middleware/masses.js';
 import { getMasses, getMass } from '../models/masses.js';
 
 // Todo - input sanitisation
@@ -19,11 +20,49 @@ router.get('/', async (req, res) => {
 // Get hymns/files for given mass
 router.get('/:id', async (req, res) => {
   const massId = req.params.id;
-  const mass = getMass(massId);
-  res.status(200).send('mass');
+  try {
+    const mass = await getMass(massId);
+    console.log(mass);
+    res.status(200).send(mass);
+  } catch {
+    res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
+  }
 });
 
 // Add mass record
-router.post('/', async (req, res) => {});
+router.post(
+  '/',
+  async (req, res, next) => {
+    // Ensure all required parameters are present
+    let massParams = req.body;
+    const massParamsRequirements = ['massName', 'massDateTime', 'hymns'];
+    for (const param of massParamsRequirements) {
+      if (!massParams[param]) {
+        res.status(400).send(`Missing parameter '${param}'`);
+        return;
+      }
+    }
+    next();
+  },
+  postMass
+);
+
+// Edit mass
+router.put(
+  '/:id',
+  async (req, res, next) => {
+    // Ensure all required parameters are present
+    let massParams = req.body;
+    const massParamsRequirements = ['massName', 'massDateTime', 'hymns'];
+    for (const param of massParamsRequirements) {
+      if (!massParams[param]) {
+        res.status(400).send(`Missing parameter '${param}'`);
+        return;
+      }
+    }
+    next();
+  },
+  postMass
+);
 
 export default router;
