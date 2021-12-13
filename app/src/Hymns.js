@@ -5,7 +5,7 @@ import SearchBox from './SearchBox.js';
 import Hymn from './Hymn';
 
 const Hymns = () => {
-  const [selectedHymn, setSelectedHymn] = useState({});
+  const [hymnData, setHymnData] = useState({ name: '' });
 
   return (
     <div className="Upload">
@@ -13,16 +13,15 @@ const Hymns = () => {
         <Form.Group controlId="formFile" className="mb-3">
           <Form.Label>Search for hymns</Form.Label>
           <SearchBox
-            setSelected={setSelectedHymn}
+            data={hymnData}
+            setData={setHymnData}
             apiPath="/hymns"
             placeholder="Hymn Name"
           />
         </Form.Group>
       </Form>
 
-      {Object.keys(selectedHymn).length > 0 && (
-        <Hymn hymn={selectedHymn}></Hymn>
-      )}
+      {Object.keys(hymnData).length > 1 && <Hymn hymn={hymnData}></Hymn>}
     </div>
   );
 };

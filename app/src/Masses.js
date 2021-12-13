@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
@@ -9,103 +9,98 @@ import SearchBox from './SearchBox';
 import './masses.css';
 
 const Masses = () => {
+  // Context
   const hymnTypes = useHymnTypes();
-  const [massId, setMassId] = useState('');
-  const [massName, setMassName] = useState('');
 
-  const handleMassNameSelect = (mass) => {
-    if (mass.name) {
-      setMassId('');
-      setMassName(mass.name);
-      if (Object.keys(mass).length > 1) {
-        setMassDateTime(mass.dateTime.substring(0, mass.dateTime.length - 1));
-        console.log(mass);
-        axios
-          .get(`/masses/${mass.id}`)
-          .then((res) => {
-            console.log('returened');
-            console.log(res.data);
-          })
-          .catch(console.log('Get files failed'));
-      }
-    }
-  };
+  const [massData, setMassData] = useState({ name: '' });
+  const [massName, setMassName] = useState('');
 
   const [massDateTime, setMassDateTime] = useState('');
   const handleMassDateTimeChange = (e) => {
-    console.log(e.target.value);
     setMassDateTime(e.target.value);
   };
 
-  const [hymns, setHymns] = useState([]);
+  useEffect(() => {
+    setMassName(massData.name);
+
+    if (massData.id) {
+      setMassDateTime(
+        massData.dateTime.substring(0, massData.dateTime.length - 1)
+      );
+
+      // Get hymns for mass
+      axios
+        .get(`/masses/${massData.id}`)
+        .then((res) => {
+          const newHymns = res.data;
+          setHymnData(newHymns);
+        })
+        .catch((e) => console.log(`Get hymns for mass failed: ${e}`));
+    }
+  }, [massData]);
+
+  const [hymnsData, setHymnData] = useState([]);
 
   const setHymnTypeId = (hymnIndex, hymnTypeId) => {
-    const updatedHymns = hymns.map((hymn, index) => {
+    const updatedHymns = hymnsData.map((hymn, index) => {
       if (index === hymnIndex) {
         hymn.hymnTypeId = hymnTypeId;
       }
       return hymn;
     });
+    setHymnData(updatedHymns);
+  };
 
-    setHymns(updatedHymns);
+  const setHymnName = (hymnIndex, hymnName) => {
+    const updatedHymns = hymnsData.map((hymn, index) => {
+      if (index === hymnIndex) {
+        hymn.name = hymnName;
+      }
+      return hymn;
+    });
+    setHymnData(updatedHymns);
   };
 
   const setHymnId = (hymnIndex, hymnId) => {
     if (hymnId) {
-      const updatedHymns = hymns.map((hymn, index) => {
+      const updatedHymns = hymnsData.map((hymn, index) => {
         if (index === hymnIndex) {
           hymn.id = hymnId;
         }
         return hymn;
       });
-      setHymns(updatedHymns);
-
-      axios
-        .get(`/files/hymn/${hymnId}`)
-        .then((res) => {
-          const updatedHymns = hymns.map((hymn, index) => {
-            if (index === hymnIndex) {
-              hymn.files = res.data.map((file) => {
-                file.selected = false;
-                return file;
-              });
-            }
-            return hymn;
-          });
-
-          setHymns(updatedHymns);
-        })
-        .catch(console.log('Get files failed'));
+      setHymnData(updatedHymns);
     }
   };
 
-  const setFiles = (hymnIndex, files) => {
-    const updatedHymns = hymns.map((hymn, index) => {
+  const setFileIds = (hymnIndex, fileIds) => {
+    const updatedHymns = hymnsData.map((hymn, index) => {
       if (index === hymnIndex) {
-        hymn.files = files;
+        hymn.fileIds = fileIds;
       }
       return hymn;
     });
-    setHymns(updatedHymns);
+    setHymnData(updatedHymns);
   };
 
   // Reorder hymns after dragging
   const handleOnDragEnd = (result) => {
     if (!result.destination) return;
-    const items = Array.from(hymns);
+    const items = Array.from(hymnsData);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-    setHymns(items);
+    setHymnData(items);
   };
 
   const handleAddHymn = (e) => {
     e.preventDefault();
-    setHymns([
-      ...hymns,
+    setHymnData([
+      ...hymnsData,
       {
-        hymnTypeId: 0,
         id: ``,
-        files: [],
+        name: '',
+        hymnTypeId: 0,
+        fileIds: [],
       },
     ]);
   };
@@ -113,7 +108,7 @@ const Masses = () => {
   const massErrors = useRef([]);
   const generateErrorString = (hymnIndex, error) => {
     return `Hymn ${hymnIndex + 1} ${
-      hymnTypes[hymns[hymnIndex].hymnTypeId].type
+      hymnTypes[hymnsData[hymnIndex].hymnTypeId].type
     } - ${error}\n`;
   };
   const massValid = () => {
@@ -130,7 +125,7 @@ const Masses = () => {
       errors += 'Mass date cannot be blank\n';
     }
 
-    for (const [index, hymn] of hymns.entries()) {
+    for (const [index, hymn] of hymnsData.entries()) {
       if (!hymn.id) {
         massValid = false;
         errors += generateErrorString(index, 'No hymn selected');
@@ -152,17 +147,16 @@ const Masses = () => {
     e.preventDefault();
 
     if (massValid()) {
-      const tempHymns = hymns.map((hymn) => {
+      const tempHymns = hymnsData.map((hymn) => {
         const fileIds = hymn.files
           .filter((file) => file.selected)
           .map((file) => file.id);
-        console.log(fileIds);
         hymn.fileIds = fileIds;
         return hymn;
       });
 
       const massData = {
-        massName: massName,
+        // massName: massName,
         massDateTime: massDateTime,
         hymns: tempHymns,
       };
@@ -176,7 +170,6 @@ const Masses = () => {
           alert(`Error saving mass:\n${e.response.status}: ${e.response.data}`);
         });
     } else {
-      console.log(massErrors.current);
       let errorStr = `Error(s) in mass:\n\n${massErrors.current}`;
       alert(errorStr);
     }
@@ -188,7 +181,8 @@ const Masses = () => {
         <Form.Group controlId="formFile" className="mb-3">
           <Form.Label>Search for mass</Form.Label>
           <SearchBox
-            setSelected={handleMassNameSelect}
+            data={massData}
+            setData={setMassData}
             apiPath="/masses"
             placeholder="Mass Name"
           />
@@ -206,7 +200,7 @@ const Masses = () => {
 
       <div className="hymnChooser">
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          {hymns.length > 0 && (
+          {hymnsData.length > 0 && (
             <Droppable droppableId="hymns">
               {(provided) => (
                 <ul
@@ -214,15 +208,16 @@ const Masses = () => {
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
-                  {hymns.map((hymn, hymnIndex) => {
+                  {hymnsData.map((hymn, hymnIndex) => {
                     return (
                       <DraggableHymn
                         key={hymnIndex}
-                        hymns={hymns}
+                        hymnsData={hymnsData}
                         hymnIndex={hymnIndex}
+                        setHymnName={setHymnName}
                         setHymnTypeId={setHymnTypeId}
                         setHymnId={setHymnId}
-                        setFiles={setFiles}
+                        setFileIds={setFileIds}
                       />
                     );
                   })}

@@ -12,16 +12,15 @@ export const getMasses = async (query) => {
   return masses.rows;
 };
 
-export const getMass = async (query) => {
+export const getMassHymns = async (query) => {
   const sqlQuery = `SELECT 
-                  mass_id AS "massId", 
-                  mass.name AS "massName",
                   hymn_pos AS "hymnPos",
                   hymn_type_id AS "hymnTypeId",
-                  hymn_id AS "hymnId",
+                  hymn_id AS "id",
+                  hymn.name AS "name",
                   file_Ids AS "fileIds"
                   FROM mass_hymns 
-                  INNER JOIN masses mass ON mass_hymns.mass_id = mass.id 
+                  INNER JOIN hymns hymn ON mass_hymns.hymn_id = hymn.id 
                   WHERE mass_id = $1
                   ORDER BY hymn_pos;`;
 

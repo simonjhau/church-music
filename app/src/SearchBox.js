@@ -3,19 +3,21 @@ import { useState } from 'react';
 import axios from 'axios';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
-const SearchBox = ({ setSelected, apiPath, placeholder }) => {
-  const handleNameChange = (input) => {
-    if (input.length > 0) {
-      setSelected(input[0]);
-    } else {
-      setSelected({});
+const SearchBox = ({ data, setData, apiPath, placeholder }) => {
+  const handleInputChange = (input) => {
+    setData({ name: input });
+    handleSearch(input);
+  };
+
+  const handleSelection = (selected) => {
+    if (selected.length > 0) {
+      setData(selected[0]);
     }
   };
 
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const handleSearch = (query) => {
-    setSelected({ name: query });
     setIsLoading(true);
     makeAndHandleRequest(query)
       .then((options) => {
@@ -42,7 +44,9 @@ const SearchBox = ({ setSelected, apiPath, placeholder }) => {
       isLoading={isLoading}
       labelKey="name"
       onSearch={handleSearch}
-      onChange={handleNameChange}
+      onChange={handleSelection}
+      onInputChange={handleInputChange}
+      selected={[data.name]}
       options={options}
       placeholder={placeholder}
       renderMenuItemChildren={(option) => <p>{option.name}</p>}

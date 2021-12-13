@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 import { postMass } from '../middleware/masses.js';
-import { getMasses, getMass } from '../models/masses.js';
+import { getMasses, getMassHymns } from '../models/masses.js';
 
 // Todo - input sanitisation
 
@@ -21,10 +21,9 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const massId = req.params.id;
   try {
-    const mass = await getMass(massId);
-    console.log(mass);
+    const mass = await getMassHymns(massId);
     res.status(200).send(mass);
-  } catch {
+  } catch (e) {
     res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
   }
 });

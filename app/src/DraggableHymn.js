@@ -1,43 +1,83 @@
+import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
+import axios from 'axios';
 import { Draggable } from 'react-beautiful-dnd';
 import SearchBox from './SearchBox.js';
 import { useHymnTypes, useBooks, useFileTypes } from './TypesAndBooksContext';
 import './masses.css';
 
 const DraggableHymn = ({
-  hymns,
+  hymnsData,
   hymnIndex,
   setHymnTypeId,
+  setHymnName,
   setHymnId,
-  setFiles,
+  setFileIds,
 }) => {
+  // Context
   const hymnTypes = useHymnTypes();
   const books = useBooks();
   const fileTypes = useFileTypes();
 
+  // Set hymn data once a hymn has been selected
+  const setHymnData = (hymn) => {
+    setHymnName(hymnIndex, hymn.name);
+    setHymnId(hymnIndex, hymn.id);
+  };
+
+  const [files, setFiles] = useState([]);
+
+  // Get list of files when hymn data changes
+  useEffect(() => {
+    const hymnId = hymnsData[hymnIndex].id;
+    if (hymnId) {
+      axios
+        .get(`/files/hymn/${hymnId}`)
+        .then((res) => {
+          const hymnFiles = res.data;
+          // Set files as selected or not
+          for (let file of hymnFiles) {
+            if (hymnsData[hymnIndex].fileIds.includes(file.id)) {
+              file.selected = true;
+            } else {
+              file.selected = false;
+            }
+          }
+          setFiles(hymnFiles);
+        })
+        .catch((e) => console.log(`Get files failed ${e}`));
+    }
+  }, [hymnsData, hymnIndex, setFiles]);
+
+  // Handle hymn type selection
   const handleHymnTypeSelect = (e) => {
     const hymnTypeId = parseInt(e.target.value);
     setHymnTypeId(hymnIndex, hymnTypeId);
   };
 
-  const handleHymnSelect = (hymn) => {
-    setHymnId(hymnIndex, hymn.id);
-  };
-
+  // Handle files being selected
   const handleFileCheckbox = (fileIndex) => {
-    const updatedFiles = hymns[hymnIndex].files.map((file, index) => {
+    const updatedFiles = files.map((file, index) => {
       if (index === fileIndex) {
         file.selected = !file.selected;
       }
       return file;
     });
-
     setFiles(hymnIndex, updatedFiles);
-  };
 
+    // Save selected file IDs in parent component
+    const selectedFileIds = [];
+    for (const file of updatedFiles) {
+      if (file.selected) {
+        selectedFileIds.push(file);
+      }
+    }
+    console.log({ selectedFileIds });
+    setFileIds(hymnIndex, selectedFileIds);
+  };
+  console.log(files);
   return (
     <Draggable key={hymnIndex} draggableId={`${hymnIndex}`} index={hymnIndex}>
       {(provided) => (
@@ -78,7 +118,8 @@ const DraggableHymn = ({
               </Form.Label>
               <Col sm="9">
                 <SearchBox
-                  setSelected={handleHymnSelect}
+                  data={hymnsData[hymnIndex]}
+                  setData={setHymnData}
                   apiPath="/hymns"
                   placeholder="Hymn Name"
                 />
@@ -93,9 +134,9 @@ const DraggableHymn = ({
               <Form.Label column sm="3">
                 Music Files:
               </Form.Label>
-              {hymns[hymnIndex].files.length > 0 && (
+              {files.length > 0 && (
                 <Col sm="9">
-                  {hymns[hymnIndex].files.map((file, fileIndex) => {
+                  {files.map((file, fileIndex) => {
                     return (
                       <Form.Check
                         type="checkbox"
@@ -111,7 +152,7 @@ const DraggableHymn = ({
                         } ${file.hymnNum ? ` - ${file.hymnNum}` : ''} ${
                           file.comment ? ` - ${file.comment}` : ''
                         }`}
-                        checked={hymns[hymnIndex].files[fileIndex].selected}
+                        checked={files[fileIndex].selected}
                         onChange={(e) => handleFileCheckbox(fileIndex)}
                       />
                     );

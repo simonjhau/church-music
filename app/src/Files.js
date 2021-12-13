@@ -18,8 +18,7 @@ const Upload = () => {
     setFile(e.target.files[0]);
   };
 
-  const [selectedHymn, setSelectedHymn] = useState({});
-  console.log(fileTypes);
+  const [selectedHymn, setSelectedHymn] = useState({ name: '' });
   const [fileTypeId, setFileTypeId] = useState(fileTypes[0].id);
   const handleFileTypeSelect = (e) => {
     setFileTypeId(parseInt(e.target.value));
@@ -138,7 +137,8 @@ const Upload = () => {
           </Form.Label>
           <Col sm="9">
             <SearchBox
-              setSelected={setSelectedHymn}
+              data={selectedHymn}
+              setData={setSelectedHymn}
               apiPath="/hymns"
               placeholder="Hymn Name"
             />
