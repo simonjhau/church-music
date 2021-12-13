@@ -1,13 +1,13 @@
 import './App.css';
-import NavigationBar from './NavigationBar';
+import NavigationBar from './components/NavigationBar';
 import Home from './Home';
-import Hymns from './Hymns';
-import Files from './Files';
-import Masses from './Masses';
+import HymnsPage from './pages/HymnsPage';
+import Files from './pages/FilesPage';
+import MassesPage from './pages/MassesPage';
 import { TypeAndBookProvider } from './TypesAndBooksContext.js';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import NotFound from './NotFound';
+import NotFoundPage from './pages/NotFound';
 
 function App() {
   return (
@@ -18,10 +18,10 @@ function App() {
           <TypeAndBookProvider>
             <Routes>
               <Route exact path="/" element={<Home />} />
-              <Route exact path="/hymns" element={<Hymns />} />
+              <Route exact path="/hymns" element={<HymnsPage />} />
               <Route exact path="/files" element={<Files />} />
-              <Route exact path="/masses" element={<Masses />} />
-              <Route path="*" element={<NotFound />} />
+              <Route exact path="/masses" element={<MassesPage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </TypeAndBookProvider>
         </div>

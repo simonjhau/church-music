@@ -1,30 +1,44 @@
-import './Files.css';
+import '../styles/Files.css';
 import { useEffect, useState, useRef, React } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { useFileTypes, useBooks, useOtherBookId } from './TypesAndBooksContext';
-import SearchBox from './SearchBox.js';
+import {
+  useFileTypes,
+  useBooks,
+  useOtherBookId,
+} from '../TypesAndBooksContext';
+import SearchBox from '../components/SearchBox.js';
+import FileSelector from '../components/FileSelector.js';
+import Dropdown from '../components/Dropdown.js';
+import Input from '../components/Input.js';
 
-const Upload = () => {
+const FilesPage = () => {
+  // Context
   const fileTypes = useFileTypes();
   const books = useBooks();
   const otherBookId = useOtherBookId();
 
+  // State and event handlers
   const [file, setFile] = useState(null);
   const handleFileSelect = (e) => {
     setFile(e.target.files[0]);
   };
 
   const [selectedHymn, setSelectedHymn] = useState({ name: '' });
+
   const [fileTypeId, setFileTypeId] = useState(fileTypes[0].id);
+  useEffect(() => {
+    setFileTypeId(fileTypes[0].id);
+  }, [fileTypes]);
   const handleFileTypeSelect = (e) => {
     setFileTypeId(parseInt(e.target.value));
   };
 
   const [bookId, setBookId] = useState(books[0].id);
+  useEffect(() => {
+    setBookId(books[0].id);
+  }, [books]);
   const handleBookSelect = (e) => {
     const bookId = parseInt(e.target.value);
     setBookId(bookId);
@@ -32,11 +46,6 @@ const Upload = () => {
       setHymnNumber('');
     }
   };
-
-  useEffect(() => {
-    setFileTypeId(fileTypes[0].id);
-    setBookId(books[0].id);
-  }, [fileTypes, books]);
 
   const [hymnNumber, setHymnNumber] = useState('');
   const handleHymnNumberChange = (e) => {
@@ -51,6 +60,7 @@ const Upload = () => {
     setComment(e.target.value);
   };
 
+  // Form Validation
   const formErrors = useRef({});
   const formValid = () => {
     const errors = {};
@@ -90,6 +100,7 @@ const Upload = () => {
     return formValid;
   };
 
+  // Form submit
   const submit = async (e) => {
     e.preventDefault();
 
@@ -126,103 +137,29 @@ const Upload = () => {
   return (
     <div className="Upload">
       <Form>
-        <Form.Group controlId="formFile" className="mb-3">
-          <Form.Label>Choose PDF file to upload</Form.Label>
-          <Form.Control type="file" onChange={handleFileSelect} />
-        </Form.Group>
-
-        <Form.Group as={Row} className="mb-3" controlId="formPlaintextHymnName">
-          <Form.Label column sm="3">
-            Hymn Name:
-          </Form.Label>
-          <Col sm="9">
-            <SearchBox
-              data={selectedHymn}
-              setData={setSelectedHymn}
-              apiPath="/hymns"
-              placeholder="Hymn Name"
-            />
-          </Col>
-        </Form.Group>
-
-        <Form.Group as={Row} className="mb-3" controlId="formSelectFileType">
-          <Form.Label column sm="3">
-            File Type:
-          </Form.Label>
-          <Col sm="9">
-            <Form.Select
-              aria-label="Select File Type"
-              name="fileType"
-              onChange={handleFileTypeSelect}
-            >
-              {fileTypes.map((fileType) => {
-                return (
-                  <option key={fileType.id} value={fileType.id}>
-                    {fileType.type}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </Col>
-        </Form.Group>
-
-        <Form.Group as={Row} className="mb-3" controlId="formSelectBook">
-          <Form.Label column sm="3">
-            Book:
-          </Form.Label>
-          <Col sm="9">
-            <Form.Select
-              aria-label="Select Book"
-              name="book"
-              onInput={handleBookSelect}
-            >
-              {books.map((book) => {
-                return (
-                  <option key={book.id} value={book.id}>
-                    {book.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </Col>
-        </Form.Group>
-
+        <FileSelector handleFileSelect={handleFileSelect} />
+        <SearchBox
+          data={selectedHymn}
+          setData={setSelectedHymn}
+          apiPath="/hymns"
+          placeholder="Hymn Name"
+          addLabel={true}
+        />
+        <Dropdown
+          text="File Type"
+          options={fileTypes}
+          handleSelect={handleFileTypeSelect}
+        />
+        <Dropdown text="Book" options={books} handleSelect={handleBookSelect} />
         {bookId !== otherBookId.current && (
-          <Form.Group
-            as={Row}
-            className="mb-3"
-            controlId="formPlaintextHymnNum"
-          >
-            <Form.Label column sm="3">
-              Hymn Number:
-            </Form.Label>
-            <Col sm="9">
-              <Form.Control
-                name="hymnNumber"
-                placeholder="Hymn Number"
-                value={hymnNumber}
-                onChange={handleHymnNumberChange}
-              />
-            </Col>
-          </Form.Group>
+          <Input
+            label="Hymn Number"
+            onChange={handleHymnNumberChange}
+            value={hymnNumber}
+          />
         )}
-
-        <Form.Group
-          as={Row}
-          className="mb-3"
-          controlId="formPlaintextComment"
-          onChange={handleCommentChange}
-        >
-          <Form.Label column sm="3">
-            Comment:
-          </Form.Label>
-          <Col sm="9">
-            <Form.Control ame="comment" placeholder="Comment" />
-          </Col>
-        </Form.Group>
-
+        <Input label="Comment" onChange={handleCommentChange} />
         <br />
-
         <div className="d-grid gap-2">
           <Button variant="primary" type="submit" onClick={submit}>
             Submit
@@ -233,4 +170,4 @@ const Upload = () => {
   );
 };
 
-export default Upload;
+export default FilesPage;

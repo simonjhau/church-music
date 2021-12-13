@@ -5,17 +5,10 @@ import Col from 'react-bootstrap/Col';
 import axios from 'axios';
 import { Draggable } from 'react-beautiful-dnd';
 import SearchBox from './SearchBox.js';
-import { useHymnTypes, useBooks, useFileTypes } from './TypesAndBooksContext';
-import './masses.css';
+import { useHymnTypes, useBooks, useFileTypes } from '../TypesAndBooksContext';
+import '../styles/masses.css';
 
-const DraggableHymn = ({
-  hymnsData,
-  hymnIndex,
-  setHymnTypeId,
-  setHymnName,
-  setHymnId,
-  setFileIds,
-}) => {
+const DraggableHymn = ({ hymnsData, hymnIndex, updateHymnData }) => {
   // Context
   const hymnTypes = useHymnTypes();
   const books = useBooks();
@@ -23,11 +16,12 @@ const DraggableHymn = ({
 
   // Set hymn data once a hymn has been selected
   const setHymnData = (hymn) => {
-    setHymnName(hymnIndex, hymn.name);
-    setHymnId(hymnIndex, hymn.id);
+    updateHymnData(hymnIndex, 'name', hymn.name);
+    updateHymnData(hymnIndex, 'id', hymn.id);
   };
 
-  const [files, setFiles] = useState([]);
+  const [filesForHymn, setFilesForHymns] = useState([]);
+  const [selectedfiles, setSelectedFiles] = useState([]);
 
   // Get list of files when hymn data changes
   useEffect(() => {
@@ -37,35 +31,43 @@ const DraggableHymn = ({
         .get(`/files/hymn/${hymnId}`)
         .then((res) => {
           const hymnFiles = res.data;
-          // Set files as selected or not
-          for (let file of hymnFiles) {
+          setFilesForHymns(hymnFiles);
+          console.log(hymnsData[hymnIndex].fileIds);
+          // Set the check boxes for selected files
+          const checkBoxes = hymnFiles.map((file) => {
             if (hymnsData[hymnIndex].fileIds.includes(file.id)) {
-              file.selected = true;
+              console.log('true');
+              return true;
             } else {
-              file.selected = false;
+              console.log({ file });
+              console.log(hymnsData[hymnIndex].fileIds);
+
+              return false;
             }
-          }
-          setFiles(hymnFiles);
+          });
+
+          setSelectedFiles(checkBoxes);
         })
         .catch((e) => console.log(`Get files failed ${e}`));
     }
-  }, [hymnsData, hymnIndex, setFiles]);
+    // eslint-disable-next-line
+  }, [hymnsData]);
 
   // Handle hymn type selection
   const handleHymnTypeSelect = (e) => {
     const hymnTypeId = parseInt(e.target.value);
-    setHymnTypeId(hymnIndex, hymnTypeId);
+    updateHymnData(hymnIndex, 'hymnTypeId', hymnTypeId);
   };
 
   // Handle files being selected
   const handleFileCheckbox = (fileIndex) => {
-    const updatedFiles = files.map((file, index) => {
+    const updatedFiles = filesForHymn.map((file, index) => {
       if (index === fileIndex) {
         file.selected = !file.selected;
       }
       return file;
     });
-    setFiles(hymnIndex, updatedFiles);
+    setFilesForHymns(updatedFiles);
 
     // Save selected file IDs in parent component
     const selectedFileIds = [];
@@ -74,10 +76,11 @@ const DraggableHymn = ({
         selectedFileIds.push(file);
       }
     }
-    console.log({ selectedFileIds });
-    setFileIds(hymnIndex, selectedFileIds);
+    // console.log({ selectedFileIds });
+    updateHymnData(hymnIndex, 'fileIds', selectedFileIds);
   };
-  console.log(files);
+
+  // console.log(files);
   return (
     <Draggable key={hymnIndex} draggableId={`${hymnIndex}`} index={hymnIndex}>
       {(provided) => (
@@ -134,9 +137,9 @@ const DraggableHymn = ({
               <Form.Label column sm="3">
                 Music Files:
               </Form.Label>
-              {files.length > 0 && (
+              {filesForHymn.length > 0 && (
                 <Col sm="9">
-                  {files.map((file, fileIndex) => {
+                  {filesForHymn.map((file, fileIndex) => {
                     return (
                       <Form.Check
                         type="checkbox"
@@ -152,7 +155,7 @@ const DraggableHymn = ({
                         } ${file.hymnNum ? ` - ${file.hymnNum}` : ''} ${
                           file.comment ? ` - ${file.comment}` : ''
                         }`}
-                        checked={files[fileIndex].selected}
+                        checked={selectedfiles[fileIndex]}
                         onChange={(e) => handleFileCheckbox(fileIndex)}
                       />
                     );

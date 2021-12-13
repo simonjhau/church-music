@@ -2,13 +2,13 @@ import { useEffect, useState, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import DraggableHymn from './DraggableHymn';
+import DraggableHymn from '../components/DraggableHymn';
 import axios from 'axios';
-import { useHymnTypes } from './TypesAndBooksContext';
-import SearchBox from './SearchBox';
-import './masses.css';
+import { useHymnTypes } from '../TypesAndBooksContext';
+import SearchBox from '../components/SearchBox';
+import '../styles/masses.css';
 
-const Masses = () => {
+const MassesPage = () => {
   // Context
   const hymnTypes = useHymnTypes();
 
@@ -41,46 +41,14 @@ const Masses = () => {
 
   const [hymnsData, setHymnData] = useState([]);
 
-  const setHymnTypeId = (hymnIndex, hymnTypeId) => {
-    const updatedHymns = hymnsData.map((hymn, index) => {
-      if (index === hymnIndex) {
-        hymn.hymnTypeId = hymnTypeId;
+  const updateHymnData = (hymnIndex, key, data) => {
+    const updatedHymn = hymnsData.map((hymn, i) => {
+      if (i === hymnIndex) {
+        hymn[key] = data;
       }
       return hymn;
     });
-    setHymnData(updatedHymns);
-  };
-
-  const setHymnName = (hymnIndex, hymnName) => {
-    const updatedHymns = hymnsData.map((hymn, index) => {
-      if (index === hymnIndex) {
-        hymn.name = hymnName;
-      }
-      return hymn;
-    });
-    setHymnData(updatedHymns);
-  };
-
-  const setHymnId = (hymnIndex, hymnId) => {
-    if (hymnId) {
-      const updatedHymns = hymnsData.map((hymn, index) => {
-        if (index === hymnIndex) {
-          hymn.id = hymnId;
-        }
-        return hymn;
-      });
-      setHymnData(updatedHymns);
-    }
-  };
-
-  const setFileIds = (hymnIndex, fileIds) => {
-    const updatedHymns = hymnsData.map((hymn, index) => {
-      if (index === hymnIndex) {
-        hymn.fileIds = fileIds;
-      }
-      return hymn;
-    });
-    setHymnData(updatedHymns);
+    setHymnData(updatedHymn);
   };
 
   // Reorder hymns after dragging
@@ -178,15 +146,13 @@ const Masses = () => {
   return (
     <div className="Masses">
       <Form>
-        <Form.Group controlId="formFile" className="mb-3">
-          <Form.Label>Search for mass</Form.Label>
-          <SearchBox
-            data={massData}
-            setData={setMassData}
-            apiPath="/masses"
-            placeholder="Mass Name"
-          />
-        </Form.Group>
+        <Form.Label>Search for mass</Form.Label>
+        <SearchBox
+          data={massData}
+          setData={setMassData}
+          apiPath="/masses"
+          placeholder="Mass Name"
+        />
 
         <Form.Group className="mb-3" controlId="formPlaintextComment">
           <Form.Control
@@ -214,10 +180,7 @@ const Masses = () => {
                         key={hymnIndex}
                         hymnsData={hymnsData}
                         hymnIndex={hymnIndex}
-                        setHymnName={setHymnName}
-                        setHymnTypeId={setHymnTypeId}
-                        setHymnId={setHymnId}
-                        setFileIds={setFileIds}
+                        updateHymnData={updateHymnData}
                       />
                     );
                   })}
@@ -239,4 +202,4 @@ const Masses = () => {
   );
 };
 
-export default Masses;
+export default MassesPage;
