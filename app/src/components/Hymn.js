@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
-import { useFileTypes, useBooks } from '../TypesAndBooksContext';
+import { useFileTypes, useBooks } from '../context/TypesAndBooksContext.js';
 import '../styles/Hymn.css';
 
 const Hymn = ({ hymn }) => {
@@ -20,7 +20,7 @@ const Hymn = ({ hymn }) => {
       .then((res) => {
         setFiles(res.data);
       })
-      .catch(console.log('Get files failed'));
+      .catch((e) => console.log('Get files failed'));
   }, [hymn, setFiles]);
 
   const handleFileClick = (e) => {
@@ -40,7 +40,7 @@ const Hymn = ({ hymn }) => {
               <Button variant="link" id={file.id} onClick={handleFileClick}>
                 {
                   fileTypes.find((fileType) => fileType.id === file.fileTypeId)
-                    ?.type
+                    ?.name
                 }
                 {' - '}
                 {books.find((book) => book.id === file.bookId)?.name}

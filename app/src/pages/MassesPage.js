@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import DraggableHymn from '../components/DraggableHymn';
+import MassHymnChooser from '../components/MassHymnChooser';
 import axios from 'axios';
-import { useHymnTypes } from '../TypesAndBooksContext';
+import { useHymnTypes } from '../context/TypesAndBooksContext.js';
 import SearchBox from '../components/SearchBox';
 import '../styles/masses.css';
 
@@ -12,6 +11,7 @@ const MassesPage = () => {
   // Context
   const hymnTypes = useHymnTypes();
 
+  // State and event handlers
   const [massData, setMassData] = useState({ name: '' });
   const [massName, setMassName] = useState('');
 
@@ -20,6 +20,9 @@ const MassesPage = () => {
     setMassDateTime(e.target.value);
   };
 
+  const [hymnsData, setHymnsData] = useState([]);
+
+  // Get mass data when a mass is selected
   useEffect(() => {
     setMassName(massData.name);
 
@@ -28,57 +31,24 @@ const MassesPage = () => {
         massData.dateTime.substring(0, massData.dateTime.length - 1)
       );
 
-      // Get hymns for mass
       axios
         .get(`/masses/${massData.id}`)
         .then((res) => {
           const newHymns = res.data;
-          setHymnData(newHymns);
+          setHymnsData(newHymns);
         })
         .catch((e) => console.log(`Get hymns for mass failed: ${e}`));
     }
   }, [massData]);
 
-  const [hymnsData, setHymnData] = useState([]);
-
-  const updateHymnData = (hymnIndex, key, data) => {
-    const updatedHymn = hymnsData.map((hymn, i) => {
-      if (i === hymnIndex) {
-        hymn[key] = data;
-      }
-      return hymn;
-    });
-    setHymnData(updatedHymn);
-  };
-
-  // Reorder hymns after dragging
-  const handleOnDragEnd = (result) => {
-    if (!result.destination) return;
-    const items = Array.from(hymnsData);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    setHymnData(items);
-  };
-
-  const handleAddHymn = (e) => {
-    e.preventDefault();
-    setHymnData([
-      ...hymnsData,
-      {
-        id: ``,
-        name: '',
-        hymnTypeId: 0,
-        fileIds: [],
-      },
-    ]);
-  };
-
+  // Mass validation
   const massErrors = useRef([]);
   const generateErrorString = (hymnIndex, error) => {
     return `Hymn ${hymnIndex + 1} ${
       hymnTypes[hymnsData[hymnIndex].hymnTypeId].type
     } - ${error}\n`;
   };
+
   const massValid = () => {
     let errors = '';
     let massValid = true;
@@ -111,22 +81,15 @@ const MassesPage = () => {
     return massValid;
   };
 
+  // Submit mass
   const submit = async (e) => {
     e.preventDefault();
 
     if (massValid()) {
-      const tempHymns = hymnsData.map((hymn) => {
-        const fileIds = hymn.files
-          .filter((file) => file.selected)
-          .map((file) => file.id);
-        hymn.fileIds = fileIds;
-        return hymn;
-      });
-
       const massData = {
         // massName: massName,
         massDateTime: massDateTime,
-        hymns: tempHymns,
+        hymns: hymnsData,
       };
 
       await axios
@@ -144,7 +107,7 @@ const MassesPage = () => {
   };
 
   return (
-    <div className="Masses">
+    <div className="masses">
       <Form>
         <Form.Label>Search for mass</Form.Label>
         <SearchBox
@@ -153,7 +116,6 @@ const MassesPage = () => {
           apiPath="/masses"
           placeholder="Mass Name"
         />
-
         <Form.Group className="mb-3" controlId="formPlaintextComment">
           <Form.Control
             type="datetime-local"
@@ -163,41 +125,11 @@ const MassesPage = () => {
           />
         </Form.Group>
       </Form>
-
-      <div className="hymnChooser">
-        <DragDropContext onDragEnd={handleOnDragEnd}>
-          {hymnsData.length > 0 && (
-            <Droppable droppableId="hymns">
-              {(provided) => (
-                <ul
-                  className="hymns"
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  {hymnsData.map((hymn, hymnIndex) => {
-                    return (
-                      <DraggableHymn
-                        key={hymnIndex}
-                        hymnsData={hymnsData}
-                        hymnIndex={hymnIndex}
-                        updateHymnData={updateHymnData}
-                      />
-                    );
-                  })}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          )}
-        </DragDropContext>
-        <Button variant="outline-primary" onClick={handleAddHymn}>
-          +
-        </Button>{' '}
-        <br />
-        <Button variant="primary" onClick={submit}>
-          Submit
-        </Button>{' '}
-      </div>
+      <MassHymnChooser hymnsData={hymnsData} setHymnsData={setHymnsData} />
+      <br />
+      <Button variant="primary" onClick={submit}>
+        Submit
+      </Button>{' '}
     </div>
   );
 };

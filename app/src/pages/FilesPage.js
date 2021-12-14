@@ -7,7 +7,7 @@ import {
   useFileTypes,
   useBooks,
   useOtherBookId,
-} from '../TypesAndBooksContext';
+} from '../context/TypesAndBooksContext.js';
 import SearchBox from '../components/SearchBox.js';
 import FileSelector from '../components/FileSelector.js';
 import Dropdown from '../components/Dropdown.js';

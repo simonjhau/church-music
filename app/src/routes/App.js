@@ -1,13 +1,13 @@
-import './App.css';
-import NavigationBar from './components/NavigationBar';
-import Home from './Home';
-import HymnsPage from './pages/HymnsPage';
-import Files from './pages/FilesPage';
-import MassesPage from './pages/MassesPage';
-import { TypeAndBookProvider } from './TypesAndBooksContext.js';
+import '../styles/App.css';
+import NavigationBar from '../components/NavigationBar';
+import HomePage from '../pages/HomePage';
+import HymnsPage from '../pages/HymnsPage';
+import Files from '../pages/FilesPage';
+import MassesPage from '../pages/MassesPage';
+import { TypeAndBookProvider } from '../context/TypesAndBooksContext.js';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import NotFoundPage from './pages/NotFound';
+import NotFoundPage from '../pages/NotFound';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <div className="content">
           <TypeAndBookProvider>
             <Routes>
-              <Route exact path="/" element={<Home />} />
+              <Route exact path="/" element={<HomePage />} />
               <Route exact path="/hymns" element={<HymnsPage />} />
               <Route exact path="/files" element={<Files />} />
               <Route exact path="/masses" element={<MassesPage />} />
