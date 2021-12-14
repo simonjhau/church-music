@@ -89,6 +89,7 @@ const DraggableHymn = ({ hymnsData, hymnIndex, updateHymnsData }) => {
               text="Hymn Type"
               options={hymnTypes}
               handleSelect={handleHymnTypeSelect}
+              value={hymnsData[hymnIndex].hymnTypeId}
             />
 
             <SearchBox

@@ -3,12 +3,12 @@ import DraggableHymn from '../components/DraggableHymn';
 
 const DraggableHymnsList = ({ hymnsData, setHymnsData }) => {
   // Reorder hymns after dragging
-  const handleOnDragEnd = (result) => {
-    if (!result.destination) return;
-    const reordereHymnsData = Array.from(hymnsData);
-    const [reorderedItem] = reordereHymnsData.splice(result.source.index, 1);
-    reordereHymnsData.splice(result.destination.index, 0, reorderedItem);
-    setHymnsData(reordereHymnsData);
+  const handleOnDragEnd = (card) => {
+    if (!card.destination) return;
+    const reorderedHymns = [...hymnsData];
+    const [reorderedItem] = reorderedHymns.splice(card.source.index, 1);
+    reorderedHymns.splice(card.destination.index, 0, reorderedItem);
+    setHymnsData(reorderedHymns);
   };
 
   const updateHymnsData = (hymnIndex, key, data) => {

@@ -5,6 +5,7 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
   const handleInputChange = (input) => {

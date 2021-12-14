@@ -2,7 +2,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-const Dropdown = ({ text, options, handleSelect }) => {
+const Dropdown = ({ text, options, handleSelect, value }) => {
   return (
     <Form.Group as={Row} className="mb-3" controlId="formSelectFileType">
       <Form.Label column sm="3">
@@ -13,6 +13,7 @@ const Dropdown = ({ text, options, handleSelect }) => {
           aria-label={`Select ${text}`}
           name="fileType"
           onChange={handleSelect}
+          value={value}
         >
           {options.map((option) => {
             return (

@@ -6,7 +6,7 @@ import { useBooks, useFileTypes } from '../context/TypesAndBooksContext.js';
 const FileCheckBoxes = ({ label, files, onChange }) => {
   const books = useBooks();
   const fileTypes = useFileTypes();
-  console.log({ files });
+
   return (
     <Form.Group as={Row} className="mb-3" controlId="formPlaintextHymnName">
       <Form.Label column sm="3">
