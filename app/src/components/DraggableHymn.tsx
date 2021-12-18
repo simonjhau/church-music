@@ -2,28 +2,37 @@ import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { Draggable } from 'react-beautiful-dnd';
-import SearchBox from './SearchBox.js';
-import { useHymnTypes } from '../context/TypesAndBooksContext.js';
-import Dropdown from './Dropdown.js';
-import FileCheckBoxes from './FileCheckBoxes.js';
+import SearchBox from './SearchBox';
+import { useHymnTypes } from '../context/TypesAndBooksContext';
+import Dropdown from './Dropdown';
+import FileCheckBoxes from './FileCheckBoxes';
+import { FileInterface, HymnDataInterface } from '../interfaces/interfaces';
 import '../styles/masses.css';
 
-const DraggableHymn = ({ hymnsData, hymnIndex, updateHymnsData }) => {
+interface HymnInterface {
+  id: string;
+  name: string;
+}
+
+interface DraggableHymnProps {
+  hymnsData: HymnDataInterface[];
+  hymnIndex: number;
+  updateHymnsData: (hymnIndex: number, key: string, value: any) => void;
+}
+
+const DraggableHymn: React.FC<DraggableHymnProps> = ({
+  hymnsData,
+  hymnIndex,
+  updateHymnsData,
+}) => {
   // Context
   const hymnTypes = useHymnTypes();
 
-  // Set hymn data once a hymn has been selected
-  const setHymnData = (hymn) => {
-    updateHymnsData(hymnIndex, 'name', hymn.name);
-    updateHymnsData(hymnIndex, 'id', hymn.id);
-  };
-
-  const [filesForHymn, setFilesForHymns] = useState([]);
+  // File state
+  const [filesForHymn, setFilesForHymns] = useState<FileInterface[]>([]);
 
   // Get list of files when hymn data changes
   useEffect(() => {
-    console.log('useEffect');
-    console.log(hymnIndex);
     const hymnId = hymnsData[hymnIndex].id;
 
     setFilesForHymns([]);
@@ -32,7 +41,7 @@ const DraggableHymn = ({ hymnsData, hymnIndex, updateHymnsData }) => {
       axios
         .get(`/files/hymn/${hymnId}`)
         .then((res) => {
-          const hymnFiles = res.data.map((file) => {
+          const hymnFiles = res.data.map((file: FileInterface) => {
             if (hymnsData[hymnIndex].fileIds.includes(file.id)) {
               file['selected'] = true;
             } else {
@@ -50,29 +59,38 @@ const DraggableHymn = ({ hymnsData, hymnIndex, updateHymnsData }) => {
   }, [hymnsData[hymnIndex].id]);
 
   // Handle hymn type selection
-  const handleHymnTypeSelect = (e) => {
+  const handleHymnTypeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const hymnTypeId = parseInt(e.target.value);
     updateHymnsData(hymnIndex, 'hymnTypeId', hymnTypeId);
   };
 
+  // Set hymn data once a hymn has been selected
+  const setHymnData = (hymn: HymnInterface) => {
+    updateHymnsData(hymnIndex, 'name', hymn.name);
+    updateHymnsData(hymnIndex, 'id', hymn.id);
+  };
+
   // Handle files being selected
-  const handleFileCheckboxSelection = (fileIndex) => {
-    const updatedFiles = filesForHymn.map((file, index) => {
-      if (index === fileIndex) {
-        file.selected = !file.selected;
+  const handleFileCheckboxSelection = (fileIndex: number) => {
+    const updatedFiles: FileInterface[] = filesForHymn.map(
+      (file: FileInterface, index) => {
+        if (index === fileIndex) {
+          file.selected = !file.selected;
+        }
+        return file;
       }
-      return file;
-    });
+    );
 
     setFilesForHymns(updatedFiles);
 
     // Save selected file IDs in parent component
-    const selectedFileIds = [];
-    for (const [index, file] of updatedFiles.entries()) {
+    const selectedFileIds: string[] = [];
+    updatedFiles.forEach((file, index) => {
       if (file.selected) {
         selectedFileIds.push(filesForHymn[index].id);
       }
-    }
+    });
+
     updateHymnsData(hymnIndex, 'fileIds', selectedFileIds);
   };
 

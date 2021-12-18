@@ -1,8 +1,21 @@
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { HymnTypesInterface } from '../context/TypesAndBooksContext';
 
-const Dropdown = ({ text, options, handleSelect, value }) => {
+interface DropdownProps {
+  text: string;
+  options: HymnTypesInterface[];
+  handleSelect: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  value: number;
+}
+
+const Dropdown: React.FC<DropdownProps> = ({
+  text,
+  options,
+  handleSelect,
+  value,
+}) => {
   return (
     <Form.Group as={Row} className="mb-3" controlId="formSelectFileType">
       <Form.Label column sm="3">

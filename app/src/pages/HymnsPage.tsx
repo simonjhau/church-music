@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 
-import SearchBox from '../components/SearchBox.js';
+import SearchBox from '../components/SearchBox';
 import Hymn from '../components/Hymn';
+import { HymnInterface } from '../interfaces/interfaces';
 
 const HymnsPage = () => {
-  const [hymnData, setHymnData] = useState({ name: '' });
+  const [hymnData, setHymnData] = useState<HymnInterface>({
+    id: '',
+    name: '',
+    altName: '',
+    lyrics: '',
+  });
 
   return (
     <div className="Upload">
@@ -17,7 +23,7 @@ const HymnsPage = () => {
         placeholder="Hymn Name"
         addLabel={false}
       />
-      {Object.keys(hymnData).length > 1 && <Hymn hymn={hymnData}></Hymn>}
+      {hymnData.id && <Hymn hymn={hymnData}></Hymn>}
     </div>
   );
 };

@@ -1,8 +1,15 @@
 import Button from 'react-bootstrap/Button';
 import DraggableHymnsList from './DraggableHymnsList';
 
-const MassHymnChooser = ({ hymnsData, setHymnsData }) => {
-  const handleAddHymn = (e) => {
+import { HymnDataInterface } from '../interfaces/interfaces';
+
+interface Props {
+  hymnsData: HymnDataInterface[];
+  setHymnsData: (newHymndData: HymnDataInterface[]) => void;
+}
+
+const MassHymnChooser: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
+  const handleAddHymn: React.MouseEventHandler = (e: React.MouseEvent) => {
     e.preventDefault();
     setHymnsData([
       ...hymnsData,
@@ -11,6 +18,7 @@ const MassHymnChooser = ({ hymnsData, setHymnsData }) => {
         name: '',
         hymnTypeId: 0,
         fileIds: [],
+        files: [],
       },
     ]);
   };

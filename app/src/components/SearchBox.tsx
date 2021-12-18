@@ -1,3 +1,5 @@
+// @ts-nocheck
+// To-do - typescript this up
 import '../styles/Files.css';
 import { useState } from 'react';
 import axios from 'axios';

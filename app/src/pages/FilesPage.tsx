@@ -1,5 +1,5 @@
 import '../styles/Files.css';
-import { useEffect, useState, useRef, React } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -7,92 +7,104 @@ import {
   useFileTypes,
   useBooks,
   useOtherBookId,
-} from '../context/TypesAndBooksContext.js';
-import SearchBox from '../components/SearchBox.js';
-import FileSelector from '../components/FileSelector.js';
-import Dropdown from '../components/Dropdown.js';
-import Input from '../components/Input.js';
+} from '../context/TypesAndBooksContext';
+import SearchBox from '../components/SearchBox';
+import FileSelector from '../components/FileSelector';
+import Dropdown from '../components/Dropdown';
+import Input from '../components/Input';
+import { HymnInterface } from '../interfaces/interfaces';
 
-const FilesPage = () => {
+const FilesPage: React.FC<{}> = () => {
   // Context
   const fileTypes = useFileTypes();
   const books = useBooks();
   const otherBookId = useOtherBookId();
 
   // State and event handlers
-  const [file, setFile] = useState(null);
-  const handleFileSelect = (e) => {
-    setFile(e.target.files[0]);
+  const [file, setFile] = useState('');
+  const handleFileSelect: React.ChangeEventHandler = (e: React.ChangeEvent) => {
+    setFile((e.target as HTMLFormElement).files[0]);
   };
 
-  const [selectedHymn, setSelectedHymn] = useState({ name: '' });
+  const [selectedHymn, setSelectedHymn] = useState<HymnInterface>({
+    id: '',
+    name: '',
+    altName: '',
+    lyrics: '',
+  });
 
   const [fileTypeId, setFileTypeId] = useState(fileTypes[0].id);
   useEffect(() => {
     setFileTypeId(fileTypes[0].id);
   }, [fileTypes]);
-  const handleFileTypeSelect = (e) => {
-    setFileTypeId(parseInt(e.target.value));
+  const handleFileTypeSelect: React.ChangeEventHandler = (
+    e: React.ChangeEvent
+  ) => {
+    setFileTypeId(parseInt((e.target as HTMLSelectElement).value));
   };
 
   const [bookId, setBookId] = useState(books[0].id);
   useEffect(() => {
     setBookId(books[0].id);
   }, [books]);
-  const handleBookSelect = (e) => {
-    const bookId = parseInt(e.target.value);
+  const handleBookSelect: React.ChangeEventHandler = (e: React.ChangeEvent) => {
+    const bookId = parseInt((e.target as HTMLSelectElement).value);
     setBookId(bookId);
-    if (bookId === otherBookId.current) {
+    if (bookId === otherBookId) {
       setHymnNumber('');
     }
   };
 
   const [hymnNumber, setHymnNumber] = useState('');
-  const handleHymnNumberChange = (e) => {
+  const handleHymnNumberChange: React.ChangeEventHandler = (
+    e: React.ChangeEvent
+  ) => {
+    const value = (e.target as HTMLSelectElement).value;
     const re = /^[0-9\b]+$/;
-    if (e.target.value === '' || re.test(e.target.value)) {
-      setHymnNumber(e.target.value);
+    if (value === '' || re.test(value)) {
+      setHymnNumber(value);
     }
   };
 
   const [comment, setComment] = useState('');
-  const handleCommentChange = (e) => {
-    setComment(e.target.value);
+  const handleCommentChange: React.ChangeEventHandler = (
+    e: React.ChangeEvent
+  ) => {
+    setComment((e.target as HTMLSelectElement).value);
   };
 
   // Form Validation
-  const formErrors = useRef({});
+  const formErrors = useRef<string[]>([]);
   const formValid = () => {
-    const errors = {};
+    const errors: string[] = [];
     let formValid = true;
 
     if (file == null) {
-      errors['File'] = 'No file selected';
+      errors.push('File: No file selected');
       formValid = false;
     }
 
     if (selectedHymn.name === '') {
-      errors['Hymn Name'] = 'Hymn name cannot be blank';
+      errors.push('Hymn Name: Hymn name cannot be blank');
       formValid = false;
     }
 
     if (selectedHymn.id === '') {
-      errors['Hymn Id'] = 'Hymn ID not valid';
+      errors.push('Hymn ID: Hymn ID not valid');
       formValid = false;
     }
 
     if (fileTypeId > fileTypes.length) {
-      errors['File Type'] = 'Invalid file type';
-      formValid = false;
+      errors.push('File Type: Invalid file type');
     }
 
     if (bookId > books.length) {
-      errors['Book'] = 'Invalid book';
+      errors.push('Book: Invalid book');
       formValid = false;
     }
 
-    if (bookId !== otherBookId.current && hymnNumber === '') {
-      errors['Hymn Number'] = 'Hymn number cannot be blank';
+    if (bookId !== otherBookId && hymnNumber === '') {
+      errors.push('Hymn Number: Hymn number cannot be blank');
       formValid = false;
     }
 
@@ -101,15 +113,15 @@ const FilesPage = () => {
   };
 
   // Form submit
-  const submit = async (e) => {
+  const submit: React.MouseEventHandler = async (e: React.MouseEvent) => {
     e.preventDefault();
 
     if (formValid()) {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('hymnId', selectedHymn.id);
-      formData.append('fileTypeId', fileTypeId);
-      formData.append('bookId', bookId);
+      formData.append('fileTypeId', fileTypeId.toString());
+      formData.append('bookId', bookId.toString());
       formData.append('hymnNum', hymnNumber);
       formData.append('comment', comment);
 
@@ -127,8 +139,8 @@ const FilesPage = () => {
         });
     } else {
       let errorStr = 'Error(s) in form submission:\n\n';
-      for (const key of Object.keys(formErrors.current)) {
-        errorStr += `${key}: ${formErrors.current[key]}\n`;
+      for (const error of formErrors.current) {
+        errorStr += `${error}\n`;
       }
       alert(errorStr);
     }
@@ -149,16 +161,22 @@ const FilesPage = () => {
           text="File Type"
           options={fileTypes}
           handleSelect={handleFileTypeSelect}
+          value={0}
         />
-        <Dropdown text="Book" options={books} handleSelect={handleBookSelect} />
-        {bookId !== otherBookId.current && (
+        <Dropdown
+          text="Book"
+          options={books}
+          handleSelect={handleBookSelect}
+          value={0}
+        />
+        {bookId !== otherBookId && (
           <Input
             label="Hymn Number"
             onChange={handleHymnNumberChange}
             value={hymnNumber}
           />
         )}
-        <Input label="Comment" onChange={handleCommentChange} />
+        <Input label="Comment" onChange={handleCommentChange} value="" />
         <br />
         <div className="d-grid gap-2">
           <Button variant="primary" type="submit" onClick={submit}>

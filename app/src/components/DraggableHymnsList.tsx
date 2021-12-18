@@ -1,19 +1,27 @@
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import DraggableHymn from '../components/DraggableHymn';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import DraggableHymn from './DraggableHymn';
+import { HymnDataInterface } from '../interfaces/interfaces';
 
-const DraggableHymnsList = ({ hymnsData, setHymnsData }) => {
+interface Props {
+  hymnsData: HymnDataInterface[];
+  setHymnsData: (newHymnsData: HymnDataInterface[]) => void;
+}
+
+const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
   // Reorder hymns after dragging
-  const handleOnDragEnd = (card) => {
-    if (!card.destination) return;
+  const handleOnDragEnd = (res: DropResult) => {
+    if (!res.destination) return;
     const reorderedHymns = [...hymnsData];
-    const [reorderedItem] = reorderedHymns.splice(card.source.index, 1);
-    reorderedHymns.splice(card.destination.index, 0, reorderedItem);
+    const [reorderedItem] = reorderedHymns.splice(res.source.index, 1);
+    reorderedHymns.splice(res.destination.index, 0, reorderedItem);
     setHymnsData(reorderedHymns);
   };
 
-  const updateHymnsData = (hymnIndex, key, data) => {
+  const updateHymnsData = (hymnIndex: number, key: string, data: any) => {
     const updatedHymn = hymnsData.map((hymn, i) => {
       if (i === hymnIndex) {
+        // todo
+        // @ts-ignore:next-line
         hymn[key] = data;
       }
       return hymn;

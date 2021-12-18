@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
-import { useFileTypes, useBooks } from '../context/TypesAndBooksContext.js';
+import { useFileTypes, useBooks } from '../context/TypesAndBooksContext';
 import '../styles/Hymn.css';
+import { HymnInterface } from '../interfaces/interfaces';
 
-const Hymn = ({ hymn }) => {
+interface FileInterface {
+  id: string;
+  fileTypeId: number;
+  bookId: number;
+  hymnNum: Number;
+  comment: string;
+}
+
+interface Props {
+  hymn: HymnInterface;
+}
+
+const Hymn: React.FC<Props> = ({ hymn }) => {
   const fileTypes = useFileTypes();
   const books = useBooks();
 
-  const [files, setFiles] = useState([
-    { id: null, fileType: null, bookId: null, hymnNum: null, comment: null },
+  const [files, setFiles] = useState<FileInterface[]>([
+    { id: '', fileTypeId: 0, bookId: 0, hymnNum: 0, comment: '' },
   ]);
 
   // Runs on component load
@@ -23,8 +36,12 @@ const Hymn = ({ hymn }) => {
       .catch((e) => console.log('Get files failed'));
   }, [hymn, setFiles]);
 
-  const handleFileClick = (e) => {
-    window.open(`${process.env.REACT_APP_API_URL}/files/${e.target.id}`);
+  const handleFileClick: React.MouseEventHandler = (e: React.MouseEvent) => {
+    window.open(
+      `${process.env.REACT_APP_API_URL}/files/${
+        (e.target as HTMLButtonElement).id
+      }`
+    );
   };
 
   return (

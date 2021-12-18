@@ -3,24 +3,37 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import MassHymnChooser from '../components/MassHymnChooser';
 import axios from 'axios';
-import { useHymnTypes } from '../context/TypesAndBooksContext.js';
+import { useHymnTypes } from '../context/TypesAndBooksContext';
 import SearchBox from '../components/SearchBox';
 import '../styles/masses.css';
+import { HymnDataInterface } from '../interfaces/interfaces';
 
-const MassesPage = () => {
+interface MassDataInterface {
+  id: string;
+  name: string;
+  dateTime: string;
+}
+
+const MassesPage: React.FC<{}> = () => {
   // Context
   const hymnTypes = useHymnTypes();
 
   // State and event handlers
-  const [massData, setMassData] = useState({ name: '' });
+  const [massData, setMassData] = useState<MassDataInterface>({
+    id: '',
+    name: '',
+    dateTime: '',
+  });
   const [massName, setMassName] = useState('');
 
   const [massDateTime, setMassDateTime] = useState('');
-  const handleMassDateTimeChange = (e) => {
-    setMassDateTime(e.target.value);
+  const handleMassDateTimeChange: React.ChangeEventHandler = (
+    e: React.ChangeEvent
+  ) => {
+    setMassDateTime((e.target as HTMLInputElement).value);
   };
 
-  const [hymnsData, setHymnsData] = useState([]);
+  const [hymnsData, setHymnsData] = useState<HymnDataInterface[]>([]);
 
   // Get mass data when a mass is selected
   useEffect(() => {
@@ -34,7 +47,10 @@ const MassesPage = () => {
       axios
         .get(`/masses/${massData.id}`)
         .then((res) => {
-          const newHymns = res.data;
+          const newHymns: HymnDataInterface[] = res.data;
+          newHymns.map((hymn) => {
+            return { ...hymn, files: [] };
+          });
           setHymnsData(newHymns);
         })
         .catch((e) => console.log(`Get hymns for mass failed: ${e}`));
@@ -42,10 +58,10 @@ const MassesPage = () => {
   }, [massData]);
 
   // Mass validation
-  const massErrors = useRef([]);
-  const generateErrorString = (hymnIndex, error) => {
+  const massErrors = useRef<string>('');
+  const generateErrorString = (hymnIndex: number, error: string) => {
     return `Hymn ${hymnIndex + 1} ${
-      hymnTypes[hymnsData[hymnIndex].hymnTypeId].type
+      hymnTypes[hymnsData[hymnIndex].hymnTypeId].name
     } - ${error}\n`;
   };
 
@@ -63,7 +79,7 @@ const MassesPage = () => {
       errors += 'Mass date cannot be blank\n';
     }
 
-    for (const [index, hymn] of hymnsData.entries()) {
+    hymnsData.forEach((hymn, index) => {
       if (!hymn.id) {
         massValid = false;
         errors += generateErrorString(index, 'No hymn selected');
@@ -74,7 +90,7 @@ const MassesPage = () => {
           errors += generateErrorString(index, 'No files selected');
         }
       }
-    }
+    });
 
     massErrors.current = errors;
 
@@ -82,7 +98,7 @@ const MassesPage = () => {
   };
 
   // Submit mass
-  const submit = async (e) => {
+  const submit: React.MouseEventHandler = async (e: React.MouseEvent) => {
     e.preventDefault();
 
     if (massValid()) {
@@ -115,6 +131,7 @@ const MassesPage = () => {
           setData={setMassData}
           apiPath="/masses"
           placeholder="Mass Name"
+          addLabel={false}
         />
         <Form.Group className="mb-3" controlId="formPlaintextComment">
           <Form.Control

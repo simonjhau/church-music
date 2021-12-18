@@ -1,9 +1,16 @@
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { useBooks, useFileTypes } from '../context/TypesAndBooksContext.js';
+import { useBooks, useFileTypes } from '../context/TypesAndBooksContext';
+import { FileInterface } from '../interfaces/interfaces';
 
-const FileCheckBoxes = ({ label, files, onChange }) => {
+interface Props {
+  label: string;
+  files: FileInterface[];
+  onChange: (fileIndex: number) => void;
+}
+
+const FileCheckBoxes: React.FC<Props> = ({ label, files, onChange }) => {
   const books = useBooks();
   const fileTypes = useFileTypes();
 

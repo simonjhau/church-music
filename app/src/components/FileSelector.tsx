@@ -1,6 +1,11 @@
+import React from 'react';
 import Form from 'react-bootstrap/Form';
 
-const FileSelector = ({ handleFileSelect }) => {
+interface Props {
+  handleFileSelect: React.ChangeEventHandler;
+}
+
+const FileSelector: React.FC<Props> = ({ handleFileSelect }) => {
   return (
     <Form.Group controlId="formFile" className="mb-3">
       <Form.Label>Choose PDF file to upload</Form.Label>
