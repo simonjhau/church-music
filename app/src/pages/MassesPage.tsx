@@ -104,7 +104,7 @@ const MassesPage: React.FC<{}> = () => {
 
     if (massValid()) {
       const massData = {
-        // massName: massName,
+        massName: massName,
         massDateTime: massDateTime,
         hymns: hymnsData,
       };

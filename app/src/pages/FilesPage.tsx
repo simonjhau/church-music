@@ -161,13 +161,13 @@ const FilesPage: React.FC<{}> = () => {
           text="File Type"
           options={fileTypes}
           handleSelect={handleFileTypeSelect}
-          value={0}
+          value={fileTypeId}
         />
         <Dropdown
           text="Book"
           options={books}
           handleSelect={handleBookSelect}
-          value={0}
+          value={bookId}
         />
         {bookId !== otherBookId && (
           <Input
@@ -176,7 +176,7 @@ const FilesPage: React.FC<{}> = () => {
             value={hymnNumber}
           />
         )}
-        <Input label="Comment" onChange={handleCommentChange} value="" />
+        <Input label="Comment" onChange={handleCommentChange} value={comment} />
         <br />
         <div className="d-grid gap-2">
           <Button variant="primary" type="submit" onClick={submit}>

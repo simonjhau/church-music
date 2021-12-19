@@ -25,7 +25,7 @@ export const s3UploadFile = async (file, id) => {
   return s3.upload(params).promise();
 };
 
-export const getFile = (id) => {
+export const s3DownloadFile = (id) => {
   const params = {
     Key: `music/${id}.pdf`,
     Bucket: bucketName,

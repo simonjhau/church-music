@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { postMass } from '../middleware/masses.js';
+import { postMass, createMassPdf } from '../middleware/masses.js';
 import { getMasses, getMassHymns } from '../models/masses.js';
 
 // Todo - input sanitisation
@@ -43,7 +43,8 @@ router.post(
     }
     next();
   },
-  postMass
+  postMass,
+  createMassPdf
 );
 
 // Edit mass

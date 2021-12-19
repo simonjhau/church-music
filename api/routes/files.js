@@ -6,7 +6,7 @@ import {
   deleteLocalFile,
 } from '../middleware/files.js';
 import { getListOfFiles } from '../models/files.js';
-import { getFile } from '../models/s3.js';
+import { s3DownloadFile } from '../models/s3.js';
 
 // Todo - input sanitisation
 
@@ -55,11 +55,10 @@ router.get('/hymn/:id', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const fileId = req.params.id;
   try {
-    const readStream = getFile(fileId);
+    const readStream = s3DownloadFile(fileId);
     readStream.pipe(res);
-    //res.status(200).json('ok');
   } catch (e) {
-    res.status(400).send(`Error getting file from S3: \n ${e}`);
+    res.status(400).send(`Error downloading file from S3: \n ${e}`);
   }
 });
 
