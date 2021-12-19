@@ -47,10 +47,11 @@ const MassesPage: React.FC<{}> = () => {
       axios
         .get(`/masses/${massData.id}`)
         .then((res) => {
-          const newHymns: HymnDataInterface[] = res.data;
-          newHymns.map((hymn) => {
-            return { ...hymn, files: [] };
-          });
+          const newHymns: HymnDataInterface[] = res.data.map(
+            (hymn: HymnDataInterface) => {
+              return { ...hymn, files: [] };
+            }
+          );
           setHymnsData(newHymns);
         })
         .catch((e) => console.log(`Get hymns for mass failed: ${e}`));

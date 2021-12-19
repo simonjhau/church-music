@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import axios from 'axios';
 
+// File types
 interface FileTypesInterface {
   id: number;
   name: string;
@@ -10,18 +11,17 @@ const FileTypesContext = React.createContext<FileTypesInterface[]>([
 ]);
 export const useFileTypes = () => useContext(FileTypesContext);
 
+// Hymn types
 export interface HymnTypesInterface {
   id: number;
   name: string;
 }
 const HymnTypesContext = React.createContext<HymnTypesInterface[]>([
-  {
-    id: 0,
-    name: '',
-  },
+  { id: 0, name: '' },
 ]);
 export const useHymnTypes = () => useContext(HymnTypesContext);
 
+// Books
 interface BookInterface {
   id: number;
   name: string;
@@ -34,10 +34,11 @@ export const useBooks = () => useContext(BooksContext);
 const OtherBookIdContext = React.createContext<number>(4);
 export const useOtherBookId = () => useContext(OtherBookIdContext);
 
+// Context provider
 export const TypeAndBookProvider: React.FC = ({ children }) => {
   const [fileTypes, setFileTypes] = useState(useFileTypes());
-  const [hymnTypes, setHymnTypes] = useState(useHymnTypes);
-  const [books, setBooks] = useState(useBooks);
+  const [hymnTypes, setHymnTypes] = useState(useHymnTypes());
+  const [books, setBooks] = useState(useBooks());
   const otherBookId = useRef(useOtherBookId());
 
   // Runs on page load

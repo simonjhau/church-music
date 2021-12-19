@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { Draggable } from 'react-beautiful-dnd';
@@ -14,13 +14,13 @@ interface HymnInterface {
   name: string;
 }
 
-interface DraggableHymnProps {
+interface Props {
   hymnsData: HymnDataInterface[];
   hymnIndex: number;
   updateHymnsData: (hymnIndex: number, key: string, value: any) => void;
 }
 
-const DraggableHymn: React.FC<DraggableHymnProps> = ({
+const DraggableHymn: React.FC<Props> = ({
   hymnsData,
   hymnIndex,
   updateHymnsData,
@@ -28,14 +28,9 @@ const DraggableHymn: React.FC<DraggableHymnProps> = ({
   // Context
   const hymnTypes = useHymnTypes();
 
-  // File state
-  const [filesForHymn, setFilesForHymns] = useState<FileInterface[]>([]);
-
   // Get list of files when hymn data changes
   useEffect(() => {
     const hymnId = hymnsData[hymnIndex].id;
-
-    setFilesForHymns([]);
 
     if (hymnId) {
       axios
@@ -50,7 +45,7 @@ const DraggableHymn: React.FC<DraggableHymnProps> = ({
             return file;
           });
 
-          setFilesForHymns(hymnFiles);
+          updateHymnsData(hymnIndex, 'files', hymnFiles);
         })
         .catch((e) => console.log(`Get files failed ${e}`));
     }
@@ -72,7 +67,7 @@ const DraggableHymn: React.FC<DraggableHymnProps> = ({
 
   // Handle files being selected
   const handleFileCheckboxSelection = (fileIndex: number) => {
-    const updatedFiles: FileInterface[] = filesForHymn.map(
+    const updatedFiles: FileInterface[] = hymnsData[hymnIndex].files.map(
       (file: FileInterface, index) => {
         if (index === fileIndex) {
           file.selected = !file.selected;
@@ -81,13 +76,13 @@ const DraggableHymn: React.FC<DraggableHymnProps> = ({
       }
     );
 
-    setFilesForHymns(updatedFiles);
+    updateHymnsData(hymnIndex, 'files', updatedFiles);
 
     // Save selected file IDs in parent component
     const selectedFileIds: string[] = [];
     updatedFiles.forEach((file, index) => {
       if (file.selected) {
-        selectedFileIds.push(filesForHymn[index].id);
+        selectedFileIds.push(hymnsData[hymnIndex].files[index].id);
       }
     });
 
@@ -120,7 +115,7 @@ const DraggableHymn: React.FC<DraggableHymnProps> = ({
 
             <FileCheckBoxes
               label="Music Files"
-              files={filesForHymn}
+              files={hymnsData[hymnIndex].files}
               onChange={handleFileCheckboxSelection}
             />
           </Form>

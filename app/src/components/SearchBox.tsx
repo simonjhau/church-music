@@ -7,7 +7,7 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+// import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
   const handleInputChange = (input) => {
@@ -24,15 +24,17 @@ const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const handleSearch = (query) => {
-    setIsLoading(true);
-    makeAndHandleRequest(query)
-      .then((options) => {
-        setIsLoading(false);
-        setOptions(options);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
+    if (query) {
+      setIsLoading(true);
+      makeAndHandleRequest(query)
+        .then((options) => {
+          setIsLoading(false);
+          setOptions(options);
+        })
+        .catch(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   const makeAndHandleRequest = (query) => {
@@ -46,7 +48,7 @@ const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
 
   if (addLabel) {
     return (
-      <Form.Group as={Row} className="mb-3" controlId="formPlaintextHymnName">
+      <Form.Group as={Row} className="mb-3" controlId="searchBox">
         <Form.Label column sm="3">
           {placeholder}:
         </Form.Label>
