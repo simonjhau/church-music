@@ -3,7 +3,8 @@ import { addMass, addMassHymns } from '../models/masses.js';
 import { dbBegin, dbCommit, dbRollback } from '../models/db.js';
 import { s3DownloadFile } from '../models/s3.js';
 import fs from 'fs';
-import PDFMerger from 'pdf-merger-js';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { getHymnTypes } from '../models/hymnTypes.js';
 
 export const postMass = async (req, res, next) => {
   let massParams = req.body;
@@ -37,21 +38,77 @@ export const postMass = async (req, res, next) => {
 export const createMassPdf = async (req, res, next) => {
   const massParams = req.body;
   const hymns = massParams.hymns;
-  const merger = new PDFMerger();
+
+  const mergedPdf = await PDFDocument.create();
+  const helveticaFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
+
+  const page = mergedPdf.addPage();
+  const { width, height } = page.getSize();
+  const headingFontSize = 30;
+  page.drawText(`${massParams.massName}\n`, {
+    x: 50,
+    y: height - 75,
+    size: headingFontSize,
+    font: helveticaFont,
+    color: rgb(0, 0, 0),
+  });
+
+  const dateTime = new Date(massParams.massDateTime);
+  const dateFontSize = 20;
+  page.drawText(`${dateTime.toUTCString()}`, {
+    x: 50,
+    y: height - 75 - headingFontSize,
+    size: dateFontSize,
+    font: helveticaFont,
+    color: rgb(0, 0, 0),
+  });
+
+  const hymnTypes = await getHymnTypes();
+  console.log({ hymnTypes });
+
+  const fontSize = 20;
+  hymns.forEach((hymn, index) => {
+    page.drawText(`${hymnTypes[hymn.hymnTypeId].name}: ${hymn.name}`, {
+      x: 50,
+      y: height - 145 - index * 1.5 * fontSize,
+      size: fontSize,
+      font: helveticaFont,
+      color: rgb(0, 0, 0),
+    });
+  });
 
   for (const hymn of hymns) {
     const fileIds = hymn.fileIds;
     for (const fileId of fileIds) {
       // Download file and save locally
-      const readStream = s3DownloadFile(fileId);
+      const pdfFile = s3DownloadFile(fileId);
       const filePath = `downloads/${fileId}.pdf`;
-      readStream.pipe(fs.createWriteStream(filePath));
-      merger.add(filePath);
+      fs.writeFileSync(filePath, pdfFile);
+      const writeStream = fs.createWriteStream(filePath);
+      readStream.pipe(writeStream);
+
+      writeStream.on('finish', async () => {
+        console.log(`Written`);
+        const document = await PDFDocument.load(fs.readFileSync(filePath));
+        const copiedPages = await mergedPdf.copyPages(
+          document,
+          document.getPageIndices()
+        );
+        copiedPages.forEach((page) => {
+          console.log('page');
+          mergedPdf.addPage();
+        });
+        console.log('added');
+      });
     }
   }
 
-  const massName = massParams.massName;
-  merger.save(`downloads/${massName}.pdf`);
+  mergedPdf.addPage();
+
+  fs.writeFileSync(
+    `downloads/${massParams.massName}.pdf`,
+    await mergedPdf.save()
+  );
 
   res.status(200).send('ok');
 };
