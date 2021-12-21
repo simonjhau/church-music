@@ -17,11 +17,14 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
     setHymnsData(reorderedHymns);
   };
 
-  const updateHymnsData = (hymnIndex: number, key: string, data: any) => {
+  // Todo - this can be improved
+  const updateHymnsData = (
+    hymnIndex: number,
+    key: keyof HymnDataInterface,
+    data: any
+  ) => {
     const updatedHymn = hymnsData.map((hymn, i) => {
       if (i === hymnIndex) {
-        // todo
-        // @ts-ignore:next-line
         hymn[key] = data;
       }
       return hymn;
@@ -43,7 +46,7 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
                 return (
                   <DraggableHymn
                     key={hymnIndex}
-                    hymnsData={hymnsData}
+                    hymnData={hymnsData[hymnIndex]}
                     hymnIndex={hymnIndex}
                     updateHymnsData={updateHymnsData}
                   />

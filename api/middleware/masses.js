@@ -83,7 +83,7 @@ export const createMassPdf = async (req, res, next) => {
       // Download file and save locally
       const pdfFile = s3DownloadFile(fileId);
       const filePath = `downloads/${fileId}.pdf`;
-      fs.writeFileSync(filePath, pdfFile);
+      // fs.writeFileSync(filePath, pdfFile);
       const writeStream = fs.createWriteStream(filePath);
       readStream.pipe(writeStream);
 

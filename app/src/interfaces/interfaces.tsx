@@ -8,6 +8,7 @@ export interface HymnInterface {
 
 // Masses
 export interface HymnDataInterface {
+  [key: string]: any;
   id: string;
   name: string;
   hymnTypeId: number;
