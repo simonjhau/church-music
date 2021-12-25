@@ -1,4 +1,4 @@
-import { dbQuery } from './db.js';
+import { dbQuery } from './db';
 
 export const getBooks = async () => {
   let sqlQuery = `SELECT * FROM books;`;

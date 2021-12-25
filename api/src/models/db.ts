@@ -1,5 +1,5 @@
-import {} from 'dotenv/config';
-
+import dotenv from 'dotenv';
+dotenv.config();
 import pg from 'pg';
 const { Pool } = pg;
 
@@ -11,7 +11,7 @@ export const pool = new Pool({
   password: process.env.AWS_DB_PASSWORD,
 });
 
-export const dbQuery = async (text, params) => {
+export const dbQuery = async (text: string, params?: any[]) => {
   return await pool.query(text, params);
 };
 

@@ -1,12 +1,8 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 const router = express.Router();
-import {
-  multerUpload,
-  uploadFile,
-  deleteLocalFile,
-} from '../middleware/files.js';
-import { getListOfFiles } from '../models/files.js';
-import { s3DownloadFile } from '../models/s3.js';
+import { multerUpload, uploadFile, deleteLocalFile } from '../middleware/files';
+import { getListOfFiles } from '../models/files';
+import { s3DownloadFile } from '../models/s3';
 
 // Todo - input sanitisation
 
@@ -14,7 +10,7 @@ import { s3DownloadFile } from '../models/s3.js';
 router.post(
   '/',
   multerUpload.single('file'),
-  (req, res, next) => {
+  (req: Request, res: Response, next: NextFunction) => {
     let file = req.file;
     if (!file) {
       res.status(400).send('Ensure pdf file is attached');
@@ -41,7 +37,7 @@ router.post(
 );
 
 // Get list of files associated with a hymn
-router.get('/hymn/:id', async (req, res) => {
+router.get('/hymn/:id', async (req: Request, res: Response) => {
   const hymnId = req.params.id;
   try {
     const files = await getListOfFiles(hymnId);
@@ -52,7 +48,7 @@ router.get('/hymn/:id', async (req, res) => {
 });
 
 // Get file given id
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response) => {
   const fileId = req.params.id;
   try {
     const readStream = s3DownloadFile(fileId);

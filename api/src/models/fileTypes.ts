@@ -1,4 +1,4 @@
-import { dbQuery } from './db.js';
+import { dbQuery } from './db';
 
 export const getFiletypes = async () => {
   let sqlQuery = `SELECT * FROM file_types ORDER BY id;`;

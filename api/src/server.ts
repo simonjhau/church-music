@@ -1,14 +1,14 @@
-import express from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
-import fileTypes from './routes/fileTypes.js';
-import books from './routes/books.js';
-import hymns from './routes/hymns.js';
-import files from './routes/files.js';
-import masses from './routes/masses.js';
-import hymnTypes from './routes/hymnTypes.js';
+import fileTypes from './routes/fileTypes';
+import books from './routes/books';
+import hymns from './routes/hymns';
+import files from './routes/files';
+import masses from './routes/masses';
+import hymnTypes from './routes/hymnTypes';
 
 // Init express
-const app = express();
+const app: Application = express();
 
 // Cors
 app.use(cors());

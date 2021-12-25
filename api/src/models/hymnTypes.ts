@@ -1,4 +1,4 @@
-import { dbQuery } from './db.js';
+import { dbQuery } from './db';
 
 export const getHymnTypes = async () => {
   let sqlQuery = `SELECT * FROM hymn_types ORDER BY id;`;

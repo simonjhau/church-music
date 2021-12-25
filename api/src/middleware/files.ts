@@ -1,10 +1,12 @@
-import { v4 as uuidv4 } from 'uuid';
-import { dbAddFile } from '../models/files.js';
-import { s3UploadFile } from '../models/s3.js';
-import { dbCommit, dbRollback } from '../models/db.js';
+import express, { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+
+import { dbAddFile } from '../models/files';
+import { s3UploadFile } from '../models/s3';
+import { dbCommit, dbRollback } from '../models/db';
 
 // Set multer disk storage settings
 const storage = multer.diskStorage({
@@ -28,13 +30,24 @@ export const multerUpload = multer({
 });
 
 // Delete local file after uploading
-export const deleteLocalFile = (req, res, next) => {
-  fs.promises
-    .unlink(req.file.path)
-    .catch((e) => console.log('Problem deleting file'));
+export const deleteLocalFile = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const path = req?.file?.path;
+  if (path) {
+    fs.promises
+      .unlink(path)
+      .catch((e) => console.log(`Problem deleting file: ${e}`));
+  }
 };
 
-export const uploadFile = async (req, res, next) => {
+export const uploadFile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // To do checking of params should be done one level higher
   // Ensure file has been sent
 

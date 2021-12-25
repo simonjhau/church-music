@@ -1,6 +1,15 @@
-import { dbBegin, dbQuery } from './db.js';
+import { dbBegin, dbQuery } from './db';
 
-export const dbAddFile = async (fileParams) => {
+interface FileParamsInterface {
+  id: string;
+  hymnId: string;
+  fileTypeId: number;
+  bookId: number;
+  hymnNum: number;
+  comment: string;
+}
+
+export const dbAddFile = async (fileParams: FileParamsInterface) => {
   await dbBegin();
   const columns = `id, hymn_id, file_type_id, book_id, hymn_num, comment`;
   const sqlQuery = `INSERT INTO files (${columns}) values ($1, $2, $3, $4, $5, $6)
@@ -17,7 +26,7 @@ export const dbAddFile = async (fileParams) => {
   return file.rows;
 };
 
-export const getListOfFiles = async (hymnId) => {
+export const getListOfFiles = async (hymnId: string) => {
   const sqlQuery = `SELECT 
                     files.id AS "id", 
                     hymns.id AS "hymnId",

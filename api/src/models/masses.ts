@@ -1,6 +1,6 @@
-import { dbQuery } from './db.js';
+import { dbQuery } from './db';
 
-export const getMasses = async (query) => {
+export const getMasses = async (query: string) => {
   let sqlQuery = `SELECT 
                   id AS "id", 
                   name AS "name", 
@@ -12,7 +12,7 @@ export const getMasses = async (query) => {
   return masses.rows;
 };
 
-export const getMassHymns = async (query) => {
+export const getMassHymns = async (query: string) => {
   const sqlQuery = `SELECT 
                   hymn_pos AS "hymnPos",
                   hymn_type_id AS "hymnTypeId",
@@ -29,7 +29,21 @@ export const getMassHymns = async (query) => {
   return mass.rows;
 };
 
-export const addMass = async (massParams) => {
+export interface HymnInterface {
+  id: string;
+  hymnIndex: number;
+  hymnTypeId: number;
+  fileIds: string[];
+}
+
+export interface MassParamsInterface {
+  massId: string;
+  massName: string;
+  massDateTime: Date;
+  hymns: HymnInterface[];
+}
+
+export const addMass = async (massParams: MassParamsInterface) => {
   const { massId, massName, massDateTime } = massParams;
   let sqlQuery = `INSERT INTO masses (id, name, date_time) 
                   VALUES ($1, $2, $3)
@@ -39,11 +53,13 @@ export const addMass = async (massParams) => {
   return masses.rows;
 };
 
-export const addMassHymns = async (massParams) => {
-  for (const [hymnIndex, hymn] of massParams.hymns.entries()) {
+export const addMassHymns = async (
+  massParams: MassParamsInterface
+): Promise<void> => {
+  massParams.hymns.forEach((hymn, hymnIndex) => {
     let sqlQuery = `INSERT INTO mass_hymns 
-                    (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
-                    VALUES ($1, $2, $3, $4, $5)`;
+  (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
+  VALUES ($1, $2, $3, $4, $5)`;
     let values = [
       massParams.massId,
       hymnIndex,
@@ -52,5 +68,5 @@ export const addMassHymns = async (massParams) => {
       hymn.fileIds,
     ];
     await dbQuery(sqlQuery, values);
-  }
+  });
 };

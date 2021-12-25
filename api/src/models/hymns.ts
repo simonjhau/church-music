@@ -1,6 +1,6 @@
-import { dbQuery } from './db.js';
+import { dbQuery } from './db';
 
-export const getHymns = async (query) => {
+export const getHymns = async (query: string) => {
   let sqlQuery = `SELECT 
                   id, 
                   name, 
@@ -14,7 +14,7 @@ export const getHymns = async (query) => {
   return hymns.rows;
 };
 
-export const getHymn = async (query) => {
+export const getHymn = async (query: string) => {
   let sqlQuery = `SELECT 
                   id, 
                   name, 

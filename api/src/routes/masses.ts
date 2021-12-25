@@ -1,16 +1,16 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 const router = express.Router();
 
-import { postMass, createMassPdf } from '../middleware/masses.js';
-import { getMasses, getMassHymns } from '../models/masses.js';
+import { postMass, createMassPdf } from '../middleware/masses';
+import { getMasses, getMassHymns } from '../models/masses';
 
 // Todo - input sanitisation
 
 // Get list of hymns that match search query
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response) => {
   const query = req.query.q;
   if (query) {
-    const hymns = await getMasses(query);
+    const hymns = await getMasses(query as string);
     res.json(hymns);
   } else {
     res.status(400).send('No query parameter sent');
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get hymns/files for given mass
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response) => {
   const massId = req.params.id;
   try {
     const mass = await getMassHymns(massId);
@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
 // Add mass record
 router.post(
   '/',
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     // Ensure all required parameters are present
     let massParams = req.body;
     const massParamsRequirements = ['massName', 'massDateTime', 'hymns'];
@@ -50,7 +50,7 @@ router.post(
 // Edit mass
 router.put(
   '/:id',
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     // Ensure all required parameters are present
     let massParams = req.body;
     const massParamsRequirements = ['massName', 'massDateTime', 'hymns'];
