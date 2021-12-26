@@ -1,12 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
-const router = express.Router();
-
-import { postMass, createMassPdf } from '../middleware/masses';
+import express, { NextFunction, Request, Response } from 'express';
+import { createMassPdf, postMass } from '../middleware/masses';
 import { getMasses, getMassHymns } from '../models/masses';
+const router = express.Router();
 
 // Todo - input sanitisation
 
-// Get list of hymns that match search query
+// Get list of masses that match search query
 router.get('/', async (req: Request, res: Response) => {
   const query = req.query.q;
   if (query) {

@@ -1,17 +1,20 @@
-import express, { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-
-import { dbAddFile } from '../models/files';
-import { s3UploadFile } from '../models/s3';
 import { dbCommit, dbRollback } from '../models/db';
+import { dbAddFile, FileParamsInterface } from '../models/files';
+import { s3UploadFile } from '../models/s3';
 
 // Set multer disk storage settings
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './uploads/');
+    const uploadsFolder = 'uploads/';
+    if (!fs.existsSync(uploadsFolder)) {
+      fs.mkdirSync(uploadsFolder);
+    }
+    return cb(null, uploadsFolder);
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
@@ -43,17 +46,20 @@ export const deleteLocalFile = (
   }
 };
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 export const uploadFile = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  // To do checking of params should be done one level higher
   // Ensure file has been sent
 
   // Add file to db
   const newId = uuidv4();
-  let fileParams = req.body;
+  let fileParams: FileParamsInterface = req.body;
   fileParams['id'] = newId;
   try {
     var uploadedFile = await dbAddFile(fileParams);
@@ -65,7 +71,7 @@ export const uploadFile = async (
 
   // Add file to s3
   try {
-    await s3UploadFile(req.file, newId);
+    await s3UploadFile((req as MulterRequest).file, newId);
     dbCommit();
     res.status(200).json(uploadedFile);
   } catch (e) {

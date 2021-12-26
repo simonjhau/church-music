@@ -1,11 +1,12 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { addMass, addMassHymns } from '../models/masses';
-import { dbBegin, dbCommit, dbRollback } from '../models/db';
-import { s3DownloadFile } from '../models/s3';
+import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { Readable } from 'stream';
+import { v4 as uuidv4 } from 'uuid';
+import { dbBegin, dbCommit, dbRollback } from '../models/db';
 import { getHymnTypes } from '../models/hymnTypes';
+import { addMass, addMassHymns, HymnInterface } from '../models/masses';
+import { s3DownloadFile } from '../models/s3';
 
 export const postMass = async (
   req: Request,
@@ -14,7 +15,6 @@ export const postMass = async (
 ) => {
   let massParams = req.body;
   massParams.massId = uuidv4();
-  console.log(massParams);
   dbBegin();
 
   // Add mass to masses table
@@ -40,19 +40,32 @@ export const postMass = async (
   next();
 };
 
+const streamToFile = (inputStream: Readable, filePath: string) => {
+  return new Promise((resolve, reject) => {
+    const fileWriteStream = fs.createWriteStream(filePath);
+    inputStream.pipe(fileWriteStream).on('finish', resolve).on('error', reject);
+  });
+};
+
+// Create merged PDF file
 export const createMassPdf = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const massParams = req.body;
-  const hymns = massParams.hymns;
+  const hymns: HymnInterface[] = massParams.hymns;
 
   const mergedPdf = await PDFDocument.create();
   const helveticaFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
+  const helveticaBoldFont = await mergedPdf.embedFont(
+    StandardFonts.HelveticaBold
+  );
 
   const page = mergedPdf.addPage();
   const { width, height } = page.getSize();
+
+  // Write heading
   const headingFontSize = 30;
   page.drawText(`${massParams.massName}\n`, {
     x: 50,
@@ -62,9 +75,11 @@ export const createMassPdf = async (
     color: rgb(0, 0, 0),
   });
 
+  // Write date
   const dateTime = new Date(massParams.massDateTime);
   const dateFontSize = 20;
-  page.drawText(`${dateTime.toUTCString()}`, {
+  const dateTimeString = dateTime.toUTCString();
+  page.drawText(`${dateTimeString.substring(0, dateTimeString.length - 7)}`, {
     x: 50,
     y: height - 75 - headingFontSize,
     size: dateFontSize,
@@ -73,12 +88,19 @@ export const createMassPdf = async (
   });
 
   const hymnTypes = await getHymnTypes();
-  console.log({ hymnTypes });
 
+  // Write list of hymns
   const fontSize = 20;
   hymns.forEach((hymn, index) => {
-    page.drawText(`${hymnTypes[hymn.hymnTypeId].name}: ${hymn.name}`, {
+    page.drawText(`${index + 1}. ${hymnTypes[hymn.hymnTypeId].name}:`, {
       x: 50,
+      y: height - 145 - index * 1.5 * fontSize,
+      size: fontSize,
+      font: helveticaBoldFont,
+      color: rgb(0, 0, 0),
+    });
+    page.drawText(hymn.name, {
+      x: width / 2 - 50,
       y: height - 145 - index * 1.5 * fontSize,
       size: fontSize,
       font: helveticaFont,
@@ -86,39 +108,45 @@ export const createMassPdf = async (
     });
   });
 
+  // Create downloads folder if it doesn't exist
+  const downloadsFolder = 'downloads/';
+  if (!fs.existsSync(downloadsFolder)) {
+    fs.mkdirSync(downloadsFolder);
+  }
+
+  let hymnIndex = 1;
   for (const hymn of hymns) {
     const fileIds = hymn.fileIds;
     for (const fileId of fileIds) {
-      // Download file and save locally
       try {
-        const pdfFile = await s3DownloadFile(fileId);
-        console.log({ pdfFile });
-        const filePath = `downloads/${fileId}.pdf`;
-        fs.writeFileSync(filePath, pdfFile);
+        // Save file locally
+        const filePath = `${downloadsFolder}${fileId}.pdf`;
+        const file = await s3DownloadFile(fileId);
+        await streamToFile(file as Readable, filePath);
+
+        // Add file to merged pdf
+        const document = await PDFDocument.load(fs.readFileSync(filePath));
+        const copiedPages = await mergedPdf.copyPages(
+          document,
+          document.getPageIndices()
+        );
+        copiedPages.forEach((page) => {
+          const { width, height } = page.getSize();
+          page.drawText(`${hymnIndex}`, {
+            x: width - 30,
+            y: height - 35,
+            size: 16,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+          mergedPdf.addPage(page);
+        });
       } catch (e) {
         console.log(e);
       }
-
-      // const writeStream = fs.createWriteStream(filePath);
-      // readStream.pipe(writeStream);
-
-      // writeStream.on('finish', async () => {
-      //   console.log(`Written`);
-      //   const document = await PDFDocument.load(fs.readFileSync(filePath));
-      //   const copiedPages = await mergedPdf.copyPages(
-      //     document,
-      //     document.getPageIndices()
-      //   );
-      //   copiedPages.forEach((page) => {
-      //     console.log('page');
-      //     mergedPdf.addPage();
-      //   });
-      //   console.log('added');
-      // });
     }
+    hymnIndex++;
   }
-
-  mergedPdf.addPage();
 
   fs.writeFileSync(
     `downloads/${massParams.massName}.pdf`,

@@ -1,11 +1,11 @@
-import express, { Application } from 'express';
 import cors from 'cors';
-import fileTypes from './routes/fileTypes';
+import express, { Application } from 'express';
 import books from './routes/books';
-import hymns from './routes/hymns';
 import files from './routes/files';
-import masses from './routes/masses';
+import fileTypes from './routes/fileTypes';
+import hymns from './routes/hymns';
 import hymnTypes from './routes/hymnTypes';
+import masses from './routes/masses';
 
 // Init express
 const app: Application = express();

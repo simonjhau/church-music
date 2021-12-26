@@ -31,6 +31,7 @@ export const getMassHymns = async (query: string) => {
 
 export interface HymnInterface {
   id: string;
+  name: string;
   hymnIndex: number;
   hymnTypeId: number;
   fileIds: string[];
@@ -53,9 +54,7 @@ export const addMass = async (massParams: MassParamsInterface) => {
   return masses.rows;
 };
 
-export const addMassHymns = async (
-  massParams: MassParamsInterface
-): Promise<void> => {
+export const addMassHymns = async (massParams: MassParamsInterface) => {
   massParams.hymns.forEach((hymn, hymnIndex) => {
     let sqlQuery = `INSERT INTO mass_hymns 
   (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
@@ -67,6 +66,7 @@ export const addMassHymns = async (
       hymn.id,
       hymn.fileIds,
     ];
-    await dbQuery(sqlQuery, values);
+
+    dbQuery(sqlQuery, values);
   });
 };

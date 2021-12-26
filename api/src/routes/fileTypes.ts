@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
-const router = express.Router();
-
 import { getFiletypes } from '../models/fileTypes';
+const router = express.Router();
 
 // Todo - input sanitisation
 

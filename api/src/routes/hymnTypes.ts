@@ -1,7 +1,6 @@
-import express, { Request, Response, NextFunction } from 'express';
-const router = express.Router();
-
+import express, { Request, Response } from 'express';
 import { getHymnTypes } from '../models/hymnTypes';
+const router = express.Router();
 
 // Todo - input sanitisation
 

@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
+import { getHymn, getHymns } from '../models/hymns';
 const router = express.Router();
-
-import { getHymns, getHymn } from '../models/hymns';
 
 // Todo - input sanitisation
 
@@ -16,14 +15,13 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// Get list of hymns that match search query
+// Get hymn data given an ID
 router.get('/:id', async (req: Request, res: Response) => {
   const hymnId = req.params.id;
   try {
     const hymns = await getHymn(hymnId);
     res.status(200).json(hymns);
   } catch (e) {
-    console.log('err');
     res.status(400).send(`Error getting hymn ${hymnId}: ${e}`);
   }
 });

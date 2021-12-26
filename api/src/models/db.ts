@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
-dotenv.config();
 import pg from 'pg';
+dotenv.config();
 const { Pool } = pg;
 
 export const pool = new Pool({
   host: process.env.AWS_DB_ENDPOINT,
   database: process.env.AWS_DB_NAME,
-  port: process.env.AWS_DB_PORT,
+  port: parseInt(process.env.AWS_DB_PORT as string),
   user: process.env.AWS_DB_USER_NAME,
   password: process.env.AWS_DB_PASSWORD,
 });

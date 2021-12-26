@@ -1,6 +1,6 @@
 import { dbBegin, dbQuery } from './db';
 
-interface FileParamsInterface {
+export interface FileParamsInterface {
   id: string;
   hymnId: string;
   fileTypeId: number;

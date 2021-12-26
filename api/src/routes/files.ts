@@ -1,8 +1,9 @@
-import express, { Request, Response, NextFunction } from 'express';
-const router = express.Router();
-import { multerUpload, uploadFile, deleteLocalFile } from '../middleware/files';
+import express, { NextFunction, Request, Response } from 'express';
+import { Readable } from 'stream';
+import { deleteLocalFile, multerUpload, uploadFile } from '../middleware/files';
 import { getListOfFiles } from '../models/files';
 import { s3DownloadFile } from '../models/s3';
+const router = express.Router();
 
 // Todo - input sanitisation
 
@@ -11,14 +12,13 @@ router.post(
   '/',
   multerUpload.single('file'),
   (req: Request, res: Response, next: NextFunction) => {
-    let file = req.file;
-    if (!file) {
+    if (!req.file) {
       res.status(400).send('Ensure pdf file is attached');
       return;
     }
 
     // Ensure all parameters are present
-    let fileParams = req.body;
+    const fileParams = req.body;
     const fileParamsRequirements = ['hymnId', 'fileTypeId', 'bookId'];
     for (const param of fileParamsRequirements) {
       if (!fileParams[param]) {
@@ -26,7 +26,7 @@ router.post(
         return;
       }
     }
-    if (fileParams['bookId'] === 4 && !fileParams['hymnNum']) {
+    if (fileParams.bookId === 4 && !fileParams.hymnNum) {
       res.status(400).send(`Missing parameter 'hymnNum'`);
       return;
     }
@@ -51,8 +51,8 @@ router.get('/hymn/:id', async (req: Request, res: Response) => {
 router.get('/:id', async (req: Request, res: Response) => {
   const fileId = req.params.id;
   try {
-    const readStream = s3DownloadFile(fileId);
-    readStream.pipe(res);
+    const file = await s3DownloadFile(fileId);
+    (file as Readable).pipe(res);
   } catch (e) {
     res.status(400).send(`Error downloading file from S3: \n ${e}`);
   }

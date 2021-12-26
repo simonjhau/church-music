@@ -1,19 +1,31 @@
+import {
+  GetObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
+import fs from 'fs';
 dotenv.config();
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
-const bucketName = process.env.AWS_BUCKET_NAME;
-const region = process.env.AWS_BUCKET_REGION;
-const accessKeyId = process.env.AWS_ACCESS_KEY;
-const secretAccessKey = process.env.AWS_SECRET_KEY;
+const bucketName = process.env.AWS_BUCKET_NAME as string;
+const region = process.env.AWS_BUCKET_REGION as string;
+const accessKeyId = process.env.AWS_ACCESS_KEY as string;
+const secretAccessKey = process.env.AWS_SECRET_KEY as string;
 
-const client = new S3Client({
+const s3Client = new S3Client({
   region,
   credentials: { accessKeyId: accessKeyId, secretAccessKey: secretAccessKey },
 });
 
-export const s3UploadFile = async (file, id: string) => {
-  // const fileStream = fs.createReadStream(file.path);
+interface FileInterface {
+  id: string;
+  path: string;
+}
+
+// Upload file to S3
+export const s3UploadFile = async (file: FileInterface, id: string) => {
+  const fileStream = fs.createReadStream(file.path);
   const input = {
     Bucket: bucketName,
     Body: fileStream,
@@ -21,23 +33,26 @@ export const s3UploadFile = async (file, id: string) => {
   };
   // return s3.upload(params).promise();
   const command = new PutObjectCommand(input);
-  const response = await client.send(command);
+  await s3Client.send(command);
 };
 
+// Download file from S3
 export const s3DownloadFile = async (id: string) => {
   const input = {
     Key: `music/${id}.pdf`,
     Bucket: bucketName,
   };
-  // return s3.getObject(params).createReadStream();
   const command = new GetObjectCommand(input);
-  const response = await client.send(command);
-  const stream = response.Body;
+  const { Body } = await s3Client.send(command);
+  return Body;
 };
 
-export const getListOfFiles = () => {
-  const params = {
+// Get list of files
+export const getListOfFiles = async () => {
+  const input = {
     Bucket: bucketName,
   };
-  return s3.listObjectsV2(params).createReadStream();
+  const command = new ListObjectsV2Command(input);
+  const response = await s3Client.send(command);
+  return response;
 };
