@@ -17,7 +17,6 @@ const MassHymnChooser: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
         name: '',
         hymnTypeId: 0,
         fileIds: [],
-        files: [],
       },
     ]);
   };

@@ -1,0 +1,19 @@
+.massCard {
+  /* display: flex; */
+  align-items: center;
+  /* border: solid 1.5px #8b98f8; */
+  background-color: #dee0f1;
+  border-radius: 0.5em;
+  padding: 2em 2em 2em 2em;
+  margin-bottom: 1em;
+}
+
+.massCard {
+  /* display: flex; */
+  align-items: center;
+  /* border: solid 1.5px #8b98f8; */
+  background-color: #dee0f1;
+  border-radius: 0.5em;
+  padding: 2em 2em 2em 2em;
+  margin-bottom: 2em;
+}

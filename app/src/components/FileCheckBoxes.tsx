@@ -1,25 +1,75 @@
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useBooks, useFileTypes } from '../context/TypesAndBooksContext';
 import { FileInterface } from '../interfaces/interfaces';
-
 interface Props {
   label: string;
-  files: FileInterface[];
-  onChange: (fileIndex: number) => void;
+  hymnId: string;
+  selectedFileIds: string[];
+  updateSelectedFiles: (selectedFiles: string[]) => void;
 }
 
-const FileCheckBoxes: React.FC<Props> = ({ label, files, onChange }) => {
+const FileCheckBoxes: React.FC<Props> = ({
+  label,
+  hymnId,
+  selectedFileIds,
+  updateSelectedFiles,
+}) => {
   const books = useBooks();
   const fileTypes = useFileTypes();
+
+  const [files, setfiles] = useState<FileInterface[]>([]);
+  const [selected, setSelected] = useState<boolean[]>([]);
+
+  // Get new files if a new hymn is selected
+  useEffect(() => {
+    if (hymnId) {
+      console.log('effect');
+      axios
+        .get(`/hymns/${hymnId}/files`)
+        .then((res) => {
+          const files = res.data as FileInterface[];
+          setfiles(res.data);
+
+          const newSelected = files.map((file) =>
+            selectedFileIds.includes(file.id)
+          );
+          setSelected(newSelected);
+        })
+        .catch((e) => console.log(`Get files failed ${e}`));
+    }
+    // eslint-disable-next-line
+  }, [hymnId]);
+
+  // Change checked boxes if selected hymns changes
+  useEffect(() => {
+    const newSelected = files.map((file) => selectedFileIds.includes(file.id));
+    setSelected(newSelected);
+    // eslint-disable-next-line
+  }, [selectedFileIds]);
+
+  const onFileClicked = (fileIndex: number) => {
+    selected[fileIndex] = !selected[fileIndex];
+
+    const newSelectedHymns: string[] = [];
+    files.forEach((file, fileIndex) => {
+      if (selected[fileIndex]) {
+        newSelectedHymns.push(file.id);
+      }
+    });
+
+    updateSelectedFiles(newSelectedHymns);
+  };
 
   return (
     <Form.Group as={Row} className="mb-3" controlId="formPlaintextHymnName">
       <Form.Label column sm="3">
         {label}:
       </Form.Label>
-      {files.length > 0 && (
+      {files.length > 0 && files.length === selected.length && (
         <Col sm="9">
           {files.map((file, fileIndex) => {
             return (
@@ -37,8 +87,8 @@ const FileCheckBoxes: React.FC<Props> = ({ label, files, onChange }) => {
                 } ${file.hymnNum ? ` - ${file.hymnNum}` : ''} ${
                   file.comment ? ` - ${file.comment}` : ''
                 }`}
-                checked={files[fileIndex].selected}
-                onChange={(e) => onChange(fileIndex)}
+                checked={selected[fileIndex]}
+                onChange={(e) => onFileClicked(fileIndex)}
               />
             );
           })}

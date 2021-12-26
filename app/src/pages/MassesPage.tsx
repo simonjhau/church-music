@@ -45,13 +45,9 @@ const MassesPage: React.FC<{}> = () => {
       );
 
       axios
-        .get(`/masses/${massData.id}`)
+        .get(`/masses/${massData.id}/hymns`)
         .then((res) => {
-          const newHymns: HymnDataInterface[] = res.data.map(
-            (hymn: HymnDataInterface) => {
-              return { ...hymn, files: [] };
-            }
-          );
+          const newHymns: HymnDataInterface[] = res.data;
           setHymnsData(newHymns);
         })
         .catch((e) => console.log(`Get hymns for mass failed: ${e}`));
@@ -84,12 +80,9 @@ const MassesPage: React.FC<{}> = () => {
       if (!hymn.id) {
         massValid = false;
         errors += generateErrorString(index, 'No hymn selected');
-      } else {
-        const filesSelected = hymn.files.map((file) => file.selected);
-        if (filesSelected.every((value) => !value)) {
-          massValid = false;
-          errors += generateErrorString(index, 'No files selected');
-        }
+      } else if (hymn.fileIds.length === 0) {
+        massValid = false;
+        errors += generateErrorString(index, 'No files selected');
       }
     });
 

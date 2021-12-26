@@ -13,13 +13,11 @@ export interface HymnDataInterface {
   name: string;
   hymnTypeId: number;
   fileIds: string[];
-  files: FileInterface[];
 }
 
 export interface FileInterface {
   id: string;
   name: string;
-  selected: boolean;
   fileTypeId: number;
   bookId: number;
   hymnNum: number;

@@ -2,8 +2,6 @@ import express, { Request, Response } from 'express';
 import { getHymnTypes } from '../models/hymnTypes';
 const router = express.Router();
 
-// Todo - input sanitisation
-
 // Get list of hymns that match search query
 router.get('/', async (req: Request, res: Response) => {
   try {

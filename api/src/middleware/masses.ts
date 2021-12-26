@@ -5,8 +5,15 @@ import { Readable } from 'stream';
 import { v4 as uuidv4 } from 'uuid';
 import { dbBegin, dbCommit, dbRollback } from '../models/db';
 import { getHymnTypes } from '../models/hymnTypes';
-import { addMass, addMassHymns, HymnInterface } from '../models/masses';
-import { s3DownloadFile } from '../models/s3';
+import {
+  addMass,
+  addMassHymns,
+  dbAddMassFileInfo,
+  HymnInterface,
+  MassParamsInterface,
+} from '../models/masses';
+import { s3DownloadFile, s3UploadFile } from '../models/s3';
+import { deleteFilesInDirectory } from '../utils/utils';
 
 export const postMass = async (
   req: Request,
@@ -90,7 +97,7 @@ export const createMassPdf = async (
   const hymnTypes = await getHymnTypes();
 
   // Write list of hymns
-  const fontSize = 20;
+  const fontSize = 18;
   hymns.forEach((hymn, index) => {
     page.drawText(`${index + 1}. ${hymnTypes[hymn.hymnTypeId].name}:`, {
       x: 50,
@@ -121,7 +128,7 @@ export const createMassPdf = async (
       try {
         // Save file locally
         const filePath = `${downloadsFolder}${fileId}.pdf`;
-        const file = await s3DownloadFile(fileId);
+        const file = await s3DownloadFile('music', fileId);
         await streamToFile(file as Readable, filePath);
 
         // Add file to merged pdf
@@ -153,5 +160,50 @@ export const createMassPdf = async (
     await mergedPdf.save()
   );
 
-  res.status(200).send('ok');
+  next();
+};
+
+// Save mass file to S3
+export const saveMassPdfToS3 = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Add file to db
+  const fileId = uuidv4();
+
+  const massParams: MassParamsInterface = req.body;
+
+  try {
+    var uploadedFile = await dbAddMassFileInfo(fileId, massParams.massId);
+  } catch (e) {
+    res.status(500).send(`Failed to add mass file to database: ${e}`);
+    next();
+    return;
+  }
+
+  // Add file to s3
+  try {
+    await s3UploadFile(
+      `downloads/${massParams.massName}.pdf`,
+      fileId,
+      'masses'
+    );
+    dbCommit();
+    res.status(200).json(uploadedFile);
+  } catch (e) {
+    dbRollback();
+    res.status(500).send(`Failed to add file to S3 bucket: ${e}`);
+  }
+
+  next();
+};
+
+export const pdfCleanup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  deleteFilesInDirectory('downloads/');
+  next();
 };

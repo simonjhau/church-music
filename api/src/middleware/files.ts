@@ -46,10 +46,6 @@ export const deleteLocalFile = (
   }
 };
 
-interface MulterRequest extends Request {
-  file: any;
-}
-
 export const uploadFile = async (
   req: Request,
   res: Response,
@@ -71,7 +67,7 @@ export const uploadFile = async (
 
   // Add file to s3
   try {
-    await s3UploadFile((req as MulterRequest).file, newId);
+    await s3UploadFile(req?.file?.path as string, newId, 'music');
     dbCommit();
     res.status(200).json(uploadedFile);
   } catch (e) {

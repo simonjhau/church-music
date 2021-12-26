@@ -24,12 +24,16 @@ interface FileInterface {
 }
 
 // Upload file to S3
-export const s3UploadFile = async (file: FileInterface, id: string) => {
-  const fileStream = fs.createReadStream(file.path);
+export const s3UploadFile = async (
+  filePath: string,
+  id: string,
+  fileType: string
+) => {
+  const fileStream = fs.createReadStream(filePath);
   const input = {
     Bucket: bucketName,
     Body: fileStream,
-    Key: `music/${id}.pdf`,
+    Key: `${fileType}/${id}.pdf`,
   };
   // return s3.upload(params).promise();
   const command = new PutObjectCommand(input);
@@ -37,11 +41,12 @@ export const s3UploadFile = async (file: FileInterface, id: string) => {
 };
 
 // Download file from S3
-export const s3DownloadFile = async (id: string) => {
+export const s3DownloadFile = async (fileType: string, id: string) => {
   const input = {
-    Key: `music/${id}.pdf`,
+    Key: `${fileType}/${id}.pdf`,
     Bucket: bucketName,
   };
+  console.log(input.Key);
   const command = new GetObjectCommand(input);
   const { Body } = await s3Client.send(command);
   return Body;
