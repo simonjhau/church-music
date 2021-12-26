@@ -1,18 +1,18 @@
-import '../styles/Files.css';
-import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import Form from 'react-bootstrap/Form';
+import { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Dropdown from '../components/Dropdown';
+import FileSelector from '../components/FileSelector';
+import Input from '../components/Input';
+import SearchBox from '../components/SearchBox';
 import {
-  useFileTypes,
   useBooks,
+  useFileTypes,
   useOtherBookId,
 } from '../context/TypesAndBooksContext';
-import SearchBox from '../components/SearchBox';
-import FileSelector from '../components/FileSelector';
-import Dropdown from '../components/Dropdown';
-import Input from '../components/Input';
 import { HymnInterface } from '../interfaces/interfaces';
+import '../styles/Files.css';
 
 const FilesPage: React.FC<{}> = () => {
   // Context

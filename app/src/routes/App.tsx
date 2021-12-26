@@ -1,13 +1,12 @@
-import '../styles/App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
+import { TypeAndBookProvider } from '../context/TypesAndBooksContext';
+import Files from '../pages/FilesPage';
 import HomePage from '../pages/HomePage';
 import HymnsPage from '../pages/HymnsPage';
-import Files from '../pages/FilesPage';
 import MassesPage from '../pages/MassesPage';
-import { TypeAndBookProvider } from '../context/TypesAndBooksContext';
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NotFoundPage from '../pages/NotFound';
+import '../styles/App.css';
 
 const App: React.FC<{}> = () => {
   return (

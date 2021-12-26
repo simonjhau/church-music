@@ -1,12 +1,12 @@
 // @ts-nocheck
 // To-do - typescript this up
-import '../styles/Files.css';
-import { useState } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import '../styles/Files.css';
 // import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {

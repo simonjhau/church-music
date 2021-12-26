@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-
-import SearchBox from '../components/SearchBox';
 import Hymn from '../components/Hymn';
+import SearchBox from '../components/SearchBox';
 import { HymnInterface } from '../interfaces/interfaces';
 
 const HymnsPage = () => {

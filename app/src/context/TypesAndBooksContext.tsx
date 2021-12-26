@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
 import axios from 'axios';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 // File types
 interface FileTypesInterface {
