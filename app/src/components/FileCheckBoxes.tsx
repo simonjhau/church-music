@@ -27,7 +27,6 @@ const FileCheckBoxes: React.FC<Props> = ({
   // Get new files if a new hymn is selected
   useEffect(() => {
     if (hymnId) {
-      console.log('effect');
       axios
         .get(`/hymns/${hymnId}/files`)
         .then((res) => {
@@ -39,7 +38,7 @@ const FileCheckBoxes: React.FC<Props> = ({
           );
           setSelected(newSelected);
         })
-        .catch((e) => console.log(`Get files failed ${e}`));
+        .catch((e) => console.error(`Get files failed ${e}`));
     }
     // eslint-disable-next-line
   }, [hymnId]);

@@ -51,7 +51,6 @@ router.get('/:id/hymns', async (req: Request, res: Response) => {
     const mass = await getMassHymns(massId);
     res.status(200).send(mass);
   } catch (e) {
-    console.log('error');
     res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
   }
 });

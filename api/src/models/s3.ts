@@ -46,7 +46,6 @@ export const s3DownloadFile = async (fileType: string, id: string) => {
     Key: `${fileType}/${id}.pdf`,
     Bucket: bucketName,
   };
-  console.log(input.Key);
   const command = new GetObjectCommand(input);
   const { Body } = await s3Client.send(command);
   return Body;

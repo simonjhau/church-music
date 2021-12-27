@@ -11,7 +11,7 @@ import '../styles/Files.css';
 
 const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
   const handleInputChange = (input) => {
-    setData({ name: input });
+    setData({ id: '', name: input });
     handleSearch(input);
   };
 

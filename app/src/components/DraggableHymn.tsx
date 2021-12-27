@@ -1,16 +1,11 @@
 import { Draggable } from 'react-beautiful-dnd';
 import Form from 'react-bootstrap/Form';
 import { useHymnTypes } from '../context/TypesAndBooksContext';
-import { HymnDataInterface } from '../interfaces/interfaces';
+import { HymnDataInterface, HymnInterface } from '../interfaces/interfaces';
 import '../styles/masses.css';
 import Dropdown from './Dropdown';
 import FileCheckBoxes from './FileCheckBoxes';
 import SearchBox from './SearchBox';
-
-interface HymnInterface {
-  id: string;
-  name: string;
-}
 
 interface Props {
   hymnData: HymnDataInterface;

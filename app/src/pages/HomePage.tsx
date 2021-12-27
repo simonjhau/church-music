@@ -12,7 +12,7 @@ const Home = () => {
       .then((res) => {
         setMasses(res.data);
       })
-      .catch((e) => console.log(`Get files failed:\n${e}`));
+      .catch((e) => console.error(`Get files failed:\n${e}`));
   }, []);
 
   return (

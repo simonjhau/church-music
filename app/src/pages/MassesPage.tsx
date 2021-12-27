@@ -50,7 +50,7 @@ const MassesPage: React.FC<{}> = () => {
           const newHymns: HymnDataInterface[] = res.data;
           setHymnsData(newHymns);
         })
-        .catch((e) => console.log(`Get hymns for mass failed: ${e}`));
+        .catch((e) => console.error(`Get hymns for mass failed: ${e}`));
     }
   }, [massData]);
 

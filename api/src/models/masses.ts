@@ -40,7 +40,6 @@ export const getMassHymns = async (query: string) => {
 
   let params = [query];
   const mass = await dbQuery(sqlQuery, params);
-  console.log(mass.rows);
   return mass.rows;
 };
 

@@ -1,0 +1,28 @@
+.hymnName {
+  background-color: #fff;
+  width: 100%;
+  border: none;
+  padding: 0;
+  font-size: 40px;
+}
+
+.altName {
+  background-color: #fff;
+  width: 100%;
+  border: none;
+  padding: 0;
+  font-size: 30px;
+  margin-bottom: 0.5em;
+}
+
+.lyrics {
+  white-space: pre-wrap;
+}
+
+.lyricsText {
+  background-color: #fff;
+  width: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
