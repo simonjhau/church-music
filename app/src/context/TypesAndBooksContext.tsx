@@ -25,10 +25,10 @@ export const useHymnTypes = () => useContext(HymnTypesContext);
 interface BookInterface {
   id: number;
   name: string;
+  bookCode: string;
 }
-const BooksContext = React.createContext<BookInterface[]>([
-  { id: 0, name: '' },
-]);
+const defaultBook = { id: 0, name: '', bookCode: '' };
+const BooksContext = React.createContext<BookInterface[]>([defaultBook]);
 export const useBooks = () => useContext(BooksContext);
 
 const OtherBookIdContext = React.createContext<number>(4);
@@ -68,7 +68,7 @@ export const TypeAndBookProvider: React.FC = ({ children }) => {
           (book: BookInterface) => book.name === 'Other'
         ).id;
       })
-      .catch((e: Error) => setBooks([{ id: 0, name: '' }]));
+      .catch((e: Error) => setBooks([defaultBook]));
   }, [setFileTypes, setBooks]);
 
   return (

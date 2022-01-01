@@ -1,8 +1,11 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import EditBar from '../components/EditBar/EditBar';
+import Row from 'react-bootstrap/Row';
 import Hymn from '../components/Hymn/Hymn';
-import SearchBox from '../components/SearchBox';
+import NewHymnButtonModal from '../components/NewHymnButtonModal/NewHymnButtonModal';
+import SearchBox from '../components/SearchBox/SearchBox';
 import EditModeProvider, { useEditMode } from '../context/EditModeContext';
 import { HymnInterface } from '../interfaces/interfaces';
 
@@ -14,51 +17,49 @@ const HymnsPage = () => {
     //eslint-disable-next-line
   }, []);
 
-  const [hymnData, setHymnData] = useState<HymnInterface>({
+  const defaultHymnData = {
     id: '',
     name: '',
     altName: '',
     lyrics: '',
-  });
-
-  const [localHymnData, setLocalHymnData] = useState(hymnData);
-
-  useEffect(() => {
-    setLocalHymnData(hymnData);
-  }, [hymnData]);
-
-  const editLocalHymnData = (key: keyof HymnInterface, data: any) => {
-    const updatedHymn = { ...localHymnData };
-    updatedHymn[key] = data;
-    setLocalHymnData(updatedHymn);
   };
 
-  const handleSaveChanges = () => {
-    // Send put request
-  };
+  const [hymnData, setHymnData] = useState<HymnInterface>(defaultHymnData);
 
-  const handleCancelChanges = () => {
-    setLocalHymnData(hymnData);
+  const refreshHymnData = (endpoint: string = '') => {
+    if (endpoint) {
+      axios
+        .get(endpoint)
+        .then((res) => {
+          setHymnData(res.data[0]);
+        })
+        .catch((e) => console.error(`Get hymn failed:\n${e}`));
+    } else {
+      setHymnData(defaultHymnData);
+    }
   };
 
   return (
     <div className="Upload">
       <EditModeProvider>
-        <EditBar
-          itemSelected={hymnData.id !== ''}
-          handleSaveChanges={handleSaveChanges}
-          handleCancelChanges={handleCancelChanges}
-        />
         <Form.Label>Search for hymns</Form.Label>
-        <SearchBox
-          data={hymnData}
-          setData={setHymnData}
-          apiPath="/hymns"
-          placeholder="Hymn Name"
-          addLabel={false}
-        />
+        <Row>
+          <Col className="d-grid" sm={9}>
+            <SearchBox
+              data={hymnData}
+              setData={setHymnData}
+              apiPath="/hymns"
+              placeholder="Hymn Name"
+              addLabel={false}
+            />
+          </Col>
+          <Col className="d-grid">
+            <NewHymnButtonModal refreshHymnData={refreshHymnData} />
+          </Col>
+        </Row>
+
         {hymnData.id && (
-          <Hymn hymn={localHymnData} editHymnData={editLocalHymnData}></Hymn>
+          <Hymn hymnData={hymnData} refreshHymnData={refreshHymnData}></Hymn>
         )}
       </EditModeProvider>
     </div>

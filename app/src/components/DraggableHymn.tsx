@@ -5,7 +5,7 @@ import { HymnDataInterface, HymnInterface } from '../interfaces/interfaces';
 import '../styles/masses.css';
 import Dropdown from './Dropdown';
 import FileCheckBoxes from './FileCheckBoxes';
-import SearchBox from './SearchBox';
+import SearchBox from './SearchBox/SearchBox';
 
 interface Props {
   hymnData: HymnDataInterface;

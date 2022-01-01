@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import MassHymnChooser from '../components/MassHymnChooser';
-import SearchBox from '../components/SearchBox';
+import SearchBox from '../components/SearchBox/SearchBox';
 import { useHymnTypes } from '../context/TypesAndBooksContext';
 import { HymnDataInterface } from '../interfaces/interfaces';
 import '../styles/masses.css';

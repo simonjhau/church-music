@@ -1,4 +1,5 @@
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
@@ -59,4 +60,15 @@ export const getListOfFiles = async () => {
   const command = new ListObjectsV2Command(input);
   const response = await s3Client.send(command);
   return response;
+};
+
+// Delete file from S3
+export const s3DeleteFile = async (id: string, fileType: string) => {
+  const input = {
+    Bucket: bucketName,
+    Key: `${fileType}/${id}.pdf`,
+  };
+  // return s3.upload(params).promise();
+  const command = new DeleteObjectCommand(input);
+  await s3Client.send(command);
 };

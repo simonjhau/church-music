@@ -27,20 +27,35 @@ export const getHymn = async (query: string) => {
   return hymns.rows;
 };
 
-export const getListOfFiles = async (hymnId: string) => {
-  const sqlQuery = `SELECT 
-                    hymn_files.id AS "id", 
-                    hymns.id AS "hymnId",
-                    hymns.name AS "hymnName",
-                    hymns.alt_name AS "altName",
-                    file_type_id AS "fileTypeId", 
-                    book_id AS "bookId", 
-                    hymn_num AS "hymnNum", 
-                    comment AS "comment"
-                    FROM hymn_files INNER JOIN hymns ON hymn_files.hymn_id = hymns.id 
-                    WHERE hymn_id = $1
-                    ORDER BY file_type_id;`;
+export const dbAddHymn = async (
+  id: string,
+  name: string,
+  altName: string = ''
+) => {
+  const sqlQuery = `INSERT into hymns (id, name, alt_name)
+                    VALUES ($1, $2, $3);`;
+  const values = [id, name, altName];
+  await dbQuery(sqlQuery, values);
+};
+
+export const dbDeleteHymn = async (hymnId: string) => {
+  const sqlQuery = `DELETE from hymns
+                    WHERE id = $1;`;
   const values = [hymnId];
-  const files = await dbQuery(sqlQuery, values);
-  return files.rows;
+  await dbQuery(sqlQuery, values);
+};
+
+export const updateHymn = async (
+  hymnId: string,
+  name: string,
+  altName: string = '',
+  lyrics: string = ''
+) => {
+  const sqlQuery = `UPDATE hymns
+                    SET name = $1,
+                    alt_name = $2,
+                    lyrics = $3
+                    WHERE id = $4;`;
+  const values = [name, altName, lyrics, hymnId];
+  await dbQuery(sqlQuery, values);
 };

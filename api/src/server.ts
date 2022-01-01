@@ -1,8 +1,8 @@
 import cors from 'cors';
 import express, { Application } from 'express';
 import books from './routes/books';
-import files from './routes/files';
 import fileTypes from './routes/fileTypes';
+import hymnFiles from './routes/hymnFiles';
 import hymns from './routes/hymns';
 import hymnTypes from './routes/hymnTypes';
 import masses from './routes/masses';
@@ -20,9 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 // API Routes
 app.use('/api/books', books);
 app.use('/api/fileTypes', fileTypes);
-app.use('/api/files', files);
 app.use('/api/hymnTypes', hymnTypes);
 app.use('/api/hymns', hymns);
+app.use('/api/hymns/:hymnId/files', hymnFiles);
 app.use('/api/masses', masses);
 
 const PORT = process.env.PORT || 9000;

@@ -3,89 +3,115 @@ import React, { useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useEditMode } from '../../context/EditModeContext';
 import { FileInterface, HymnInterface } from '../../interfaces/interfaces';
-import HymnFileLink from '../HymnFileLink';
+import EditBar from '../EditBar/EditBar';
+import HymnFilesList from '../HymnFilesList';
 import './Hymn.css';
 
 interface Props {
-  hymn: HymnInterface;
-  editHymnData: (key: keyof HymnInterface, data: any) => void;
+  hymnData: HymnInterface;
+  refreshHymnData: (endpoint?: string) => void;
 }
 
-const Hymn: React.FC<Props> = ({ hymn, editHymnData }) => {
+const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
+  // Context
+  const { editMode } = useEditMode();
+
+  const [localHymnData, setLocalHymnData] = useState(hymnData);
   const [files, setFiles] = useState<FileInterface[]>([
     { id: '', name: '', fileTypeId: 0, bookId: 0, hymnNum: 0, comment: '' },
   ]);
-
-  const { editMode } = useEditMode();
 
   // Runs on component load
   useEffect(() => {
     // Get list of files for this hymns
     axios
-      .get(`/hymns/${hymn.id}/files`)
+      .get(`/hymns/${hymnData.id}/files`)
       .then((res) => {
         setFiles(res.data);
       })
       .catch((e) => console.error(`Get files failed:\n${e}`));
-  }, [hymn, setFiles]);
+
+    setLocalHymnData(hymnData);
+    //eslint-disable-next-line
+  }, [hymnData]);
+
+  const editLocalHymnData = (key: keyof HymnInterface, data: any) => {
+    const updatedHymnData = { ...localHymnData };
+    updatedHymnData[key] = data;
+    setLocalHymnData(updatedHymnData);
+  };
 
   const handleHymnNameChange = (e: React.ChangeEvent) => {
     const updatedHymnName = (e.target as HTMLTextAreaElement).value;
-    editHymnData('name', updatedHymnName);
+    editLocalHymnData('name', updatedHymnName);
   };
 
-  const handleAltNameChange = (e: React.ChangeEvent) => {
-    const updatedHymnName = (e.target as HTMLTextAreaElement).value;
-    editHymnData('altName', updatedHymnName);
-  };
-
-  const handleDeleteFile = (deletedFileId: string) => {
-    const fileToDeleteIndex = files.findIndex(
-      (file) => file.id === deletedFileId
-    );
-    const tempFiles = [...files];
-    tempFiles.splice(fileToDeleteIndex, 1);
-    setFiles(tempFiles);
-  };
   const handleLyricsChange = (e: React.ChangeEvent) => {
     const updatedLyrics = (e.target as HTMLTextAreaElement).value;
-    editHymnData('lyrics', updatedLyrics);
+    editLocalHymnData('lyrics', updatedLyrics);
+  };
+
+  const handleSaveChanges = async () => {
+    // Update the hymn data
+    await axios
+      .put(`/hymns/${localHymnData.id}`, {
+        name: localHymnData.name,
+        altName: localHymnData.altName,
+        lyrics: localHymnData.lyrics,
+      })
+      .then((res) => {
+        alert(`Hymn saved successfully`);
+        refreshHymnData(res.headers.location);
+      })
+      .catch((e) => {
+        alert(`Error saving hymns:\n${e.response.status}: ${e.response.data}`);
+      });
+  };
+
+  const handleDelete = async () => {
+    await axios
+      .delete(`/hymns/${localHymnData.id}`)
+      .then((res) => {
+        alert(`Hymn deleted successfully`);
+        refreshHymnData('');
+      })
+      .catch((e) => {
+        alert(`Error deleting hymn:\n${e.response.status}: ${e.response.data}`);
+      });
+  };
+
+  const handleCancelChanges = () => {
+    setLocalHymnData(hymnData);
   };
 
   return (
     <div>
-      <input
+      <EditBar
+        handleSaveChanges={handleSaveChanges}
+        handleDelete={handleDelete}
+        handleCancelChanges={handleCancelChanges}
+      />
+      <TextareaAutosize
         className="hymnName"
         disabled={!editMode}
-        value={hymn.name}
+        value={localHymnData.name}
         onChange={handleHymnNameChange}
-      ></input>
-      <input
-        className="altName"
-        disabled={!editMode}
-        value={hymn.altName ? `(${hymn.altName})` : ''}
-        onChange={handleAltNameChange}
-      ></input>
+      ></TextareaAutosize>
       <br />
       <h4>Music Files</h4>
-      {files.length > 0 &&
-        files.map((file) => {
-          return (
-            <HymnFileLink
-              key={file.id}
-              file={file}
-              handleDeleteFile={handleDeleteFile}
-            />
-          );
-        })}
-
+      <HymnFilesList
+        hymnId={hymnData.id}
+        files={files}
+        setFiles={setFiles}
+        refreshHymnData={refreshHymnData}
+      />
+      <br />
       <div className="lyrics">
-        <br />
         <h4>Lyrics</h4>
         <TextareaAutosize
           className="lyricsText"
           disabled={!editMode}
-          value={hymn.lyrics ? hymn.lyrics : ''}
+          value={localHymnData.lyrics ? localHymnData.lyrics : ''}
           onChange={handleLyricsChange}
         ></TextareaAutosize>
       </div>

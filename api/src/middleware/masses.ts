@@ -97,7 +97,7 @@ export const createMassPdf = async (
   const hymnTypes = await getHymnTypes();
 
   // Write list of hymns
-  const fontSize = 18;
+  const fontSize = 16;
   hymns.forEach((hymn, index) => {
     page.drawText(`${index + 1}. ${hymnTypes[hymn.hymnTypeId].name}:`, {
       x: 50,
@@ -107,7 +107,7 @@ export const createMassPdf = async (
       color: rgb(0, 0, 0),
     });
     page.drawText(hymn.name, {
-      x: width / 2 - 50,
+      x: width / 2 - 75,
       y: height - 145 - index * 1.5 * fontSize,
       size: fontSize,
       font: helveticaFont,

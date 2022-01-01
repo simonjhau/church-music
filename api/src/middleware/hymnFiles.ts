@@ -4,8 +4,12 @@ import multer from 'multer';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { dbCommit, dbRollback } from '../models/db';
-import { dbAddFile, FileParamsInterface } from '../models/files';
-import { s3UploadFile } from '../models/s3';
+import {
+  dbAddFile,
+  dbDeleteFile,
+  FileParamsInterface,
+} from '../models/hymnFiles';
+import { s3DeleteFile, s3UploadFile } from '../models/s3';
 
 // Set multer disk storage settings
 const storage = multer.diskStorage({
@@ -43,6 +47,7 @@ export const deleteLocalFile = (
     fs.promises
       .unlink(path)
       .catch((e) => console.log(`Problem deleting file: ${e}`));
+    next();
   }
 };
 
@@ -51,14 +56,14 @@ export const uploadFile = async (
   res: Response,
   next: NextFunction
 ) => {
-  // Ensure file has been sent
+  const hymnId = req.params.hymnId;
 
   // Add file to db
   const newId = uuidv4();
   let fileParams: FileParamsInterface = req.body;
   fileParams['id'] = newId;
   try {
-    var uploadedFile = await dbAddFile(fileParams);
+    var uploadedFile = await dbAddFile(hymnId, fileParams);
   } catch (e) {
     res.status(500).send(`Failed to add file to database: ${e}`);
     next();
@@ -76,4 +81,33 @@ export const uploadFile = async (
   }
 
   next();
+};
+
+export const deleteFile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log('here');
+  const hymnId = req.params.hymnId;
+  const fileId = req.params.fileId;
+
+  // Delete file from db
+  try {
+    await dbDeleteFile(hymnId, fileId);
+  } catch (e) {
+    res.status(500).send(`Failed to delete file from database: ${e}`);
+    next();
+    return;
+  }
+
+  // Delete file from s3
+  try {
+    await s3DeleteFile(fileId, 'music');
+    dbCommit();
+    res.status(200).send('File deleted successfully');
+  } catch (e) {
+    dbRollback();
+    res.status(500).send(`Failed to delete file from S3 bucket: ${e}`);
+  }
 };

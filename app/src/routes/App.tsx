@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar/NavigationBar';
 import { TypeAndBookProvider } from '../context/TypesAndBooksContext';
-import Files from '../pages/FilesPage';
 import HomePage from '../pages/HomePage';
 import HymnsPage from '../pages/HymnsPage';
 import MassesPage from '../pages/MassesPage';
@@ -18,7 +17,6 @@ const App: React.FC<{}> = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/hymns" element={<HymnsPage />} />
-              <Route path="/files" element={<Files />} />
               <Route path="/masses" element={<MassesPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

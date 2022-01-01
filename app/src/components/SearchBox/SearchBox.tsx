@@ -3,15 +3,14 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import '../styles/Files.css';
-// import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
   const handleInputChange = (input) => {
-    setData({ id: '', name: input });
+    setData({ id: '', name: input, altName: '' });
     handleSearch(input);
   };
 
@@ -48,7 +47,7 @@ const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
 
   if (addLabel) {
     return (
-      <Form.Group as={Row} className="mb-3" controlId="searchBox">
+      <Form.Group as={Row} controlId="searchBox">
         <Form.Label column sm="3">
           {placeholder}:
         </Form.Label>
@@ -70,20 +69,19 @@ const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
     );
   } else {
     return (
-      <Form.Group controlId="formFile" className="mb-3">
-        <AsyncTypeahead
-          id="search"
-          isLoading={isLoading}
-          labelKey="name"
-          onSearch={handleSearch}
-          onChange={handleSelection}
-          onInputChange={handleInputChange}
-          selected={[data.name]}
-          options={options}
-          placeholder={placeholder}
-          renderMenuItemChildren={(option) => <p>{option.name}</p>}
-        />
-      </Form.Group>
+      <AsyncTypeahead
+        id="search"
+        className="searchBox"
+        isLoading={isLoading}
+        labelKey="name"
+        onSearch={handleSearch}
+        onChange={handleSelection}
+        onInputChange={handleInputChange}
+        selected={[data.name]}
+        options={options}
+        placeholder={placeholder}
+        renderMenuItemChildren={(option) => <p>{option.name}</p>}
+      />
     );
   }
 };
