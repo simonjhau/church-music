@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
-import { HymnDataInterface } from '../interfaces/interfaces';
-import DraggableHymnsList from './DraggableHymnsList';
+import { HymnDataInterface } from '../../../interfaces/interfaces';
+import DraggableHymnsList from '../DraggableHymnsList/DraggableHymnsList';
 
 interface Props {
   hymnsData: HymnDataInterface[];

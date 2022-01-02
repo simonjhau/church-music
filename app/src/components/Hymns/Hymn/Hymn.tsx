@@ -1,10 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { useEditMode } from '../../context/EditModeContext';
-import { FileInterface, HymnInterface } from '../../interfaces/interfaces';
+import { useEditMode } from '../../../context/EditModeContext';
+import { FileInterface, HymnInterface } from '../../../interfaces/interfaces';
 import EditHymnBar from '../EditHymnBar/EditHymnBar';
-import HymnFilesList from '../HymnFilesList';
+import HymnFilesList from '../HymnFilesList/HymnFilesList';
 import './Hymn.css';
 
 interface Props {

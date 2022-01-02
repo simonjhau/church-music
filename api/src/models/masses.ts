@@ -82,7 +82,7 @@ export const dbAddMass = async (
   return masses.rows;
 };
 
-export const addMassHymns = async (
+export const dbAddMassHymns = async (
   massId: string,
   massParams: MassParamsInterface
 ) => {

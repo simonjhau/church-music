@@ -53,7 +53,7 @@ export const s3DownloadFile = async (fileType: string, id: string) => {
 };
 
 // Get list of files
-export const getListOfFiles = async () => {
+export const s3GetListOfFiles = async () => {
   const input = {
     Bucket: bucketName,
   };

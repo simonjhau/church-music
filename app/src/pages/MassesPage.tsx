@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import Mass from '../components/Mass/Mass';
-import NewMassButtonModal from '../components/NewMassButtonModal/NewMassButtonModal';
-import SearchBox from '../components/SearchBox/SearchBox';
+import SearchBox from '../components/General/SearchBox/SearchBox';
+import Mass from '../components/Masses/Mass/Mass';
+import NewMassButtonModal from '../components/Masses/NewMassButtonModal/NewMassButtonModal';
 import { EditModeProvider, useEditMode } from '../context/EditModeContext';
 import { MassInterface } from '../interfaces/interfaces';
 

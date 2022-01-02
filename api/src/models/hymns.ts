@@ -1,6 +1,6 @@
 import { dbQuery } from './db';
 
-export const getHymns = async (query: string) => {
+export const dbGetHymns = async (query: string) => {
   let sqlQuery = `SELECT 
                   id, 
                   name, 
@@ -14,7 +14,7 @@ export const getHymns = async (query: string) => {
   return hymns.rows;
 };
 
-export const getHymn = async (query: string) => {
+export const dbGetHymn = async (query: string) => {
   let sqlQuery = `SELECT 
                   id, 
                   name, 
@@ -45,7 +45,7 @@ export const dbDeleteHymn = async (hymnId: string) => {
   await dbQuery(sqlQuery, values);
 };
 
-export const updateHymn = async (
+export const dbUpdateHymn = async (
   hymnId: string,
   name: string,
   altName: string = '',

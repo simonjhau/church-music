@@ -2,12 +2,12 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { useEditMode } from '../context/EditModeContext';
-import { useBooks, useFileTypes } from '../context/TypesAndBooksContext';
-import { FileInterface } from '../interfaces/interfaces';
+import { useEditMode } from '../../../context/EditModeContext';
+import { useBooks, useFileTypes } from '../../../context/TypesAndBooksContext';
+import { FileInterface } from '../../../interfaces/interfaces';
 import AddEditFileButtonModal, {
   ModalType,
-} from './AddEditFileButtonModal/AddEditFileButtonModal';
+} from '../AddEditFileButtonModal/AddEditFileButtonModal';
 
 interface HymnFileLinkProps {
   hymnId: string;

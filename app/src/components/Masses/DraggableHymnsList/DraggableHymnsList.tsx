@@ -1,6 +1,6 @@
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { HymnDataInterface } from '../interfaces/interfaces';
-import DraggableHymn from './DraggableHymn/DraggableHymn';
+import { HymnDataInterface } from '../../../interfaces/interfaces';
+import DraggableHymn from '../DraggableHymn/DraggableHymn';
 
 interface Props {
   hymnsData: HymnDataInterface[];

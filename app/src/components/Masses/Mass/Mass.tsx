@@ -2,10 +2,13 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useHymnTypes } from '../../context/TypesAndBooksContext';
-import { HymnDataInterface, MassInterface } from '../../interfaces/interfaces';
+import { useHymnTypes } from '../../../context/TypesAndBooksContext';
+import {
+  HymnDataInterface,
+  MassInterface,
+} from '../../../interfaces/interfaces';
 import EditMassBar from '../EditMassBar/EditMassBar';
-import MassHymnChooser from '../MassHymnChooser';
+import MassHymnChooser from '../MassHymnChooser/MassHymnChooser';
 import './Mass.css';
 
 interface Props {

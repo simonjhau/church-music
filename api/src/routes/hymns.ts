@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { addHymn, deleteHymn } from '../middleware/hymns';
-import { getHymn, getHymns, updateHymn } from '../models/hymns';
+import { dbGetHymn, dbGetHymns, dbUpdateHymn } from '../models/hymns';
 const router = express.Router();
 
 // Todo - input sanitisation
@@ -24,7 +24,7 @@ router.post(
 router.get('/', async (req: Request, res: Response) => {
   const query = req.query.q;
   if (query) {
-    const hymns = await getHymns(query as string);
+    const hymns = await dbGetHymns(query as string);
     res.json(hymns);
   } else {
     res.status(400).send('No query parameter sent');
@@ -35,7 +35,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.get('/:id', async (req: Request, res: Response) => {
   const hymnId = req.params.id;
   try {
-    const hymns = await getHymn(hymnId);
+    const hymns = await dbGetHymn(hymnId);
     res.status(200).json(hymns);
   } catch (e) {
     res.status(400).send(`Error getting hymn ${hymnId}: ${e}`);
@@ -66,7 +66,7 @@ router.put('/:id', async (req: Request, res: Response) => {
   }
 
   try {
-    await updateHymn(
+    await dbUpdateHymn(
       hymnId,
       hymnParams.name,
       hymnParams.altName,

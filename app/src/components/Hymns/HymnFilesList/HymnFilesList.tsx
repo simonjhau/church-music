@@ -1,12 +1,12 @@
 import React from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { useEditMode } from '../context/EditModeContext';
-import { FileInterface } from '../interfaces/interfaces';
+import { useEditMode } from '../../../context/EditModeContext';
+import { FileInterface } from '../../../interfaces/interfaces';
 import AddEditFileButtonModal, {
   ModalType,
-} from './AddEditFileButtonModal/AddEditFileButtonModal';
-import HymnFileLink from './HymnFileLink';
+} from '../AddEditFileButtonModal/AddEditFileButtonModal';
+import HymnFileLink from '../HymnFileLink/HymnFileLink';
 
 interface HymnFilesListProps {
   hymnId: string;

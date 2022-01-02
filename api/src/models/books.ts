@@ -1,6 +1,6 @@
 import { dbQuery } from './db';
 
-export const getBooks = async () => {
+export const dbGetBooks = async () => {
   let sqlQuery = `SELECT 
                   id AS "id",
                   name AS "name",

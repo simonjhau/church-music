@@ -4,11 +4,11 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { Readable } from 'stream';
 import { v4 as uuidv4 } from 'uuid';
 import { dbBegin, dbCommit, dbRollback } from '../models/db';
-import { getHymnTypes } from '../models/hymnTypes';
+import { dbGetHymnTypes } from '../models/hymnTypes';
 import {
-  addMassHymns,
   dbAddMass,
   dbAddMassFileInfo,
+  dbAddMassHymns,
   dbDeleteMass,
   dbDeleteMassHymns,
   dbDuplicateMass,
@@ -43,7 +43,7 @@ export const updateMass = async (
   // Save hymns to mass_hymns table
   try {
     await dbDeleteMassHymns(massId);
-    await addMassHymns(massId, massParams);
+    await dbAddMassHymns(massId, massParams);
   } catch (e) {
     res.status(500).send(`Failed to add hymns to mass_hymns table: ${e}`);
     dbRollback();
@@ -102,7 +102,7 @@ export const createMassPdf = async (
     color: rgb(0, 0, 0),
   });
 
-  const hymnTypes = await getHymnTypes();
+  const hymnTypes = await dbGetHymnTypes();
 
   // Write list of hymns
   const fontSize = 16;

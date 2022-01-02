@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { useBooks, useFileTypes } from '../../context/TypesAndBooksContext';
-import { FileInterface } from '../../interfaces/interfaces';
+import { useBooks, useFileTypes } from '../../../context/TypesAndBooksContext';
+import { FileInterface } from '../../../interfaces/interfaces';
 import './FileCheckBoxes.css';
 
 interface Props {

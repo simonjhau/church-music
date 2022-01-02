@@ -1,7 +1,7 @@
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { HymnTypesInterface } from '../../context/TypesAndBooksContext';
+import { HymnTypesInterface } from '../../../context/TypesAndBooksContext';
 import './Dropdown.css';
 
 interface DropdownProps {
