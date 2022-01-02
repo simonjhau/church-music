@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useEditMode } from '../../context/EditModeContext';
 import { FileInterface, HymnInterface } from '../../interfaces/interfaces';
-import EditBar from '../EditBar/EditBar';
+import EditHymnBar from '../EditHymnBar/EditHymnBar';
 import HymnFilesList from '../HymnFilesList';
 import './Hymn.css';
 
@@ -69,15 +69,19 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
   };
 
   const handleDelete = async () => {
-    await axios
-      .delete(`/hymns/${localHymnData.id}`)
-      .then((res) => {
-        alert(`Hymn deleted successfully`);
-        refreshHymnData('');
-      })
-      .catch((e) => {
-        alert(`Error deleting hymn:\n${e.response.status}: ${e.response.data}`);
-      });
+    if (window.confirm(`Are you sure you want to delete`)) {
+      await axios
+        .delete(`/hymns/${localHymnData.id}`)
+        .then((res) => {
+          alert(`Hymn deleted successfully`);
+          refreshHymnData('');
+        })
+        .catch((e) => {
+          alert(
+            `Error deleting hymn:\n${e.response.status}: ${e.response.data}`
+          );
+        });
+    }
   };
 
   const handleCancelChanges = () => {
@@ -86,7 +90,7 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
 
   return (
     <div>
-      <EditBar
+      <EditHymnBar
         handleSaveChanges={handleSaveChanges}
         handleDelete={handleDelete}
         handleCancelChanges={handleCancelChanges}

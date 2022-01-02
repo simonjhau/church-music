@@ -126,6 +126,25 @@ export const dbDeleteMass = async (massId: string) => {
   await dbQuery(sqlQuery, values);
 };
 
+export const dbDuplicateMass = async (oldMassId: string, newMassId: string) => {
+  const sqlQuery = `INSERT INTO masses (id, name, date_time, file_id) 
+                    SELECT $1, CONCAT(name, ' (copy)'), date_time, ''
+                    FROM masses WHERE id = $2;`;
+  const values = [newMassId, oldMassId];
+  await dbQuery(sqlQuery, values);
+};
+
+export const dbDuplicateMassHymns = async (
+  oldMassId: string,
+  newMassId: string
+) => {
+  const sqlQuery = `INSERT INTO mass_hymns (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
+                      SELECT $1, hymn_pos, hymn_type_id, hymn_id, file_ids
+                      FROM mass_hymns WHERE mass_id = $2;`;
+  const values = [newMassId, oldMassId];
+  await dbQuery(sqlQuery, values);
+};
+
 export const dbDeleteMassHymns = async (massId: string) => {
   const sqlQuery = `DELETE from mass_hymns
                     WHERE mass_id = $1;`;

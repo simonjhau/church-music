@@ -11,6 +11,8 @@ import {
   dbAddMassFileInfo,
   dbDeleteMass,
   dbDeleteMassHymns,
+  dbDuplicateMass,
+  dbDuplicateMassHymns,
   dbGetFileId,
   dbUpdateMass,
   HymnInterface,
@@ -227,6 +229,25 @@ export const deleteMass = async (req: Request, res: Response) => {
     await dbDeleteMass(massId);
     await s3DeleteFile(fileId, 'masses');
     dbCommit();
+    res.status(200).send(`Mass successfully deleted from db`);
+  } catch (e) {
+    dbRollback();
+    res.status(500).send(`Error deleting mass from db: \n ${e}`);
+  }
+};
+
+export const duplicateMass = async (req: Request, res: Response) => {
+  const oldMassId = req.params.massId as string;
+  const newMassId = uuidv4();
+
+  dbBegin();
+
+  try {
+    // Duplicate mass in masses table
+    await dbDuplicateMass(oldMassId, newMassId);
+    await dbDuplicateMassHymns(oldMassId, newMassId);
+    dbCommit();
+    res.location(`/masses/${newMassId}`);
     res.status(200).send(`Mass successfully deleted from db`);
   } catch (e) {
     dbRollback();

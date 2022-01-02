@@ -4,6 +4,7 @@ import {
   addMass,
   createMassPdf,
   deleteMass,
+  duplicateMass,
   saveMassPdfToS3,
   updateMass,
 } from '../middleware/masses';
@@ -75,7 +76,7 @@ router.post(
   '/',
   async (req: Request, res: Response, next: NextFunction) => {
     // Ensure all required parameters are present
-    let massParams = req.body;
+    const massParams = req.body;
     const massParamsRequirements = ['name', 'dateTime'];
     for (const param of massParamsRequirements) {
       if (!massParams[param]) {
@@ -89,25 +90,11 @@ router.post(
 );
 
 // Add mass record
-// router.post(
-//   '/',
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     // Ensure all required parameters are present
-//     let massParams = req.body;
-//     const massParamsRequirements = ['name', 'dateTime'];
-//     for (const param of massParamsRequirements) {
-//       if (!massParams[param]) {
-//         res.status(400).send(`Missing parameter '${param}'`);
-//         return;
-//       }
-//     }
-//     next();
-//   },
-//   postMass,
-//   createMassPdf,
-//   saveMassPdfToS3,
+router.post(
+  '/:massId/copy',
 
-// );
+  duplicateMass
+);
 
 // Edit mass
 router.put(

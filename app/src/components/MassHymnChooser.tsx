@@ -1,6 +1,5 @@
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
-import { useEditMode } from '../context/EditModeContext';
 import { HymnDataInterface } from '../interfaces/interfaces';
 import DraggableHymnsList from './DraggableHymnsList';
 
@@ -10,8 +9,6 @@ interface Props {
 }
 
 const MassHymnChooser: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
-  const { editMode } = useEditMode();
-
   const handleAddHymn: React.MouseEventHandler = (e: React.MouseEvent) => {
     e.preventDefault();
     setHymnsData([
@@ -28,18 +25,16 @@ const MassHymnChooser: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
   return (
     <div>
       <DraggableHymnsList hymnsData={hymnsData} setHymnsData={setHymnsData} />
-      {editMode && (
-        <Row>
-          {' '}
-          <Button
-            className="d-grid"
-            variant="outline-primary"
-            onClick={handleAddHymn}
-          >
-            +
-          </Button>{' '}
-        </Row>
-      )}
+      <Row>
+        {' '}
+        <Button
+          className="d-grid gap-2"
+          variant="outline-primary"
+          onClick={handleAddHymn}
+        >
+          +
+        </Button>{' '}
+      </Row>
     </div>
   );
 };

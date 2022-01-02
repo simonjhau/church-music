@@ -1,5 +1,4 @@
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { useEditMode } from '../context/EditModeContext';
 import { HymnDataInterface } from '../interfaces/interfaces';
 import DraggableHymn from './DraggableHymn/DraggableHymn';
 
@@ -9,8 +8,6 @@ interface Props {
 }
 
 const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
-  const { editMode } = useEditMode();
-
   // Reorder hymns after dragging
   const handleOnDragEnd = (res: DropResult) => {
     if (!res.destination) return;
@@ -38,7 +35,7 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
       {hymnsData.length > 0 && (
-        <Droppable droppableId="hymns" isDropDisabled={!editMode}>
+        <Droppable droppableId="hymns">
           {(provided) => (
             <ul
               className="hymns"
@@ -52,7 +49,6 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
                     hymnData={hymnsData[hymnIndex]}
                     hymnIndex={hymnIndex}
                     updateHymnsData={updateHymnsData}
-                    disabled={!editMode}
                   />
                 );
               })}

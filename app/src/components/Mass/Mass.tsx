@@ -2,10 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useEditMode } from '../../context/EditModeContext';
 import { useHymnTypes } from '../../context/TypesAndBooksContext';
 import { HymnDataInterface, MassInterface } from '../../interfaces/interfaces';
-import EditBar from '../EditBar/EditBar';
+import EditMassBar from '../EditMassBar/EditMassBar';
 import MassHymnChooser from '../MassHymnChooser';
 import './Mass.css';
 
@@ -16,7 +15,7 @@ interface Props {
 
 const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
   // Context
-  const { editMode } = useEditMode();
+
   const hymnTypes = useHymnTypes();
 
   const [localMassData, setLocalMassData] = useState(massData);
@@ -61,6 +60,19 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
     editLocalMassData('dateTime', updatedDateTime);
   };
 
+  const handleDuplicate = async () => {
+    // Update the hymn data
+    await axios
+      .post(`/masses/${localMassData.id}/copy`, massData)
+      .then((res) => {
+        alert('Mass duplicated successfully');
+        refreshMassData(res.headers.location);
+      })
+      .catch((e) => {
+        alert(`Error saving mass:\n${e.response.status}: ${e.response.data}`);
+      });
+  };
+
   const handleSaveChanges = async () => {
     // Update the hymn data
     if (massValid()) {
@@ -85,15 +97,19 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
   };
 
   const handleDelete = async () => {
-    await axios
-      .delete(`/masses/${localMassData.id}`)
-      .then((res) => {
-        alert(`Mass deleted successfully`);
-        refreshMassData('');
-      })
-      .catch((e) => {
-        alert(`Error deleting mass:\n${e.response.status}: ${e.response.data}`);
-      });
+    if (window.confirm(`Are you sure you want to delete`)) {
+      await axios
+        .delete(`/masses/${localMassData.id}`)
+        .then((res) => {
+          alert(`Mass deleted successfully`);
+          refreshMassData('');
+        })
+        .catch((e) => {
+          alert(
+            `Error deleting mass:\n${e.response.status}: ${e.response.data}`
+          );
+        });
+    }
   };
 
   const handleCancelChanges = () => {
@@ -145,14 +161,15 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
 
   return (
     <div>
-      <EditBar
+      <EditMassBar
+        handleDuplicate={handleDuplicate}
         handleSaveChanges={handleSaveChanges}
         handleDelete={handleDelete}
         handleCancelChanges={handleCancelChanges}
       />
+      <br />
       <input
         className="massName"
-        disabled={!editMode}
         value={localMassData.name}
         onChange={handleMassNameChange}
       ></input>
@@ -160,8 +177,11 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
         className="massDateTime"
         type="datetime-local"
         name="mass_date_time"
-        disabled={!editMode}
-        value={new Date(localMassData.dateTime).toISOString().slice(0, -1)}
+        value={
+          localMassData.dateTime
+            ? new Date(localMassData.dateTime).toISOString().slice(0, -1)
+            : Date.now().toString().slice(0, -1)
+        }
         onChange={handleMassDateTimeChange}
       />
 

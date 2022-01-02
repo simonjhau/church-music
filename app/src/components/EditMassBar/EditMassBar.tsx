@@ -2,48 +2,53 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { useEditMode } from '../../context/EditModeContext';
-import './EditBar.css';
+import './EditMassBar.css';
 
 interface EditBarProps {
+  handleDuplicate: () => void;
   handleSaveChanges: () => void;
   handleDelete: () => void;
   handleCancelChanges: () => void;
 }
 
 const EditBar: React.FC<EditBarProps> = ({
+  handleDuplicate,
   handleSaveChanges,
   handleDelete,
   handleCancelChanges,
 }) => {
-  const { editMode, setEditMode } = useEditMode();
-
-  const handleEditButtonClick = (e: React.MouseEvent) => {
+  const handleDuplicateClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setEditMode(true);
+    handleDuplicate();
   };
 
   const handleSaveChangesClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setEditMode(false);
     handleSaveChanges();
   };
 
   const handleDeleteChangesClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setEditMode(false);
     handleDelete();
   };
 
   const handleCancelChangesClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setEditMode(false);
     handleCancelChanges();
   };
 
-  return editMode ? (
+  return (
     <Form.Group className="editBar" as={Row} controlId="formPlaintextComment">
-      <Col className="d-grid" sm={{ offset: 3, span: 3 }}>
+      <Col className="d-grid" sm={{ span: 3 }}>
+        <Button
+          variant="secondary"
+          type="submit"
+          onClick={handleDuplicateClick}
+        >
+          Duplicate
+        </Button>
+      </Col>
+      <Col className="d-grid">
         <Button
           variant="primary"
           type="submit"
@@ -71,21 +76,6 @@ const EditBar: React.FC<EditBarProps> = ({
         </Button>
       </Col>
     </Form.Group>
-  ) : (
-    <div className="editBar">
-      <Row>
-        <Col className="d-grid" sm={9}></Col>
-        <Col className="d-grid" sm={3}>
-          <Button
-            variant="outline-primary"
-            type="submit"
-            onClick={handleEditButtonClick}
-          >
-            Edit
-          </Button>
-        </Col>
-      </Row>
-    </div>
   );
 };
 

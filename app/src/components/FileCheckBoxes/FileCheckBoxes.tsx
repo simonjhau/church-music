@@ -12,7 +12,7 @@ interface Props {
   hymnId: string;
   selectedFileIds: string[];
   updateSelectedFiles: (selectedFiles: string[]) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const FileCheckBoxes: React.FC<Props> = ({
@@ -20,7 +20,7 @@ const FileCheckBoxes: React.FC<Props> = ({
   hymnId,
   selectedFileIds,
   updateSelectedFiles,
-  disabled,
+  disabled = false,
 }) => {
   const books = useBooks();
   const fileTypes = useFileTypes();
