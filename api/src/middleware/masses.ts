@@ -6,36 +6,42 @@ import { v4 as uuidv4 } from 'uuid';
 import { dbBegin, dbCommit, dbRollback } from '../models/db';
 import { getHymnTypes } from '../models/hymnTypes';
 import {
-  addMass,
   addMassHymns,
+  dbAddMass,
   dbAddMassFileInfo,
+  dbDeleteMass,
+  dbDeleteMassHymns,
+  dbGetFileId,
+  dbUpdateMass,
   HymnInterface,
   MassParamsInterface,
 } from '../models/masses';
-import { s3DownloadFile, s3UploadFile } from '../models/s3';
+import { s3DeleteFile, s3DownloadFile, s3UploadFile } from '../models/s3';
 import { deleteFilesInDirectory } from '../utils/utils';
 
-export const postMass = async (
+export const updateMass = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  let massParams = req.body;
-  massParams.massId = uuidv4();
+  const massId = req.params.id;
+  const massParams = req.body;
+
   dbBegin();
 
-  // Add mass to masses table
+  // Update masses table
   try {
-    await addMass(massParams);
+    await dbUpdateMass(massId, massParams);
   } catch (e) {
-    res.status(500).send(`Failed to add mass to masses table: ${e}`);
+    res.status(500).send(`Failed to update mass to masses table: ${e}`);
     dbRollback();
     return;
   }
 
-  // Add hymns to mass_hymns table
+  // Save hymns to mass_hymns table
   try {
-    await addMassHymns(massParams);
+    await dbDeleteMassHymns(massId);
+    await addMassHymns(massId, massParams);
   } catch (e) {
     res.status(500).send(`Failed to add hymns to mass_hymns table: ${e}`);
     dbRollback();
@@ -60,7 +66,7 @@ export const createMassPdf = async (
   res: Response,
   next: NextFunction
 ) => {
-  const massParams = req.body;
+  const massParams = req.body as MassParamsInterface;
   const hymns: HymnInterface[] = massParams.hymns;
 
   const mergedPdf = await PDFDocument.create();
@@ -74,7 +80,7 @@ export const createMassPdf = async (
 
   // Write heading
   const headingFontSize = 30;
-  page.drawText(`${massParams.massName}\n`, {
+  page.drawText(`${massParams.name}\n`, {
     x: 50,
     y: height - 75,
     size: headingFontSize,
@@ -83,7 +89,7 @@ export const createMassPdf = async (
   });
 
   // Write date
-  const dateTime = new Date(massParams.massDateTime);
+  const dateTime = new Date(massParams.dateTime);
   const dateFontSize = 20;
   const dateTimeString = dateTime.toUTCString();
   page.drawText(`${dateTimeString.substring(0, dateTimeString.length - 7)}`, {
@@ -155,10 +161,7 @@ export const createMassPdf = async (
     hymnIndex++;
   }
 
-  fs.writeFileSync(
-    `downloads/${massParams.massName}.pdf`,
-    await mergedPdf.save()
-  );
+  fs.writeFileSync(`downloads/${massParams.name}.pdf`, await mergedPdf.save());
 
   next();
 };
@@ -169,13 +172,18 @@ export const saveMassPdfToS3 = async (
   res: Response,
   next: NextFunction
 ) => {
+  //to do
   // Add file to db
-  const fileId = uuidv4();
-
+  const massId = req.params.id;
   const massParams: MassParamsInterface = req.body;
 
+  let fileId = await dbGetFileId(massId);
+  if (!fileId) {
+    fileId = uuidv4();
+  }
+
   try {
-    var uploadedFile = await dbAddMassFileInfo(fileId, massParams.massId);
+    await dbAddMassFileInfo(fileId, massId);
   } catch (e) {
     res.status(500).send(`Failed to add mass file to database: ${e}`);
     next();
@@ -184,26 +192,44 @@ export const saveMassPdfToS3 = async (
 
   // Add file to s3
   try {
-    await s3UploadFile(
-      `downloads/${massParams.massName}.pdf`,
-      fileId,
-      'masses'
-    );
+    await s3UploadFile(`downloads/${massParams.name}.pdf`, fileId, 'masses');
     dbCommit();
-    res.status(200).json(uploadedFile);
   } catch (e) {
     dbRollback();
     res.status(500).send(`Failed to add file to S3 bucket: ${e}`);
   }
-
+  deleteFilesInDirectory('downloads/');
   next();
 };
 
-export const pdfCleanup = async (
+export const addMass = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  deleteFilesInDirectory('downloads/');
-  next();
+  const newId = uuidv4();
+  const massData = req.body;
+  try {
+    await dbAddMass(newId, massData);
+    res.location(`masses/${newId}`);
+    res.status(201).send('Mass added successfully');
+  } catch (e) {
+    res.status(500).send(`Failed to add mass to database: ${e}`);
+  }
+};
+
+export const deleteMass = async (req: Request, res: Response) => {
+  const massId = req.params.id as string;
+  try {
+    const fileId = await dbGetFileId(massId);
+    dbBegin();
+    await dbDeleteMassHymns(massId);
+    await dbDeleteMass(massId);
+    await s3DeleteFile(fileId, 'masses');
+    dbCommit();
+    res.status(200).send(`Mass successfully deleted from db`);
+  } catch (e) {
+    dbRollback();
+    res.status(500).send(`Error deleting mass from db: \n ${e}`);
+  }
 };

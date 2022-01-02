@@ -7,8 +7,16 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import './SearchBox.css';
 
-const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
+const SearchBox = ({
+  data,
+  setData,
+  apiPath,
+  placeholder,
+  addLabel,
+  disabled = false,
+}) => {
   const handleInputChange = (input) => {
     setData({ id: '', name: input, altName: '' });
     handleSearch(input);
@@ -54,6 +62,7 @@ const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
         <Col sm="9">
           <AsyncTypeahead
             id="search"
+            className="searchBox"
             isLoading={isLoading}
             labelKey="name"
             onSearch={handleSearch}
@@ -63,6 +72,7 @@ const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
             options={options}
             placeholder={placeholder}
             renderMenuItemChildren={(option) => <p>{option.name}</p>}
+            disabled={disabled}
           />
         </Col>
       </Form.Group>
@@ -81,6 +91,7 @@ const SearchBox = ({ data, setData, apiPath, placeholder, addLabel }) => {
         options={options}
         placeholder={placeholder}
         renderMenuItemChildren={(option) => <p>{option.name}</p>}
+        disabled={disabled}
       />
     );
   }

@@ -1,13 +1,15 @@
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { HymnTypesInterface } from '../context/TypesAndBooksContext';
+import { HymnTypesInterface } from '../../context/TypesAndBooksContext';
+import './Dropdown.css';
 
 interface DropdownProps {
   text: string;
   options: HymnTypesInterface[];
   handleSelect: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   value: number;
+  disabled?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -15,6 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   options,
   handleSelect,
   value,
+  disabled,
 }) => {
   return (
     <Form.Group as={Row} className="mb-3" controlId="formSelectFileType">
@@ -24,9 +27,10 @@ const Dropdown: React.FC<DropdownProps> = ({
       <Col sm="9">
         <Form.Select
           aria-label={`Select ${text}`}
-          name="fileType"
+          className="dropdown"
           onChange={handleSelect}
           value={value}
+          disabled={disabled ? disabled : false}
         >
           {options.map((option) => {
             return (

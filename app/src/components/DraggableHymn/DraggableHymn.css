@@ -1,8 +1,3 @@
-.masses {
-  display: flex;
-  flex-direction: column;
-}
-
 .hymns {
   list-style: none;
   padding-left: 0;
@@ -15,5 +10,6 @@
   background-color: #dee0f1;
   border-radius: 0.2em;
   padding: 1em 1em 1em 1em;
+  margin-top: 1em;
   margin-bottom: 1em;
 }

@@ -3,13 +3,16 @@ import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { useBooks, useFileTypes } from '../context/TypesAndBooksContext';
-import { FileInterface } from '../interfaces/interfaces';
+import { useBooks, useFileTypes } from '../../context/TypesAndBooksContext';
+import { FileInterface } from '../../interfaces/interfaces';
+import './FileCheckBoxes.css';
+
 interface Props {
   label: string;
   hymnId: string;
   selectedFileIds: string[];
   updateSelectedFiles: (selectedFiles: string[]) => void;
+  disabled: boolean;
 }
 
 const FileCheckBoxes: React.FC<Props> = ({
@@ -17,6 +20,7 @@ const FileCheckBoxes: React.FC<Props> = ({
   hymnId,
   selectedFileIds,
   updateSelectedFiles,
+  disabled,
 }) => {
   const books = useBooks();
   const fileTypes = useFileTypes();
@@ -64,7 +68,11 @@ const FileCheckBoxes: React.FC<Props> = ({
   };
 
   return (
-    <Form.Group as={Row} className="mb-3" controlId="formPlaintextHymnName">
+    <Form.Group
+      as={Row}
+      className="mb-3 checkBoxes"
+      controlId="formPlaintextHymnName"
+    >
       <Form.Label column sm="3">
         {label}:
       </Form.Label>
@@ -73,21 +81,20 @@ const FileCheckBoxes: React.FC<Props> = ({
           {files.map((file, fileIndex) => {
             return (
               <Form.Check
+                className="checkBox"
                 type="checkbox"
                 id={file.id}
                 key={file.id}
-                label={`
-                          ${
-                            fileTypes.find(
-                              (fileType) => fileType.id === file.fileTypeId
-                            )?.name
-                          } - ${
-                  books.find((book) => book.id === file.bookId)?.name
-                } ${file.hymnNum ? ` - ${file.hymnNum}` : ''} ${
-                  file.comment ? ` - ${file.comment}` : ''
-                }`}
                 checked={selected[fileIndex]}
                 onChange={(e) => onFileClicked(fileIndex)}
+                disabled={disabled}
+                label={`
+                ${
+                  fileTypes.find((fileType) => fileType.id === file.fileTypeId)
+                    ?.name
+                } - ${books.find((book) => book.id === file.bookId)?.name} ${
+                  file.hymnNum ? ` - ${file.hymnNum}` : ''
+                } ${file.comment ? ` - ${file.comment}` : ''}`}
               />
             );
           })}

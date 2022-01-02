@@ -62,11 +62,25 @@ export const getListOfFiles = async () => {
   return response;
 };
 
+interface FileTypesInterface {
+  music: string;
+  masses: string;
+}
+
+const fileTypes: FileTypesInterface = {
+  music: 'music',
+  masses: 'masses',
+};
+
 // Delete file from S3
-export const s3DeleteFile = async (id: string, fileType: string) => {
+export const s3DeleteFile = async (
+  id: string,
+  fileType: keyof FileTypesInterface
+) => {
+  const fileTypeString = fileTypes[fileType];
   const input = {
     Bucket: bucketName,
-    Key: `${fileType}/${id}.pdf`,
+    Key: `${fileTypeString}/${id}.pdf`,
   };
   // return s3.upload(params).promise();
   const command = new DeleteObjectCommand(input);

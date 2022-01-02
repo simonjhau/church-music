@@ -88,7 +88,6 @@ export const deleteFile = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('here');
   const hymnId = req.params.hymnId;
   const fileId = req.params.fileId;
 

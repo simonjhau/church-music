@@ -11,9 +11,8 @@ const NavigationBar = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="navItem">
-            <Nav.Link href="/hymns">Hymns</Nav.Link>
-            <Nav.Link href="/files">Files</Nav.Link>
             <Nav.Link href="/masses">Masses</Nav.Link>
+            <Nav.Link href="/hymns">Hymns</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

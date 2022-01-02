@@ -8,7 +8,7 @@ import {
   useFileTypes,
   useOtherBookId,
 } from '../../context/TypesAndBooksContext';
-import Dropdown from '../Dropdown';
+import Dropdown from '../Dropdown/Dropdown';
 import FileSelector from '../FileSelector';
 import Input from '../Input';
 

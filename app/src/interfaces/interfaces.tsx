@@ -7,6 +7,12 @@ export interface HymnInterface {
 }
 
 // Masses
+export interface MassInterface {
+  id: string;
+  name: string;
+  dateTime: string;
+  fileId: string;
+}
 export interface HymnDataInterface {
   [key: string]: any;
   id: string;

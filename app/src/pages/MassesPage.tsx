@@ -1,146 +1,68 @@
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
-import Button from 'react-bootstrap/Button';
+import { useEffect, useState } from 'react';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import MassHymnChooser from '../components/MassHymnChooser';
+import Row from 'react-bootstrap/Row';
+import Mass from '../components/Mass/Mass';
+import NewMassButtonModal from '../components/NewMassButtonModal/NewMassButtonModal';
 import SearchBox from '../components/SearchBox/SearchBox';
-import { useHymnTypes } from '../context/TypesAndBooksContext';
-import { HymnDataInterface } from '../interfaces/interfaces';
-import '../styles/masses.css';
+import { EditModeProvider, useEditMode } from '../context/EditModeContext';
+import { MassInterface } from '../interfaces/interfaces';
 
-interface MassDataInterface {
-  id: string;
-  name: string;
-  dateTime: string;
-}
+const MassesPage = () => {
+  // Set edit mode to false on first render
+  const { setEditMode } = useEditMode();
+  useEffect(() => {
+    setEditMode(false);
+    //eslint-disable-next-line
+  }, []);
 
-const MassesPage: React.FC<{}> = () => {
-  // Context
-  const hymnTypes = useHymnTypes();
-
-  // State and event handlers
-  const [massData, setMassData] = useState<MassDataInterface>({
+  const defaultMassData = {
     id: '',
     name: '',
     dateTime: '',
-  });
-  const [massName, setMassName] = useState('');
-
-  const [massDateTime, setMassDateTime] = useState('');
-  const handleMassDateTimeChange: React.ChangeEventHandler = (
-    e: React.ChangeEvent
-  ) => {
-    setMassDateTime((e.target as HTMLInputElement).value);
+    fileId: '',
   };
 
-  const [hymnsData, setHymnsData] = useState<HymnDataInterface[]>([]);
+  // State and event handlers
+  const [massData, setMassData] = useState<MassInterface>(defaultMassData);
 
-  // Get mass data when a mass is selected
-  useEffect(() => {
-    setMassName(massData.name);
-
-    if (massData.id) {
-      setMassDateTime(
-        massData.dateTime.substring(0, massData.dateTime.length - 1)
-      );
-
+  const refreshMassData = (endpoint: string = '') => {
+    if (endpoint) {
       axios
-        .get(`/masses/${massData.id}/hymns`)
+        .get(endpoint)
         .then((res) => {
-          const newHymns: HymnDataInterface[] = res.data;
-          setHymnsData(newHymns);
+          setMassData(res.data[0]);
         })
-        .catch((e) => console.error(`Get hymns for mass failed: ${e}`));
-    }
-  }, [massData]);
-
-  // Mass validation
-  const massErrors = useRef<string>('');
-  const generateErrorString = (hymnIndex: number, error: string) => {
-    return `Hymn ${hymnIndex + 1} ${
-      hymnTypes[hymnsData[hymnIndex].hymnTypeId].name
-    } - ${error}\n`;
-  };
-
-  const massValid = () => {
-    let errors = '';
-    let massValid = true;
-
-    if (!massName) {
-      massValid = false;
-      errors += 'Mass name cannot be blank\n';
-    }
-
-    if (!massDateTime) {
-      massValid = false;
-      errors += 'Mass date cannot be blank\n';
-    }
-
-    hymnsData.forEach((hymn, index) => {
-      if (!hymn.id) {
-        massValid = false;
-        errors += generateErrorString(index, 'No hymn selected');
-      } else if (hymn.fileIds.length === 0) {
-        massValid = false;
-        errors += generateErrorString(index, 'No files selected');
-      }
-    });
-
-    massErrors.current = errors;
-
-    return massValid;
-  };
-
-  // Submit mass
-  const submit: React.MouseEventHandler = async (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    if (massValid()) {
-      const massData = {
-        massName: massName,
-        massDateTime: massDateTime,
-        hymns: hymnsData,
-      };
-
-      await axios
-        .post('/masses', massData)
-        .then((res) => {
-          alert('Mass saved successfully');
-        })
-        .catch((e) => {
-          alert(`Error saving mass:\n${e.response.status}: ${e.response.data}`);
-        });
+        .catch((e) => console.error(`Get mass failed:\n${e}`));
     } else {
-      let errorStr = `Error(s) in mass:\n\n${massErrors.current}`;
-      alert(errorStr);
+      setMassData(defaultMassData);
     }
   };
 
   return (
     <div className="masses">
-      <Form>
-        <Form.Label>Search for mass</Form.Label>
-        <SearchBox
-          data={massData}
-          setData={setMassData}
-          apiPath="/masses"
-          placeholder="Mass Name"
-          addLabel={false}
-        />
-        <Form.Group className="mb-3" controlId="formPlaintextComment">
-          <Form.Control
-            type="datetime-local"
-            name="mass_date_time"
-            value={massDateTime}
-            onChange={handleMassDateTimeChange}
-          />
-        </Form.Group>
-      </Form>
-      <MassHymnChooser hymnsData={hymnsData} setHymnsData={setHymnsData} />
-      <br />
-      <Button variant="primary" onClick={submit}>
-        Submit
-      </Button>{' '}
+      <EditModeProvider>
+        <Form.Label>Search for masses</Form.Label>
+        <Row>
+          <Col className="d-grid" sm={9}>
+            <SearchBox
+              data={massData}
+              setData={setMassData}
+              apiPath="/masses"
+              placeholder="Mass Name"
+              addLabel={false}
+            />
+          </Col>
+          <Col className="d-grid">
+            <NewMassButtonModal refreshMassData={refreshMassData} />
+          </Col>
+        </Row>
+
+        {massData.id && (
+          <Mass massData={massData} refreshMassData={refreshMassData} />
+        )}
+      </EditModeProvider>
     </div>
   );
 };

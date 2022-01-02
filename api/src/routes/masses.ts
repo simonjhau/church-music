@@ -1,15 +1,18 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { Readable } from 'stream';
 import {
+  addMass,
   createMassPdf,
-  pdfCleanup,
-  postMass,
+  deleteMass,
   saveMassPdfToS3,
+  updateMass,
 } from '../middleware/masses';
 import {
-  getAllMasses,
-  getMassesQueryName,
-  getMassHymns,
+  dbGetAllMasses,
+  dbGetFileId,
+  dbGetMassData,
+  dbGetMassesQueryName,
+  dbGetMassHymns,
 } from '../models/masses';
 import { s3DownloadFile } from '../models/s3';
 
@@ -22,10 +25,10 @@ router.get('/', async (req: Request, res: Response) => {
   const query = req.query.q as string;
   try {
     if (query) {
-      const masses = await getMassesQueryName(query);
+      const masses = await dbGetMassesQueryName(query);
       res.json(masses);
     } else {
-      const masses = await getAllMasses();
+      const masses = await dbGetAllMasses();
       res.json(masses);
     }
   } catch (e) {
@@ -35,20 +38,20 @@ router.get('/', async (req: Request, res: Response) => {
 
 // Get mass data for given mass id
 router.get('/:id', async (req: Request, res: Response) => {
-  // const massId = req.params.id;
-  // try {
-  //   const mass = await getMassHymns(massId);
-  //   res.status(200).send(mass);
-  // } catch (e) {
-  //   res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
-  // }
+  const massId = req.params.id;
+  try {
+    const mass = await dbGetMassData(massId);
+    res.status(200).send(mass);
+  } catch (e) {
+    res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
+  }
 });
 
 // Get hymns/files for given mass
 router.get('/:id/hymns', async (req: Request, res: Response) => {
   const massId = req.params.id;
   try {
-    const mass = await getMassHymns(massId);
+    const mass = await dbGetMassHymns(massId);
     res.status(200).send(mass);
   } catch (e) {
     res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
@@ -56,9 +59,10 @@ router.get('/:id/hymns', async (req: Request, res: Response) => {
 });
 
 // Get file given mass id
-router.get('/files/:id', async (req: Request, res: Response) => {
-  const fileId = req.params.id;
+router.get('/:massId/file', async (req: Request, res: Response) => {
+  const massId = req.params.massId;
   try {
+    const fileId = await dbGetFileId(massId);
     const file = await s3DownloadFile('masses', fileId);
     (file as Readable).pipe(res);
   } catch (e) {
@@ -72,7 +76,7 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     // Ensure all required parameters are present
     let massParams = req.body;
-    const massParamsRequirements = ['massName', 'massDateTime', 'hymns'];
+    const massParamsRequirements = ['name', 'dateTime'];
     for (const param of massParamsRequirements) {
       if (!massParams[param]) {
         res.status(400).send(`Missing parameter '${param}'`);
@@ -81,19 +85,37 @@ router.post(
     }
     next();
   },
-  postMass,
-  createMassPdf,
-  saveMassPdfToS3,
-  pdfCleanup
+  addMass
 );
+
+// Add mass record
+// router.post(
+//   '/',
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     // Ensure all required parameters are present
+//     let massParams = req.body;
+//     const massParamsRequirements = ['name', 'dateTime'];
+//     for (const param of massParamsRequirements) {
+//       if (!massParams[param]) {
+//         res.status(400).send(`Missing parameter '${param}'`);
+//         return;
+//       }
+//     }
+//     next();
+//   },
+//   postMass,
+//   createMassPdf,
+//   saveMassPdfToS3,
+
+// );
 
 // Edit mass
 router.put(
   '/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     // Ensure all required parameters are present
-    let massParams = req.body;
-    const massParamsRequirements = ['massName', 'massDateTime', 'hymns'];
+    const massParams = req.body;
+    const massParamsRequirements = ['name', 'dateTime', 'hymns'];
     for (const param of massParamsRequirements) {
       if (!massParams[param]) {
         res.status(400).send(`Missing parameter '${param}'`);
@@ -102,7 +124,17 @@ router.put(
     }
     next();
   },
-  postMass
+  updateMass,
+  createMassPdf,
+  saveMassPdfToS3,
+  async (req: Request, res: Response, next: NextFunction) => {
+    const massId = req.params.id;
+    res.location(`/masses/${massId}`);
+    res.status(200).send('Mass saved successfully');
+  }
 );
+
+// Delete mass given ID
+router.delete('/:id', deleteMass);
 
 export default router;

@@ -1,0 +1,21 @@
+.form-check-input:disabled {
+  /* display: block; */
+  /* content: ''; */
+  /* background: green; */
+  /* opacity: 1; */
+  /* background-color: black; */
+  /* color: red; */
+  /* background-color: red;
+  background: white;
+  color: black;
+  opacity: 1; */
+}
+
+.form-check-label {
+  /* color: black;
+  opacity: 1; */
+}
+
+.checkBoxes {
+  margin-top: 1em;
+}

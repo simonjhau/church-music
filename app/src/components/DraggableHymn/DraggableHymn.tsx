@@ -1,11 +1,11 @@
 import { Draggable } from 'react-beautiful-dnd';
 import Form from 'react-bootstrap/Form';
-import { useHymnTypes } from '../context/TypesAndBooksContext';
-import { HymnDataInterface, HymnInterface } from '../interfaces/interfaces';
-import '../styles/masses.css';
-import Dropdown from './Dropdown';
-import FileCheckBoxes from './FileCheckBoxes';
-import SearchBox from './SearchBox/SearchBox';
+import { useHymnTypes } from '../../context/TypesAndBooksContext';
+import { HymnDataInterface, HymnInterface } from '../../interfaces/interfaces';
+import Dropdown from '../Dropdown/Dropdown';
+import FileCheckBoxes from '../FileCheckBoxes/FileCheckBoxes';
+import SearchBox from '../SearchBox/SearchBox';
+import './DraggableHymn.css';
 
 interface Props {
   hymnData: HymnDataInterface;
@@ -15,12 +15,14 @@ interface Props {
     key: keyof HymnDataInterface,
     value: any
   ) => void;
+  disabled: boolean;
 }
 
 const DraggableHymn: React.FC<Props> = ({
   hymnData,
   hymnIndex,
   updateHymnsData,
+  disabled,
 }) => {
   // Context
   const hymnTypes = useHymnTypes();
@@ -43,7 +45,12 @@ const DraggableHymn: React.FC<Props> = ({
   };
 
   return (
-    <Draggable key={hymnIndex} draggableId={`${hymnIndex}`} index={hymnIndex}>
+    <Draggable
+      key={hymnIndex}
+      draggableId={`${hymnIndex}`}
+      index={hymnIndex}
+      isDragDisabled={disabled}
+    >
       {(provided) => (
         <li
           ref={provided.innerRef}
@@ -56,6 +63,7 @@ const DraggableHymn: React.FC<Props> = ({
               options={hymnTypes}
               handleSelect={handleHymnTypeSelect}
               value={hymnData.hymnTypeId}
+              disabled={disabled}
             />
 
             <SearchBox
@@ -64,6 +72,7 @@ const DraggableHymn: React.FC<Props> = ({
               apiPath="/hymns"
               placeholder="Hymn Name"
               addLabel={true}
+              disabled={disabled}
             />
 
             <FileCheckBoxes
@@ -71,6 +80,7 @@ const DraggableHymn: React.FC<Props> = ({
               hymnId={hymnData.id}
               selectedFileIds={hymnData.fileIds}
               updateSelectedFiles={updateSelectedFiles}
+              disabled={disabled}
             />
           </Form>
         </li>

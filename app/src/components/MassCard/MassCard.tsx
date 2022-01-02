@@ -26,7 +26,7 @@ const MassCard: React.FC<Props> = ({ mass }) => {
     e: React.MouseEvent
   ) => {
     e.preventDefault();
-    window.open(`${process.env.REACT_APP_API_URL}/masses/files/${mass.fileId}`);
+    window.open(`${process.env.REACT_APP_API_URL}/masses/${mass.id}/file`);
   };
 
   return (
