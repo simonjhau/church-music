@@ -1,5 +1,8 @@
 import cors from 'cors';
 import express, { Application } from 'express';
+import helmet from 'helmet';
+import checkJwt from './authz/checkJwt';
+import { clientOrigins, serverPort } from './config/env.dev';
 import books from './routes/books';
 import fileTypes from './routes/fileTypes';
 import hymnFiles from './routes/hymnFiles';
@@ -10,12 +13,16 @@ import masses from './routes/masses';
 // Init express
 const app: Application = express();
 
+app.use(helmet());
+
 // Cors
-app.use(cors());
+app.use(cors({ origin: clientOrigins }));
 
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(checkJwt);
 
 // API Routes
 app.use('/api/books', books);
@@ -25,5 +32,6 @@ app.use('/api/hymns', hymns);
 app.use('/api/hymns/:hymnId/files', hymnFiles);
 app.use('/api/masses', masses);
 
-const PORT = process.env.PORT || 9000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(serverPort, () =>
+  console.log(`Server started on port ${serverPort}`)
+);

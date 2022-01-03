@@ -1,9 +1,10 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import SearchBox from '../components/General/SearchBox/SearchBox';
+import SearchBox from '../components/general/SearchBox/SearchBox';
 import Hymn from '../components/Hymns/Hymn/Hymn';
 import NewHymnButtonModal from '../components/Hymns/NewHymnButtonModal/NewHymnButtonModal';
 import EditModeProvider, { useEditMode } from '../context/EditModeContext';
@@ -11,6 +12,7 @@ import { HymnInterface } from '../interfaces/interfaces';
 
 const HymnsPage = () => {
   // Set edit mode to false on first render
+  const { getAccessTokenSilently } = useAuth0();
   const { setEditMode } = useEditMode();
   useEffect(() => {
     setEditMode(false);
@@ -26,10 +28,11 @@ const HymnsPage = () => {
 
   const [hymnData, setHymnData] = useState<HymnInterface>(defaultHymnData);
 
-  const refreshHymnData = (endpoint: string = '') => {
+  const refreshHymnData = async (endpoint: string = '') => {
     if (endpoint) {
+      const token = await getAccessTokenSilently();
       axios
-        .get(endpoint)
+        .get(endpoint, { headers: { Authorization: `Bearer ${token}` } })
         .then((res) => {
           setHymnData(res.data[0]);
         })

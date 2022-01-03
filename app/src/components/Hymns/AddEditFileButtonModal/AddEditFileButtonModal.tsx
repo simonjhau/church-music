@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -8,9 +9,9 @@ import {
   useFileTypes,
   useOtherBookId,
 } from '../../../context/TypesAndBooksContext';
-import Dropdown from '../../General/Dropdown/Dropdown';
-import FileSelector from '../../General/FileSelector/FileSelector';
-import Input from '../../General/Input/Input';
+import Dropdown from '../../general/Dropdown/Dropdown';
+import FileSelector from '../../general/FileSelector/FileSelector';
+import Input from '../../general/Input/Input';
 
 export enum ModalType {
   Add,
@@ -39,6 +40,8 @@ const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
   fileId,
   refreshHymnData,
 }) => {
+  const { getAccessTokenSilently } = useAuth0();
+
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
@@ -98,20 +101,24 @@ const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
 
   // Get file data if this is an edit modal
   useEffect(() => {
-    if (modalType === ModalType.Edit) {
-      axios
-        .get(`/hymns/${hymnId}/files/${fileId}`)
-        .then((res) => {
-          const fileData = res.data[0] as FileData;
-          setFileTypeId(fileData.fileTypeId);
-          setBookId(fileData.bookId);
-          setHymnNum(fileData.hymnNum?.toString());
-          setComment(fileData.comment);
-        })
-        .catch((e) => console.error(`Get files failed:\n${e}`));
-    }
-    // Get list of files for this hymns
-
+    const getFile = async () => {
+      if (modalType === ModalType.Edit) {
+        const token = await getAccessTokenSilently();
+        axios
+          .get(`/hymns/${hymnId}/files/${fileId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) => {
+            const fileData = res.data[0] as FileData;
+            setFileTypeId(fileData.fileTypeId);
+            setBookId(fileData.bookId);
+            setHymnNum(fileData.hymnNum?.toString());
+            setComment(fileData.comment);
+          })
+          .catch((e) => console.error(`Get files failed:\n${e}`));
+      }
+    };
+    getFile();
     //eslint-disable-next-line
   }, []);
 
@@ -159,10 +166,15 @@ const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
       formData.append('hymnNum', hymnNum);
       formData.append('comment', comment);
 
+      const token = await getAccessTokenSilently();
+
       if (modalType === ModalType.Add) {
         await axios
           .post(`/hymns/${hymnId}/files`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+            },
           })
           .then((res) => {
             alert('File uploaded successfully');
@@ -181,7 +193,9 @@ const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
           comment: comment,
         };
         await axios
-          .put(`/hymns/${hymnId}/files/${fileId}`, fileData)
+          .put(`/hymns/${hymnId}/files/${fileId}`, fileData, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
           .then((res) => {
             alert('File updated successfully');
             refreshHymnData(`/hymns/${hymnId}`);

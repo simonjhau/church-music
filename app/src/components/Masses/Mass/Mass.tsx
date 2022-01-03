@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -18,7 +19,7 @@ interface Props {
 
 const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
   // Context
-
+  const { getAccessTokenSilently } = useAuth0();
   const hymnTypes = useHymnTypes();
 
   const [localMassData, setLocalMassData] = useState(massData);
@@ -30,13 +31,19 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
   // Runs on component load
   useEffect(() => {
     // Get list of hymns for this mass
-    axios
-      .get(`/masses/${massData.id}/hymns`)
-      .then((res) => {
-        setHymnsData(res.data);
-      })
-      .catch((e) => console.error(`Get hymns failed:\n${e}`));
-    setLocalMassData(massData);
+    const getHymns = async () => {
+      const token = await getAccessTokenSilently();
+      axios
+        .get(`/masses/${massData.id}/hymns`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setHymnsData(res.data);
+        })
+        .catch((e) => console.error(`Get hymns failed:\n${e}`));
+      setLocalMassData(massData);
+    };
+    getHymns();
     // eslint-disable-next-line
   }, [massData]);
 
@@ -65,8 +72,11 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
 
   const handleDuplicate = async () => {
     // Update the hymn data
-    await axios
-      .post(`/masses/${localMassData.id}/copy`, massData)
+    const token = await getAccessTokenSilently();
+    axios
+      .post(`/masses/${localMassData.id}/copy`, massData, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         alert('Mass duplicated successfully');
         refreshMassData(res.headers.location);
@@ -84,8 +94,11 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
         hymns: localHymnsData,
       };
 
-      await axios
-        .put(`/masses/${localMassData.id}`, massData)
+      const token = await getAccessTokenSilently();
+      axios
+        .put(`/masses/${localMassData.id}`, massData, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((res) => {
           alert('Mass saved successfully');
           refreshMassData(res.headers.location);
@@ -101,8 +114,11 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete`)) {
+      const token = await getAccessTokenSilently();
       await axios
-        .delete(`/masses/${localMassData.id}`)
+        .delete(`/masses/${localMassData.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((res) => {
           alert(`Mass deleted successfully`);
           refreshMassData('');

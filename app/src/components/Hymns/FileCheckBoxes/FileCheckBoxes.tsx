@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
@@ -22,6 +23,7 @@ const FileCheckBoxes: React.FC<Props> = ({
   updateSelectedFiles,
   disabled = false,
 }) => {
+  const { getAccessTokenSilently } = useAuth0();
   const books = useBooks();
   const fileTypes = useFileTypes();
 
@@ -30,20 +32,26 @@ const FileCheckBoxes: React.FC<Props> = ({
 
   // Get new files if a new hymn is selected
   useEffect(() => {
-    if (hymnId) {
-      axios
-        .get(`/hymns/${hymnId}/files`)
-        .then((res) => {
-          const files = res.data as FileInterface[];
-          setfiles(res.data);
+    const getFiles = async () => {
+      if (hymnId) {
+        const token = await getAccessTokenSilently();
+        axios
+          .get(`/hymns/${hymnId}/files`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) => {
+            const files = res.data as FileInterface[];
+            setfiles(res.data);
 
-          const newSelected = files.map((file) =>
-            selectedFileIds.includes(file.id)
-          );
-          setSelected(newSelected);
-        })
-        .catch((e) => console.error(`Get files failed ${e}`));
-    }
+            const newSelected = files.map((file) =>
+              selectedFileIds.includes(file.id)
+            );
+            setSelected(newSelected);
+          })
+          .catch((e) => console.error(`Get files failed ${e}`));
+      }
+    };
+    getFiles();
     // eslint-disable-next-line
   }, [hymnId]);
 

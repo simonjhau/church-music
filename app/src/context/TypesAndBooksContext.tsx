@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
@@ -41,34 +42,44 @@ export const TypeAndBookProvider: React.FC = ({ children }) => {
   const [books, setBooks] = useState(useBooks());
   const otherBookId = useRef(useOtherBookId());
 
+  const { getAccessTokenSilently } = useAuth0();
+
   // Runs on page load
   useEffect(() => {
-    // Get list of file types
-    axios
-      .get('/fileTypes')
-      .then((res) => {
-        setFileTypes(res.data);
-      })
-      .catch((e: Error) => setFileTypes([{ id: 0, name: '' }]));
+    const getContextFromApi = async () => {
+      // Get list of file types
+      const token = await getAccessTokenSilently();
 
-    // Get list of hymn types
-    axios
-      .get('/hymnTypes')
-      .then((res) => {
-        setHymnTypes(res.data);
-      })
-      .catch((e: Error) => setHymnTypes([{ id: 0, name: '' }]));
+      axios
+        .get('/fileTypes', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => {
+          setFileTypes(res.data);
+        })
+        .catch((e: Error) => setFileTypes([{ id: 0, name: '' }]));
 
-    // Get list of books
-    axios
-      .get('/books')
-      .then((res) => {
-        setBooks(res.data);
-        otherBookId.current = res.data.find(
-          (book: BookInterface) => book.name === 'Other'
-        ).id;
-      })
-      .catch((e: Error) => setBooks([defaultBook]));
+      // Get list of hymn types
+      axios
+        .get('/hymnTypes', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => {
+          setHymnTypes(res.data);
+        })
+        .catch((e: Error) => setHymnTypes([{ id: 0, name: '' }]));
+
+      // Get list of books
+      axios
+        .get('/books', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => {
+          setBooks(res.data);
+          otherBookId.current = res.data.find(
+            (book: BookInterface) => book.name === 'Other'
+          ).id;
+        })
+        .catch((e: Error) => setBooks([defaultBook]));
+    };
+
+    getContextFromApi();
+
+    // eslint-disable-next-line
   }, [setFileTypes, setBooks]);
 
   return (

@@ -1,5 +1,6 @@
 // @ts-nocheck
 // To-do - typescript this up
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useState } from 'react';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
@@ -17,6 +18,8 @@ const SearchBox = ({
   addLabel,
   disabled = false,
 }) => {
+  const { getAccessTokenSilently } = useAuth0();
+
   const handleInputChange = (input) => {
     setData({ id: '', name: input, altName: '' });
     handleSearch(input);
@@ -44,9 +47,13 @@ const SearchBox = ({
     }
   };
 
-  const makeAndHandleRequest = (query) => {
+  const makeAndHandleRequest = async (query) => {
+    const token = await getAccessTokenSilently();
     return axios
-      .get(apiPath, { params: { q: query } })
+      .get(apiPath, {
+        headers: { Authorization: `Bearer ${token}` },
+        headparams: { q: query },
+      })
       .then((res) => {
         setOptions(res.data);
       })

@@ -1,15 +1,17 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Input from '../../General/Input/Input';
+import Input from '../../general/Input/Input';
 
 interface NewHymnModal {
   refreshHymnData: (endpoint: string) => void;
 }
 
 const NewHymnButtonModal: React.FC<NewHymnModal> = ({ refreshHymnData }) => {
+  const { getAccessTokenSilently } = useAuth0();
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
@@ -28,8 +30,11 @@ const NewHymnButtonModal: React.FC<NewHymnModal> = ({ refreshHymnData }) => {
       name: name,
     };
 
-    await axios
-      .post('/hymns', hymnData)
+    const token = getAccessTokenSilently();
+    axios
+      .post('/hymns', hymnData, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         alert('Mass saved successfully');
         setName('');

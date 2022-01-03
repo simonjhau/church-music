@@ -1,15 +1,18 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Input from '../../General/Input/Input';
+import Input from '../../general/Input/Input';
 
 interface NewMassModal {
   refreshMassData: (endpoint: string) => void;
 }
 
 const NewMassButtonModal: React.FC<NewMassModal> = ({ refreshMassData }) => {
+  const { getAccessTokenSilently } = useAuth0();
+
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
@@ -29,8 +32,11 @@ const NewMassButtonModal: React.FC<NewMassModal> = ({ refreshMassData }) => {
       dateTime: new Date().toISOString(),
     };
 
+    const token = await getAccessTokenSilently();
     await axios
-      .post('/masses', massData)
+      .post('/masses', massData, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         alert('Mass added successfully');
         setName('');

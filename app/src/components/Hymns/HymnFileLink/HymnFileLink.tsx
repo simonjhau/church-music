@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -20,6 +21,7 @@ const HymnFileLink: React.FC<HymnFileLinkProps> = ({
   file,
   refreshHymnData,
 }) => {
+  const { getAccessTokenSilently } = useAuth0();
   const fileTypes = useFileTypes();
   const books = useBooks();
   const { editMode } = useEditMode();
@@ -32,9 +34,12 @@ const HymnFileLink: React.FC<HymnFileLinkProps> = ({
     );
   };
 
-  const handleDeleteFile = (fileId: string) => {
+  const handleDeleteFile = async (fileId: string) => {
+    const token = await getAccessTokenSilently();
     axios
-      .delete(`/hymns/${hymnId}/files/${fileId}`)
+      .delete(`/hymns/${hymnId}/files/${fileId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => refreshHymnData(`/hymns/${hymnId}`))
       .catch((e) => alert(`Error deleting file:\n${e}`));
   };

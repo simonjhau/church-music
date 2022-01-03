@@ -1,15 +1,18 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import SearchBox from '../components/General/SearchBox/SearchBox';
+import SearchBox from '../components/general/SearchBox/SearchBox';
 import Mass from '../components/Masses/Mass/Mass';
 import NewMassButtonModal from '../components/Masses/NewMassButtonModal/NewMassButtonModal';
 import { EditModeProvider, useEditMode } from '../context/EditModeContext';
 import { MassInterface } from '../interfaces/interfaces';
 
 const MassesPage = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
   // Set edit mode to false on first render
   const { setEditMode } = useEditMode();
   useEffect(() => {
@@ -27,10 +30,11 @@ const MassesPage = () => {
   // State and event handlers
   const [massData, setMassData] = useState<MassInterface>(defaultMassData);
 
-  const refreshMassData = (endpoint: string = '') => {
+  const refreshMassData = async (endpoint: string = '') => {
     if (endpoint) {
+      const token = await getAccessTokenSilently();
       axios
-        .get(endpoint)
+        .get(endpoint, { headers: { Authorization: `Bearer ${token}` } })
         .then((res) => {
           setMassData(res.data[0]);
         })

@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
+  const { getAccessTokenSilently } = useAuth0();
   // Context
   const { editMode } = useEditMode();
 
@@ -23,15 +25,21 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
 
   // Runs on component load
   useEffect(() => {
-    // Get list of files for this hymns
-    axios
-      .get(`/hymns/${hymnData.id}/files`)
-      .then((res) => {
-        setFiles(res.data);
-      })
-      .catch((e) => console.error(`Get files failed:\n${e}`));
+    const getFiles = async () => {
+      // Get list of files for this hymns
+      const token = await getAccessTokenSilently();
+      axios
+        .get(`/hymns/${hymnData.id}/files`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setFiles(res.data);
+        })
+        .catch((e) => console.error(`Get files failed:\n${e}`));
 
-    setLocalHymnData(hymnData);
+      setLocalHymnData(hymnData);
+    };
+    getFiles();
     //eslint-disable-next-line
   }, [hymnData]);
 
@@ -53,12 +61,17 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
 
   const handleSaveChanges = async () => {
     // Update the hymn data
-    await axios
-      .put(`/hymns/${localHymnData.id}`, {
-        name: localHymnData.name,
-        altName: localHymnData.altName,
-        lyrics: localHymnData.lyrics,
-      })
+    const token = await getAccessTokenSilently();
+    axios
+      .put(
+        `/hymns/${localHymnData.id}`,
+        {
+          name: localHymnData.name,
+          altName: localHymnData.altName,
+          lyrics: localHymnData.lyrics,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       .then((res) => {
         alert(`Hymn saved successfully`);
         refreshHymnData(res.headers.location);
@@ -70,8 +83,11 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete`)) {
+      const token = getAccessTokenSilently();
       await axios
-        .delete(`/hymns/${localHymnData.id}`)
+        .delete(`/hymns/${localHymnData.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((res) => {
           alert(`Hymn deleted successfully`);
           refreshHymnData('');

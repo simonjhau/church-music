@@ -1,48 +1,23 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import MassCard, { MassInterface } from '../components/MassCard/MassCard';
+import { useAuth0, User } from '@auth0/auth0-react';
 
 const Home = () => {
-  const [masses, setMasses] = useState<MassInterface[]>([]);
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
 
-  useEffect(() => {
-    // Get list of 20 most recent
-    axios
-      .get(`masses/`)
-      .then((res) => {
-        setMasses(res.data);
-      })
-      .catch((e) => console.error(`Get files failed:\n${e}`));
-  }, []);
-
-  const now = Date.now();
-  const presentIndex = masses.findIndex(
-    (mass) => new Date(mass.dateTime).getTime() - now < 0
-  );
-  const futureMasses = masses.slice(0, presentIndex);
-  const previousMasses = masses.slice(presentIndex);
-
+  const { isAuthenticated, user } = useAuth0();
   return (
     <div className="home">
-      <h1>Upcoming Masses</h1>
-      <br />
-      {futureMasses.length > 0 ? (
-        futureMasses.map((mass) => {
-          return <MassCard key={mass.id} mass={mass}></MassCard>;
-        })
+      <h2>Welcome to the Church Music app!</h2>
+      {isAuthenticated ? (
+        <div>
+          <p>
+            Hi {capitalizeFirstLetter((user as User).nickname as string)},<br />
+            Feel free to look around!
+          </p>
+        </div>
       ) : (
-        <p>No masses found</p>
-      )}
-
-      <hr />
-      <h1>Previous Masses</h1>
-      <br />
-      {previousMasses.length > 0 ? (
-        previousMasses.map((mass) => {
-          return <MassCard key={mass.id} mass={mass}></MassCard>;
-        })
-      ) : (
-        <p>No masses found</p>
+        <p>Please log in to use this application</p>
       )}
     </div>
   );
