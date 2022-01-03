@@ -5,7 +5,15 @@ const Home = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
-  const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, user, error, logout } = useAuth0();
+
+  console.log(error);
+
+  if (error) {
+    alert(error);
+    logout();
+  }
+
   return (
     <div className="home">
       <h2>Welcome to the Church Music app!</h2>

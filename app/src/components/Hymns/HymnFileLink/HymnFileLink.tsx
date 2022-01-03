@@ -26,22 +26,31 @@ const HymnFileLink: React.FC<HymnFileLinkProps> = ({
   const books = useBooks();
   const { editMode } = useEditMode();
 
-  const handleFileClick: React.MouseEventHandler = (e: React.MouseEvent) => {
-    window.open(
-      `${process.env.REACT_APP_API_URL}/hymns/${hymnId}/files/${
-        (e.target as HTMLButtonElement).id
-      }/file`
-    );
+  const handleFileClick: React.MouseEventHandler = async (
+    e: React.MouseEvent
+  ) => {
+    const token = await getAccessTokenSilently();
+    axios
+      .get(
+        `/hymns/${hymnId}/files/${(e.target as HTMLButtonElement).id}/file`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then((res) => window.open(res.data))
+      .catch((e) => alert('Failed to get mass file'));
   };
 
   const handleDeleteFile = async (fileId: string) => {
-    const token = await getAccessTokenSilently();
-    axios
-      .delete(`/hymns/${hymnId}/files/${fileId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => refreshHymnData(`/hymns/${hymnId}`))
-      .catch((e) => alert(`Error deleting file:\n${e}`));
+    if (window.confirm(`Are you sure you want to delete`)) {
+      const token = await getAccessTokenSilently();
+      axios
+        .delete(`/hymns/${hymnId}/files/${fileId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => refreshHymnData(`/hymns/${hymnId}`))
+        .catch((e) => alert(`Error deleting file:\n${e}`));
+    }
   };
 
   return (

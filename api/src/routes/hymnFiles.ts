@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { Readable } from 'stream';
 import {
   deleteFile,
   deleteLocalFile,
@@ -7,7 +6,7 @@ import {
   uploadFile,
 } from '../middleware/hymnFiles';
 import { dbGetFile, dbGetListOfFiles, dbUpdateFile } from '../models/hymnFiles';
-import { s3DownloadFile } from '../models/s3';
+import { s3GetSignedUrl } from '../models/s3';
 const router = express.Router({ mergeParams: true });
 // Todo - input sanitisation
 
@@ -34,12 +33,12 @@ router.get('/:fileId', async (req: Request, res: Response) => {
   }
 });
 
-// Get file given file ID
+// Get hymn file given file ID
 router.get('/:id/file', async (req: Request, res: Response) => {
   const fileId = req.params.id;
   try {
-    const file = await s3DownloadFile('music', fileId);
-    (file as Readable).pipe(res);
+    const url = await s3GetSignedUrl('music', fileId);
+    res.status(200).json(url);
   } catch (e) {
     res.status(400).send(`Error downloading file from S3: \n ${e}`);
   }

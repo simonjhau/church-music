@@ -52,7 +52,7 @@ const SearchBox = ({
     return axios
       .get(apiPath, {
         headers: { Authorization: `Bearer ${token}` },
-        headparams: { q: query },
+        params: { q: query },
       })
       .then((res) => {
         setOptions(res.data);

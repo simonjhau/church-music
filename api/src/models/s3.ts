@@ -5,6 +5,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import dotenv from 'dotenv';
 import fs from 'fs';
 dotenv.config();
@@ -50,6 +51,17 @@ export const s3DownloadFile = async (fileType: string, id: string) => {
   const command = new GetObjectCommand(input);
   const { Body } = await s3Client.send(command);
   return Body;
+};
+
+// Download file from S3
+export const s3GetSignedUrl = async (fileType: string, id: string) => {
+  const input = {
+    Key: `${fileType}/${id}.pdf`,
+    Bucket: bucketName,
+  };
+  const command = new GetObjectCommand(input);
+  const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  return url;
 };
 
 // Get list of files

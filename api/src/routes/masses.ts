@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { Readable } from 'stream';
 import {
   addMass,
   createMassPdf,
@@ -15,7 +14,7 @@ import {
   dbGetMassesQueryName,
   dbGetMassHymns,
 } from '../models/masses';
-import { s3DownloadFile } from '../models/s3';
+import { s3GetSignedUrl } from '../models/s3';
 
 const router = express.Router();
 
@@ -59,13 +58,14 @@ router.get('/:id/hymns', async (req: Request, res: Response) => {
   }
 });
 
-// Get file given mass id
+// Get mass file given mass id
 router.get('/:massId/file', async (req: Request, res: Response) => {
   const massId = req.params.massId;
   try {
     const fileId = await dbGetFileId(massId);
-    const file = await s3DownloadFile('masses', fileId);
-    (file as Readable).pipe(res);
+    const url = await s3GetSignedUrl('masses', fileId);
+    console.log(url);
+    res.status(200).json(url);
   } catch (e) {
     res.status(400).send(`Error downloading file from S3: \n ${e}`);
   }

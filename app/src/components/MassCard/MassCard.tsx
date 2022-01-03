@@ -1,3 +1,5 @@
+import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import './MassCard.css';
@@ -20,13 +22,21 @@ const dateTimeToString = (dateTimeSql: string) => {
 };
 
 const MassCard: React.FC<Props> = ({ mass }) => {
+  const { getAccessTokenSilently } = useAuth0();
+
   const dateTime = dateTimeToString(mass.dateTime);
 
-  const handleMassFileClick: React.MouseEventHandler = (
+  const handleMassFileClick: React.MouseEventHandler = async (
     e: React.MouseEvent
   ) => {
     e.preventDefault();
-    window.open(`${process.env.REACT_APP_API_URL}/masses/${mass.id}/file`);
+    const token = await getAccessTokenSilently();
+    axios
+      .get(`/masses/${mass.id}/file`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => window.open(res.data))
+      .catch((e) => alert('Failed to get mass file'));
   };
 
   return (

@@ -172,10 +172,15 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
     return massValid;
   };
 
-  const handleOpenMusic = () => {
-    window.open(
-      `${process.env.REACT_APP_API_URL}/masses/${localMassData.id}/file`
-    );
+  const handleOpenMusic = async () => {
+    const token = await getAccessTokenSilently();
+
+    axios
+      .get(`/masses/${localMassData.id}/file`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => window.open(res.data))
+      .catch((e) => alert('Failed to get mass file'));
   };
 
   return (
