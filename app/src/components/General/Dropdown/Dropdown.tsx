@@ -22,8 +22,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   disabled = false,
 }) => {
   return (
-    <Form.Group as={Row} className="mb-1" controlId="formSelectFileType">
-      <Form.Label column={size} sm="3">
+    <Form.Group as={Row} className="mb-2" controlId="formPlaintextComment">
+      <Form.Label column={size ? size : true} sm="3">
         {text}:
       </Form.Label>
       <Col sm="9">

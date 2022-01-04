@@ -10,7 +10,7 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ label, onChange, value }) => {
   return (
-    <Form.Group as={Row} className="mb-3" controlId="formPlaintextComment">
+    <Form.Group as={Row} className="mb-2" controlId="formPlaintextComment">
       <Form.Label column sm="3">
         {label}:
       </Form.Label>

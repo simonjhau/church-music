@@ -16,7 +16,7 @@ const SearchBox = ({
   apiPath,
   placeholder,
   addLabel,
-  size = 'md',
+  size = '',
   disabled = false,
 }) => {
   const { getAccessTokenSilently } = useAuth0();
@@ -80,7 +80,7 @@ const SearchBox = ({
             options={options}
             placeholder={placeholder}
             renderMenuItemChildren={(option) => <p>{option.name}</p>}
-            size={size}
+            size={size ? size : null}
             disabled={disabled}
           />
         </Col>
@@ -100,7 +100,7 @@ const SearchBox = ({
         options={options}
         placeholder={placeholder}
         renderMenuItemChildren={(option) => <p>{option.name}</p>}
-        size={size}
+        size={size ? size : null}
         disabled={disabled}
       />
     );

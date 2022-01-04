@@ -12,7 +12,7 @@ const HymnCardHeader: React.FC<Props> = ({ hymnIndex, handleDelete }) => {
     <Row className="mb-2 justify-content-md-center">
       <Col sm={1}>
         <Form.Label column="sm" className="hymnCardIndex">
-          {hymnIndex}
+          {hymnIndex + 1}
         </Form.Label>
       </Col>
       <Col sm={10} />

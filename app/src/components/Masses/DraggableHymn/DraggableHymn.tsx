@@ -46,6 +46,7 @@ const DraggableHymn: React.FC<Props> = ({
 
   // Set hymn data once a hymn has been selected
   const setHymnData = async (hymn: HymnInterface) => {
+    updateHymnsData(hymnIndex, 'name', hymn.name);
     // Set all files as selected
     const token = await getAccessTokenSilently();
     axios
@@ -55,7 +56,6 @@ const DraggableHymn: React.FC<Props> = ({
       .then((res) => {
         const fileIds = (res.data as FileInterface[]).map((file) => file.id);
         updateSelectedFiles(fileIds);
-        updateHymnsData(hymnIndex, 'name', hymn.name);
         updateHymnsData(hymnIndex, 'id', hymn.id);
       });
   };

@@ -7,7 +7,7 @@ interface Props {
 
 const FileSelector: React.FC<Props> = ({ handleFileSelect }) => {
   return (
-    <Form.Group controlId="formFile" className="mb-3">
+    <Form.Group controlId="formFile" className="mb-2">
       <Form.Label>Choose PDF file to upload</Form.Label>
       <Form.Control type="file" onChange={handleFileSelect} />
     </Form.Group>
