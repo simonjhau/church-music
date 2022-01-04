@@ -1,5 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 import {
+  checkReadMassPermissions,
+  checkWriteMassPermissions,
+} from '../authz/checkPermissions';
+import {
   addMass,
   createMassPdf,
   deleteMass,
@@ -21,59 +25,76 @@ const router = express.Router();
 // Todo - input sanitisation
 
 // Get list of masses that match search query
-router.get('/', async (req: Request, res: Response) => {
-  const query = req.query.q as string;
-  try {
-    if (query) {
-      const masses = await dbGetMassesQueryName(query);
-      res.json(masses);
-    } else {
-      const masses = await dbGetAllMasses();
-      res.json(masses);
+router.get(
+  '/',
+  checkReadMassPermissions,
+  async (req: Request, res: Response) => {
+    const query = req.query.q as string;
+    try {
+      if (query) {
+        const masses = await dbGetMassesQueryName(query);
+        res.json(masses);
+      } else {
+        const masses = await dbGetAllMasses();
+        res.json(masses);
+      }
+    } catch (e) {
+      res.status(500).send(`Error getting masses from db: \n ${e}`);
     }
-  } catch (e) {
-    res.status(500).send(`Error getting masses from db: \n ${e}`);
   }
-});
+);
 
 // Get mass data for given mass id
-router.get('/:id', async (req: Request, res: Response) => {
-  const massId = req.params.id;
-  try {
-    const mass = await dbGetMassData(massId);
-    res.status(200).send(mass);
-  } catch (e) {
-    res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
+router.get(
+  '/:id',
+  checkWriteMassPermissions,
+  async (req: Request, res: Response) => {
+    const massId = req.params.id;
+    try {
+      const mass = await dbGetMassData(massId);
+      res.status(200).send(mass);
+    } catch (e) {
+      res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
+    }
   }
-});
+);
 
 // Get hymns/files for given mass
-router.get('/:id/hymns', async (req: Request, res: Response) => {
-  const massId = req.params.id;
-  try {
-    const mass = await dbGetMassHymns(massId);
-    res.status(200).send(mass);
-  } catch (e) {
-    res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
+router.get(
+  '/:id/hymns',
+  checkReadMassPermissions,
+  async (req: Request, res: Response) => {
+    const massId = req.params.id;
+    try {
+      const mass = await dbGetMassHymns(massId);
+      res.status(200).send(mass);
+    } catch (e) {
+      res.status(400).send(`Error getting mass ${massId} from db: \n ${e}`);
+    }
   }
-});
+);
 
 // Get mass file given mass id
-router.get('/:massId/file', async (req: Request, res: Response) => {
-  const massId = req.params.massId;
-  try {
-    const fileId = await dbGetFileId(massId);
-    const url = await s3GetSignedUrl('masses', fileId);
-    console.log(url);
-    res.status(200).json(url);
-  } catch (e) {
-    res.status(400).send(`Error downloading file from S3: \n ${e}`);
+router.get(
+  '/:massId/file',
+  checkReadMassPermissions,
+  async (req: Request, res: Response) => {
+    const massId = req.params.massId;
+    try {
+      const fileId = await dbGetFileId(massId);
+      const url = await s3GetSignedUrl('masses', fileId);
+      console.log(url);
+      res.status(200).json(url);
+    } catch (e) {
+      res.status(400).send(`Error downloading file from S3: \n ${e}`);
+    }
   }
-});
+);
 
 // Add mass record
 router.post(
   '/',
+  checkWriteMassPermissions,
   async (req: Request, res: Response, next: NextFunction) => {
     // Ensure all required parameters are present
     const massParams = req.body;
@@ -89,16 +110,13 @@ router.post(
   addMass
 );
 
-// Add mass record
-router.post(
-  '/:massId/copy',
-
-  duplicateMass
-);
+// Duplicate mass record
+router.post('/:massId/copy', checkWriteMassPermissions, duplicateMass);
 
 // Edit mass
 router.put(
   '/:id',
+  checkWriteMassPermissions,
   async (req: Request, res: Response, next: NextFunction) => {
     // Ensure all required parameters are present
     const massParams = req.body;
@@ -122,6 +140,6 @@ router.put(
 );
 
 // Delete mass given ID
-router.delete('/:id', deleteMass);
+router.delete('/:id', checkWriteMassPermissions, deleteMass);
 
 export default router;

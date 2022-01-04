@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import SearchBox from '../components/general/SearchBox/SearchBox';
+import SearchBox from '../components/General/SearchBox/SearchBox';
 import Hymn from '../components/Hymns/Hymn/Hymn';
 import NewHymnButtonModal from '../components/Hymns/NewHymnButtonModal/NewHymnButtonModal';
 import EditModeProvider, { useEditMode } from '../context/EditModeContext';

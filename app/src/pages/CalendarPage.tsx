@@ -1,7 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import MassCard, { MassInterface } from '../components/MassCard/MassCard';
+import MassCard, {
+  MassInterface,
+} from '../components/Calendar/MassCard/MassCard';
 
 const Home = () => {
   const { getAccessTokenSilently } = useAuth0();

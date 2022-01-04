@@ -9,9 +9,9 @@ import {
   useFileTypes,
   useOtherBookId,
 } from '../../../context/TypesAndBooksContext';
-import Dropdown from '../../general/Dropdown/Dropdown';
-import FileSelector from '../../general/FileSelector/FileSelector';
-import Input from '../../general/Input/Input';
+import Dropdown from '../../General/Dropdown/Dropdown';
+import FileSelector from '../../General/FileSelector/FileSelector';
+import Input from '../../General/Input/Input';
 
 export enum ModalType {
   Add,

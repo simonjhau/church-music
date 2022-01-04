@@ -38,7 +38,7 @@ const HymnFileLink: React.FC<HymnFileLinkProps> = ({
         }
       )
       .then((res) => window.open(res.data))
-      .catch((e) => alert('Failed to get mass file'));
+      .catch((e) => alert(`Failed to get music file:\n${e}`));
   };
 
   const handleDeleteFile = async (fileId: string) => {

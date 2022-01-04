@@ -2,8 +2,6 @@ import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import { audience, domain } from '../config/env.dev';
 
-// console.log(domain);
-
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,

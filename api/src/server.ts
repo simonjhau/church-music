@@ -22,6 +22,7 @@ app.use(cors({ origin: clientOrigins }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Check if use is authenticated
 app.use(checkJwt);
 
 // API Routes

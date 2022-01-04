@@ -2,7 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import AuthenticationButton from '../../auth/AuthenticationButton';
+import AuthenticationButton from '../../Auth/AuthenticationButton';
 import './NavigationBar.css';
 
 const NavigationBar = () => {

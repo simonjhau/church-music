@@ -5,8 +5,8 @@ import {
   HymnDataInterface,
   HymnInterface,
 } from '../../../interfaces/interfaces';
-import Dropdown from '../../general/Dropdown/Dropdown';
-import SearchBox from '../../general/SearchBox/SearchBox';
+import Dropdown from '../../General/Dropdown/Dropdown';
+import SearchBox from '../../General/SearchBox/SearchBox';
 import FileCheckBoxes from '../../Hymns/FileCheckBoxes/FileCheckBoxes';
 import './DraggableHymn.css';
 
