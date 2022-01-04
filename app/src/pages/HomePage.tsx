@@ -7,8 +7,6 @@ const Home = () => {
 
   const { isAuthenticated, user, error, logout } = useAuth0();
 
-  console.log(error);
-
   if (error) {
     alert(error);
     logout();

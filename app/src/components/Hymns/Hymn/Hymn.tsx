@@ -1,4 +1,4 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, User } from '@auth0/auth0-react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -14,7 +14,11 @@ interface Props {
 }
 
 const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
+  const adminMode = (user as User)['https://church-music/roles'].includes(
+    'admin'
+  );
+
   // Context
   const { editMode } = useEditMode();
 
@@ -106,11 +110,13 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
 
   return (
     <div>
-      <EditHymnBar
-        handleSaveChanges={handleSaveChanges}
-        handleDelete={handleDelete}
-        handleCancelChanges={handleCancelChanges}
-      />
+      {adminMode && (
+        <EditHymnBar
+          handleSaveChanges={handleSaveChanges}
+          handleDelete={handleDelete}
+          handleCancelChanges={handleCancelChanges}
+        />
+      )}
       <TextareaAutosize
         className="hymnName"
         disabled={!editMode}

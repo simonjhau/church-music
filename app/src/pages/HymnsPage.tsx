@@ -13,6 +13,7 @@ import { HymnInterface } from '../interfaces/interfaces';
 const HymnsPage = () => {
   // Set edit mode to false on first render
   const { getAccessTokenSilently } = useAuth0();
+
   const { setEditMode } = useEditMode();
   useEffect(() => {
     setEditMode(false);
