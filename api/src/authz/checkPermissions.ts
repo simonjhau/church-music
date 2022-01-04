@@ -1,10 +1,10 @@
 import jwtAuthz from 'express-jwt-authz';
 
-export const checkReadHymnPermissions = jwtAuthz(['read:hymn'], {
+export const checkReadHymnPermissions = jwtAuthz(['read:hymns'], {
   customScopeKey: 'permissions',
 });
 
-export const checkWriteHymnPermissions = jwtAuthz(['write:hymn'], {
+export const checkWriteHymnPermissions = jwtAuthz(['write:hymns'], {
   customScopeKey: 'permissions',
 });
 
