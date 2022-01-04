@@ -1,0 +1,48 @@
+.close-btn:last-child {
+  margin-right: 0;
+}
+
+.close-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background: #ff5d5b;
+  border: 2px solid #cf544d;
+  z-index: 2;
+}
+
+/* Close btn */
+.close-btn:before,
+.close-btn:after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+  opacity: 0;
+  transition: all 300ms ease-in-out;
+  width: 2px;
+  height: 70%;
+  /* background: #460100; */
+  background: #a11b19;
+}
+
+.close-btn:before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close-btn:after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Hover function */
+.close-btn:hover:before,
+.close-btn:hover:after {
+  top: 50%;
+  opacity: 1;
+}

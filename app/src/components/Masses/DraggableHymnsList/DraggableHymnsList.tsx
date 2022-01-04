@@ -1,6 +1,8 @@
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import { Button, Row } from 'react-bootstrap';
 import { HymnDataInterface } from '../../../interfaces/interfaces';
 import DraggableHymn from '../DraggableHymn/DraggableHymn';
+import './DraggableHymnsList.css';
 
 interface Props {
   hymnsData: HymnDataInterface[];
@@ -32,32 +34,72 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
     setHymnsData(updatedHymn);
   };
 
+  const handleDeleteHymn = (hymnIndex: number) => {
+    const tempHymns = [...hymnsData];
+    tempHymns.splice(hymnIndex, 1);
+    setHymnsData(tempHymns);
+  };
+
+  const handleAddHymn = (index: number) => {
+    const tempHymns = [...hymnsData];
+    tempHymns.splice(index, 0, {
+      id: ``,
+      name: '',
+      hymnTypeId: 0,
+      fileIds: [],
+    });
+    setHymnsData(tempHymns);
+  };
+
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      {hymnsData.length > 0 && (
-        <Droppable droppableId="hymns">
-          {(provided) => (
-            <ul
-              className="hymns"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {hymnsData.map((hymn, hymnIndex) => {
-                return (
-                  <DraggableHymn
-                    key={hymnIndex}
-                    hymnData={hymnsData[hymnIndex]}
-                    hymnIndex={hymnIndex}
-                    updateHymnsData={updateHymnsData}
-                  />
-                );
-              })}
-              {provided.placeholder}
-            </ul>
-          )}
-        </Droppable>
-      )}
-    </DragDropContext>
+    <div>
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        {hymnsData.length > 0 && (
+          <Droppable droppableId="hymns">
+            {(provided) => (
+              <ul
+                className="hymns"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {hymnsData.map((hymn, hymnIndex) => {
+                  return (
+                    <div>
+                      <Row>
+                        <Button
+                          variant="outline-primary"
+                          className="plusButton"
+                          onClick={() => handleAddHymn(hymnIndex)}
+                        >
+                          +
+                        </Button>
+                      </Row>
+                      <DraggableHymn
+                        key={hymnIndex}
+                        hymnData={hymnsData[hymnIndex]}
+                        hymnIndex={hymnIndex}
+                        updateHymnsData={updateHymnsData}
+                        handleDeleteHymn={handleDeleteHymn}
+                      />
+                    </div>
+                  );
+                })}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        )}
+      </DragDropContext>
+      <Row>
+        <Button
+          variant="outline-primary"
+          className="plusButton"
+          onClick={() => handleAddHymn(hymnsData.length)}
+        >
+          +
+        </Button>
+      </Row>
+    </div>
   );
 };
 

@@ -82,20 +82,30 @@ export const dbAddMass = async (
   return masses.rows;
 };
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const dbAddMassHymns = async (
   massId: string,
   massParams: MassParamsInterface
 ) => {
+  const hymns = massParams.hymns;
   const promises: Promise<any>[] = [];
-  console.log(massParams.hymns);
 
-  massParams.hymns.forEach((hymn, hymnIndex) => {
+  for (let i = 0; i < massParams.hymns.length; i++) {
     const sqlQuery = `INSERT INTO mass_hymns 
-                      (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
-                      VALUES ($1, $2, $3, $4, $5)`;
-    const values = [massId, hymnIndex, hymn.hymnTypeId, hymn.id, hymn.fileIds];
+    (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
+    VALUES ($1, $2, $3, $4, $5)`;
+    const values = [
+      massId,
+      i,
+      hymns[i].hymnTypeId,
+      hymns[i].id,
+      hymns[i].fileIds,
+    ];
     promises.push(dbQuery(sqlQuery, values));
-  });
+    // todo - why do i need this??
+    await delay(20);
+  }
 
   await Promise.all(promises);
 };

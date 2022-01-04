@@ -8,8 +8,8 @@ import {
   HymnDataInterface,
   MassInterface,
 } from '../../../interfaces/interfaces';
+import DraggableHymnsList from '../DraggableHymnsList/DraggableHymnsList';
 import EditMassBar from '../EditMassBar/EditMassBar';
-import MassHymnChooser from '../MassHymnChooser/MassHymnChooser';
 import './Mass.css';
 
 interface Props {
@@ -27,6 +27,7 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
   const [hymnsData, setHymnsData] = useState<HymnDataInterface[]>([]);
   const [localHymnsData, setLocalHymnsData] =
     useState<HymnDataInterface[]>(hymnsData);
+  console.log(localHymnsData, localHymnsData);
 
   // Runs on component load
   useEffect(() => {
@@ -190,7 +191,6 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
         handleDelete={handleDelete}
         handleCancelChanges={handleCancelChanges}
       />
-      <br />
       <input
         className="massName"
         value={localMassData.name}
@@ -210,13 +210,17 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
 
       {localMassData.fileId && (
         <div className="d-grid gap-2">
-          <Button variant="primary" onClick={handleOpenMusic}>
+          <Button size="sm" variant="primary" onClick={handleOpenMusic}>
             Open Music
           </Button>
         </div>
       )}
+      <br />
 
-      <MassHymnChooser hymnsData={localHymnsData} setHymnsData={setHymnsData} />
+      <DraggableHymnsList
+        hymnsData={localHymnsData}
+        setHymnsData={setLocalHymnsData}
+      />
     </div>
   );
 };

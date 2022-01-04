@@ -1,0 +1,11 @@
+.checkBoxes {
+  margin-top: 1em;
+}
+
+.checkBox {
+  font-size: 30;
+}
+
+.checkBox label {
+  font-size: 14px;
+}

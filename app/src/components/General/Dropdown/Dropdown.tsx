@@ -9,6 +9,7 @@ interface DropdownProps {
   options: HymnTypesInterface[];
   handleSelect: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   value: number;
+  size?: 'sm' | 'lg' | undefined;
   disabled?: boolean;
 }
 
@@ -17,11 +18,12 @@ const Dropdown: React.FC<DropdownProps> = ({
   options,
   handleSelect,
   value,
-  disabled,
+  size,
+  disabled = false,
 }) => {
   return (
-    <Form.Group as={Row} className="mb-3" controlId="formSelectFileType">
-      <Form.Label column sm="3">
+    <Form.Group as={Row} className="mb-1" controlId="formSelectFileType">
+      <Form.Label column={size} sm="3">
         {text}:
       </Form.Label>
       <Col sm="9">
@@ -30,7 +32,8 @@ const Dropdown: React.FC<DropdownProps> = ({
           className="dropdown"
           onChange={handleSelect}
           value={value}
-          disabled={disabled ? disabled : false}
+          size={size}
+          disabled={disabled}
         >
           {options.map((option) => {
             return (

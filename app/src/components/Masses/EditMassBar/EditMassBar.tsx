@@ -41,6 +41,7 @@ const EditBar: React.FC<EditBarProps> = ({
     <Form.Group className="editBar" as={Row} controlId="formPlaintextComment">
       <Col className="d-grid" sm={{ span: 3 }}>
         <Button
+          size="sm"
           variant="secondary"
           type="submit"
           onClick={handleDuplicateClick}
@@ -50,6 +51,7 @@ const EditBar: React.FC<EditBarProps> = ({
       </Col>
       <Col className="d-grid">
         <Button
+          size="sm"
           variant="primary"
           type="submit"
           onClick={handleSaveChangesClick}
@@ -59,6 +61,7 @@ const EditBar: React.FC<EditBarProps> = ({
       </Col>
       <Col className="d-grid">
         <Button
+          size="sm"
           variant="danger"
           type="submit"
           onClick={handleDeleteChangesClick}
@@ -68,6 +71,7 @@ const EditBar: React.FC<EditBarProps> = ({
       </Col>
       <Col className="d-grid">
         <Button
+          size="sm"
           variant="outline-primary"
           type="submit"
           onClick={handleCancelChangesClick}

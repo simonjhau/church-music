@@ -78,10 +78,10 @@ const FileCheckBoxes: React.FC<Props> = ({
   return (
     <Form.Group
       as={Row}
-      className="mb-3 checkBoxes"
+      className="mb-0 checkBoxes"
       controlId="formPlaintextHymnName"
     >
-      <Form.Label column sm="3">
+      <Form.Label column="sm" sm="3">
         {label}:
       </Form.Label>
       {files.length > 0 && files.length === selected.length && (

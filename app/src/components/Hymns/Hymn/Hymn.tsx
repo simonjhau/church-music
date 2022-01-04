@@ -87,7 +87,7 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete`)) {
-      const token = getAccessTokenSilently();
+      const token = await getAccessTokenSilently();
       await axios
         .delete(`/hymns/${localHymnData.id}`, {
           headers: { Authorization: `Bearer ${token}` },

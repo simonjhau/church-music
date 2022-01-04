@@ -16,6 +16,7 @@ const SearchBox = ({
   apiPath,
   placeholder,
   addLabel,
+  size = 'md',
   disabled = false,
 }) => {
   const { getAccessTokenSilently } = useAuth0();
@@ -63,7 +64,7 @@ const SearchBox = ({
   if (addLabel) {
     return (
       <Form.Group as={Row} controlId="searchBox">
-        <Form.Label column sm="3">
+        <Form.Label column={size} sm="3">
           {placeholder}:
         </Form.Label>
         <Col sm="9">
@@ -79,6 +80,7 @@ const SearchBox = ({
             options={options}
             placeholder={placeholder}
             renderMenuItemChildren={(option) => <p>{option.name}</p>}
+            size={size}
             disabled={disabled}
           />
         </Col>
@@ -98,6 +100,7 @@ const SearchBox = ({
         options={options}
         placeholder={placeholder}
         renderMenuItemChildren={(option) => <p>{option.name}</p>}
+        size={size}
         disabled={disabled}
       />
     );

@@ -4,12 +4,11 @@
 }
 
 .hymns li {
-  /* display: flex; */
   align-items: center;
   border: solid 1.5px #8b98f8;
   background-color: #dee0f1;
   border-radius: 0.2em;
   padding: 1em 1em 1em 1em;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
