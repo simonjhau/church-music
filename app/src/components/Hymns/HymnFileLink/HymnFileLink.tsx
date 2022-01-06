@@ -9,6 +9,7 @@ import { FileInterface } from '../../../interfaces/interfaces';
 import AddEditFileButtonModal, {
   ModalType,
 } from '../AddEditFileButtonModal/AddEditFileButtonModal';
+import './HymnFileLink.css';
 
 interface HymnFileLinkProps {
   hymnId: string;
@@ -55,8 +56,8 @@ const HymnFileLink: React.FC<HymnFileLinkProps> = ({
 
   return (
     <div key={file.id}>
-      <Row>
-        <Col sm="5">
+      <Row sm="3">
+        <Col>
           <Button variant="link" id={file.id} onClick={handleFileClick}>
             {
               fileTypes.find((fileType) => fileType.id === file.fileTypeId)
@@ -69,25 +70,24 @@ const HymnFileLink: React.FC<HymnFileLinkProps> = ({
           </Button>
         </Col>
         {editMode && (
-          <Col sm="1">
-            <AddEditFileButtonModal
-              modalType={ModalType.Edit}
-              hymnId={hymnId}
-              fileId={file.id}
-              refreshHymnData={refreshHymnData}
-            />
-          </Col>
-        )}
-        {editMode && (
           <Col>
-            <Button
-              id={`${file.id}-del`}
-              variant="danger"
-              size="sm"
-              onClick={(e) => handleDeleteFile(file.id)}
-            >
-              X
-            </Button>
+            <div className="editButtons">
+              <AddEditFileButtonModal
+                modalType={ModalType.Edit}
+                hymnId={hymnId}
+                fileId={file.id}
+                refreshHymnData={refreshHymnData}
+              />
+
+              <Button
+                id={`${file.id}-del`}
+                variant="danger"
+                size="sm"
+                onClick={(e) => handleDeleteFile(file.id)}
+              >
+                X
+              </Button>
+            </div>
           </Col>
         )}
       </Row>

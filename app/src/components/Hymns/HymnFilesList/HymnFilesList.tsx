@@ -38,13 +38,14 @@ const HymnFilesList: React.FC<HymnFilesListProps> = ({
         })}
       {editMode && (
         <Row>
-          <Col className="d-grid" sm="5">
+          <Col className="d-grid">
             <AddEditFileButtonModal
               modalType={ModalType.Add}
               hymnId={hymnId}
               refreshHymnData={refreshHymnData}
             />
           </Col>
+          <Col></Col>
         </Row>
       )}
     </div>
