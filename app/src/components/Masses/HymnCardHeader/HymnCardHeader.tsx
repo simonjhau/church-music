@@ -1,5 +1,5 @@
 import React from 'react';
-import { CloseButton, Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import './HymnCardHeader.css';
 
 interface Props {
@@ -18,7 +18,9 @@ const HymnCardHeader: React.FC<Props> = ({ hymnIndex, handleDelete }) => {
       <Col sm={10} />
       <Col sm={1}>
         <div className="deleteBtn">
-          <CloseButton onClick={handleDelete} />
+          <Button size="sm" variant="danger" onClick={handleDelete}>
+            X
+          </Button>
         </div>
       </Col>
     </Row>

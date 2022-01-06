@@ -4,3 +4,9 @@
   padding: 0;
   margin: 0;
 }
+
+.deleteBtn {
+  position: relative;
+  left: -5px;
+  top: -5px;
+}
