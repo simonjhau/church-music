@@ -27,7 +27,7 @@ const Mass: React.FC<Props> = ({ massData, refreshMassData }) => {
   const [hymnsData, setHymnsData] = useState<HymnDataInterface[]>([]);
   const [localHymnsData, setLocalHymnsData] =
     useState<HymnDataInterface[]>(hymnsData);
-  console.log(localHymnsData, localHymnsData);
+  console.log(hymnsData);
 
   // Runs on component load
   useEffect(() => {

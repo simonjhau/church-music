@@ -10,13 +10,12 @@ interface Props {
 const HymnCardHeader: React.FC<Props> = ({ hymnIndex, handleDelete }) => {
   return (
     <Row className="mb-2 justify-content-md-center">
-      <Col sm={1}>
+      <Col>
         <Form.Label column="sm" className="hymnCardIndex">
           {hymnIndex + 1}
         </Form.Label>
       </Col>
-      <Col sm={10} />
-      <Col sm={1}>
+      <Col>
         <div className="deleteBtn">
           <Button size="sm" variant="danger" onClick={handleDelete}>
             X

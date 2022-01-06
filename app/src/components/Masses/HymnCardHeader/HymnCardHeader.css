@@ -6,7 +6,5 @@
 }
 
 .deleteBtn {
-  position: relative;
-  left: -5px;
-  top: -5px;
+  float: right;
 }

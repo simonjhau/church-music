@@ -39,7 +39,7 @@ const EditBar: React.FC<EditBarProps> = ({
 
   return (
     <Form.Group className="editBar" as={Row} controlId="formPlaintextComment">
-      <Col className="d-grid" sm={{ span: 3 }}>
+      <Col className="d-grid">
         <Button
           size="sm"
           variant="secondary"

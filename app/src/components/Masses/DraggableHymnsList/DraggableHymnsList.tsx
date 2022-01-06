@@ -64,7 +64,7 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
               >
                 {hymnsData.map((hymn, hymnIndex) => {
                   return (
-                    <div>
+                    <div key={`${hymnIndex}`}>
                       <Row>
                         <Button
                           variant="outline-primary"
@@ -75,7 +75,6 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
                         </Button>
                       </Row>
                       <DraggableHymn
-                        key={hymnIndex}
                         hymnData={hymnsData[hymnIndex]}
                         hymnIndex={hymnIndex}
                         updateHymnsData={updateHymnsData}
