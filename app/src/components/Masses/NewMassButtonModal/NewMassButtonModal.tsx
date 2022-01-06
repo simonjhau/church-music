@@ -2,7 +2,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Input from '../../General/Input/Input';
 
@@ -19,10 +18,13 @@ const NewMassButtonModal: React.FC<NewMassModal> = ({ refreshMassData }) => {
 
   const [name, setName] = useState('');
   const handleNameChange = (e: React.ChangeEvent) => {
+    e.preventDefault();
     setName((e.target as HTMLInputElement).value);
   };
 
-  const handleSaveMass = async () => {
+  const handleSaveMass = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
     if (!name) {
       alert('Error: Name cannot be blank');
     }
@@ -59,9 +61,7 @@ const NewMassButtonModal: React.FC<NewMassModal> = ({ refreshMassData }) => {
           <Modal.Title>New Mass</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Input label="Mass Name" onChange={handleNameChange} value={name} />
-          </Form>
+          <Input label="Mass Name" onChange={handleNameChange} value={name} />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

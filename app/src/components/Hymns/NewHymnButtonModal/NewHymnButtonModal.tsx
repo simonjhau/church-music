@@ -2,7 +2,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Input from '../../General/Input/Input';
 
@@ -57,9 +56,7 @@ const NewHymnButtonModal: React.FC<NewHymnModal> = ({ refreshHymnData }) => {
           <Modal.Title>New Hymn</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Input label="Hymn Name" onChange={handleNameChange} value={name} />
-          </Form>
+          <Input label="Hymn Name" onChange={handleNameChange} value={name} />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

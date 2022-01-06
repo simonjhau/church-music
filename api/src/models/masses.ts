@@ -1,3 +1,4 @@
+import format from 'pg-format';
 import { dbQuery } from './db';
 
 export const dbGetAllMasses = async () => {
@@ -82,34 +83,37 @@ export const dbAddMass = async (
   return masses.rows;
 };
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
+// Add mass hymns to mass_hymns table
 export const dbAddMassHymns = async (
   massId: string,
   massParams: MassParamsInterface
 ) => {
   const hymns = massParams.hymns;
-  const promises: Promise<any>[] = [];
 
-  for (let i = 0; i < massParams.hymns.length; i++) {
-    const sqlQuery = `INSERT INTO mass_hymns 
-    (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
-    VALUES ($1, $2, $3, $4, $5)`;
-    const values = [
+  const hymnsData = hymns.map((hymn, index) => {
+    return format(
+      '(%L, %L, %L, %L, ARRAY[%L])',
       massId,
-      i,
-      hymns[i].hymnTypeId,
-      hymns[i].id,
-      hymns[i].fileIds,
-    ];
-    promises.push(dbQuery(sqlQuery, values));
-    // todo - why do i need this??
-    await delay(20);
-  }
+      index,
+      hymn.hymnTypeId,
+      hymn.id,
+      hymn.fileIds
+    );
+  }, '');
 
-  await Promise.all(promises);
+  const hymnsDataString = hymnsData.join(',');
+
+  const sqlQuery = format(
+    `INSERT INTO mass_hymns 
+    (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids) 
+    VALUES %s;`,
+    hymnsDataString
+  );
+
+  await dbQuery(sqlQuery, []);
 };
 
+// Duplicate mass in masses table
 export const dbUpdateMass = async (
   massId: string,
   massParams: MassParamsInterface
