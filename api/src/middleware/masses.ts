@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { Readable } from 'stream';
 import { v4 as uuidv4 } from 'uuid';
 import { dbBegin, dbCommit, dbRollback } from '../models/db';
@@ -146,9 +146,17 @@ export const createMassPdf = async (
           document.getPageIndices()
         );
         copiedPages.forEach((page) => {
-          const { width, height } = page.getSize();
+          let { width, height } = page.getSize();
+
+          // Rotate landscape pages
+          if (width > height) {
+            page.setRotation(degrees(-90));
+            // Swap width and height
+            [width, height] = [height, width];
+          }
+
           page.drawText(`${hymnIndex}`, {
-            x: width - 30,
+            x: width - 40,
             y: height - 35,
             size: 16,
             font: helveticaFont,

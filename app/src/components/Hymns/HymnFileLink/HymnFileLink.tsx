@@ -56,7 +56,7 @@ const HymnFileLink: React.FC<HymnFileLinkProps> = ({
 
   return (
     <div key={file.id}>
-      <Row sm="3">
+      <Row sm="2">
         <Col>
           <Button variant="link" id={file.id} onClick={handleFileClick}>
             {
