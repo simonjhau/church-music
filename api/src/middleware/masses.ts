@@ -147,10 +147,20 @@ export const createMassPdf = async (
         );
         copiedPages.forEach((page) => {
           let { width, height } = page.getSize();
+          const rotationAngle = page.getRotation().angle;
+
+          // Work out the actual orientation of the document
+          if (
+            rotationAngle === 90 ||
+            rotationAngle === -90 ||
+            rotationAngle === 270
+          ) {
+            [width, height] = [height, width];
+          }
 
           // Rotate landscape pages
           if (width > height) {
-            page.setRotation(degrees(-90));
+            page.setRotation(degrees(rotationAngle - 90));
             // Swap width and height
             [width, height] = [height, width];
           }
@@ -165,7 +175,8 @@ export const createMassPdf = async (
           mergedPdf.addPage(page);
         });
       } catch (e) {
-        console.log(e);
+        res.status(500).send(`Error generating PDF: ${e}`);
+        return;
       }
     }
     hymnIndex++;

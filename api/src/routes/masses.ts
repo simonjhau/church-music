@@ -83,7 +83,6 @@ router.get(
     try {
       const fileId = await dbGetFileId(massId);
       const url = await s3GetSignedUrl('masses', fileId);
-      console.log(url);
       res.status(200).json(url);
     } catch (e) {
       res.status(400).send(`Error downloading file from S3: \n ${e}`);
