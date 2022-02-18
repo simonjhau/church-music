@@ -71,7 +71,6 @@ const Hymn: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
         `/hymns/${localHymnData.id}`,
         {
           name: localHymnData.name,
-          altName: localHymnData.altName,
           lyrics: localHymnData.lyrics,
         },
         { headers: { Authorization: `Bearer ${token}` } }

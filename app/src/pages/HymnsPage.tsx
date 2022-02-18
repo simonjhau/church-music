@@ -23,7 +23,6 @@ const HymnsPage = () => {
   const defaultHymnData = {
     id: '',
     name: '',
-    altName: '',
     lyrics: '',
   };
 

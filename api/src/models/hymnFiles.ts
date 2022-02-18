@@ -49,7 +49,6 @@ export const dbGetListOfFiles = async (hymnId: string) => {
                     hymn_files.id AS "id", 
                     hymns.id AS "hymnId",
                     hymns.name AS "hymnName",
-                    hymns.alt_name AS "altName",
                     file_type_id AS "fileTypeId", 
                     book_id AS "bookId", 
                     hymn_num AS "hymnNum", 

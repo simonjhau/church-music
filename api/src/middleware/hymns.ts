@@ -7,10 +7,10 @@ export const addHymn = async (req: Request, res: Response) => {
 
   // Add file to db
   const newId = uuidv4();
-  const { name, altName } = req.body;
+  const { name } = req.body;
 
   try {
-    await dbAddHymn(newId, name, altName);
+    await dbAddHymn(newId, name);
     res.location(`/hymns/${newId}`);
     res.status(201).send(`Hymn successfully aded to database`);
   } catch (e) {

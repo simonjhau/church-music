@@ -49,6 +49,8 @@ const FileCheckBoxes: React.FC<Props> = ({
             setSelected(newSelected);
           })
           .catch((e) => console.error(`Get files failed ${e}`));
+      } else {
+        setfiles([]);
       }
     };
     getFiles();

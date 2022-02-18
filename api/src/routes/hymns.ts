@@ -84,12 +84,7 @@ router.put(
     }
 
     try {
-      await dbUpdateHymn(
-        hymnId,
-        hymnParams.name,
-        hymnParams.altName,
-        hymnParams.lyrics
-      );
+      await dbUpdateHymn(hymnId, hymnParams.name, hymnParams.lyrics);
       res.location(`/hymns/${hymnId}`);
       res.status(200).json('Hymn saved sucessfully');
     } catch (e) {

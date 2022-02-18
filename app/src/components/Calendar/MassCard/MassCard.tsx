@@ -36,7 +36,6 @@ const MassCard: React.FC<Props> = ({ mass }) => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        console.log(res.data);
         window.open(res.data);
       })
       .catch((e) => alert(`Failed to get mass file:\n${e}`));

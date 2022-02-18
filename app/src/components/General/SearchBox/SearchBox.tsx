@@ -22,7 +22,7 @@ const SearchBox = ({
   const { getAccessTokenSilently } = useAuth0();
 
   const handleInputChange = (input) => {
-    setData({ id: '', name: input, altName: '' });
+    setData({ id: '', name: input });
     handleSearch(input);
   };
 
@@ -82,6 +82,7 @@ const SearchBox = ({
             renderMenuItemChildren={(option) => <p>{option.name}</p>}
             size={size ? size : null}
             disabled={disabled}
+            filterBy={() => true}
           />
         </Col>
       </Form.Group>
@@ -102,6 +103,7 @@ const SearchBox = ({
         renderMenuItemChildren={(option) => <p>{option.name}</p>}
         size={size ? size : null}
         disabled={disabled}
+        filterBy={() => true}
       />
     );
   }

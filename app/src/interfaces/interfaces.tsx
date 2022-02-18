@@ -2,7 +2,6 @@
 export interface HymnInterface {
   id: string;
   name: string;
-  altName: string;
   lyrics: string;
 }
 
