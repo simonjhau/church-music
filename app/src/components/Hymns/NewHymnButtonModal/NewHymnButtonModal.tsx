@@ -29,7 +29,7 @@ const NewHymnButtonModal: React.FC<NewHymnModal> = ({ refreshHymnData }) => {
       name: name,
     };
 
-    const token = getAccessTokenSilently();
+    const token = await getAccessTokenSilently();
     axios
       .post('/hymns', hymnData, {
         headers: { Authorization: `Bearer ${token}` },

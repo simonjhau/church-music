@@ -115,7 +115,7 @@ export const createMassPdf = async (
       color: rgb(0, 0, 0),
     });
     page.drawText(hymn.name, {
-      x: width / 2 - 75,
+      x: width / 2 - 50,
       y: height - 145 - index * 1.5 * fontSize,
       size: fontSize,
       font: helveticaFont,
