@@ -59,4 +59,4 @@ jobs:
         with:
           context: ./api
           push: true
-          tags: church-music-api:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/church-music-api:latest
