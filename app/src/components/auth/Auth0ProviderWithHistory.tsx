@@ -9,7 +9,7 @@ const Auth0ProviderWithNavigate: React.FC = ({ children }) => {
 
   const navigate = useNavigate();
 
-  const onRedirectCallback = (appState: AppState) => {
+  const onRedirectCallback = (appState: AppState | undefined) => {
     navigate(appState?.returnTo || window.location.pathname);
   };
 
