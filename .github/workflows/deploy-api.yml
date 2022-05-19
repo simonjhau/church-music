@@ -50,6 +50,7 @@ jobs:
           echo CLIENT_ORIGIN_URL=${{ secrets.CLIENT_ORIGIN_URL }}} > .env
           echo AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }}} > .env
           echo AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}} > .env
+          cat .env
         working-directory: ./api
 
       - name: Set up QEMU
