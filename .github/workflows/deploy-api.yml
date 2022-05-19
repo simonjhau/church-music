@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - api/**
+      - .github/workflows/api-ci-cd.yml
 
 jobs:
   build:
