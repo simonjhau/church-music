@@ -12,7 +12,7 @@ on:
       - .github/workflows/api-ci-cd.yml
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
