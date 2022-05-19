@@ -37,9 +37,19 @@ jobs:
       - name: Create env file
         run: |
           touch .env
-          echo ${API_ENV} > .env
-        env:
-          API_ENV: ${{ secrets.API_ENV }}
+          echo AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}} > .env
+          echo AWS_BUCKET_REGION=${{ secrets.AWS_BUCKET_REGION }}} > .env
+          echo AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}} > .env
+          echo AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}} > .env
+          echo AWS_DB_ENDPOINT=${{ secrets.AWS_DB_ENDPOINT }}} > .env
+          echo AWS_DB_NAME=${{ secrets.AWS_DB_NAME }}} > .env
+          echo AWS_DB_USER_NAME=${{ secrets.AWS_DB_USER_NAME }}} > .env
+          echo AWS_DB_PASSWORD=${{ secrets.AWS_DB_PASSWORD }}} > .env
+          echo AWS_DB_PORT=${{ secrets.AWS_DB_PORT }}} > .env
+          echo SERVER_PORT=${{ secrets.SERVER_PORT }}} > .env
+          echo CLIENT_ORIGIN_URL=${{ secrets.CLIENT_ORIGIN_URL }}} > .env
+          echo AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }}} > .env
+          echo AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}} > .env
         working-directory: ./api
 
       - name: Set up QEMU
