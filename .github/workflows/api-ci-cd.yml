@@ -45,6 +45,6 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
       - name: Build API
-        run: gcloud builds submit --tag gcr.io/church-music/api .
+        run: gcloud builds submit --tag gcr.io/church-music/api ./api
       - name: Deploy API
         run: gcloud run deploy api --image gcr.io/church-music/api --platform managed --region us-central1
