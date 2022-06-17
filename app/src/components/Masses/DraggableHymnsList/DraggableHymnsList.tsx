@@ -45,7 +45,7 @@ const DraggableHymnsList: React.FC<Props> = ({ hymnsData, setHymnsData }) => {
     tempHymns.splice(index, 0, {
       id: ``,
       name: '',
-      hymnTypeId: 0,
+      hymnTypeId: tempHymns[index - 1].hymnTypeId + 1,
       fileIds: [],
     });
     setHymnsData(tempHymns);
