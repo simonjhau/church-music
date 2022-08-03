@@ -174,3 +174,10 @@ export const dbGetFileId = async (massId: string) => {
   const result = await dbQuery(sqlQuery, values);
   return result.rows[0].fileId;
 };
+
+export const dbGetMassName = async (massId: string) => {
+  const sqlQuery = `SELECT name FROM masses WHERE id = $1;`;
+  const params = [massId];
+  const massName = await dbQuery(sqlQuery, params);
+  return massName.rows[0].name;
+};

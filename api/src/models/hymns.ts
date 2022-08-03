@@ -51,3 +51,10 @@ export const dbUpdateHymn = async (
   const values = [name, lyrics, hymnId];
   await dbQuery(sqlQuery, values);
 };
+
+export const dbGetHymnName = async (hymnId: string) => {
+  const sqlQuery = `SELECT name FROM hymns where id = $1;`;
+  const values = [hymnId];
+  const hymnName = await dbQuery(sqlQuery, values);
+  return hymnName.rows[0].name;
+};

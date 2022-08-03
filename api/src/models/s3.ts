@@ -54,10 +54,15 @@ export const s3DownloadFile = async (fileType: string, id: string) => {
 };
 
 // Download file from S3
-export const s3GetSignedUrl = async (fileType: string, id: string) => {
+export const s3GetSignedUrl = async (
+  fileType: string,
+  id: string,
+  fileName: string
+) => {
   const input = {
     Key: `${fileType}/${id}.pdf`,
     Bucket: bucketName,
+    ResponseContentDisposition: `attachment; filename=${fileName}.pdf`,
   };
   const command = new GetObjectCommand(input);
   const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });

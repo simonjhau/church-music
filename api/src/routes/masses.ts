@@ -17,6 +17,7 @@ import {
   dbGetMassData,
   dbGetMassesQueryName,
   dbGetMassHymns,
+  dbGetMassName,
 } from '../models/masses';
 import { s3GetSignedUrl } from '../models/s3';
 
@@ -82,7 +83,8 @@ router.get(
     const massId = req.params.massId;
     try {
       const fileId = await dbGetFileId(massId);
-      const url = await s3GetSignedUrl('masses', fileId);
+      const massName = await dbGetMassName(massId);
+      const url = await s3GetSignedUrl('masses', fileId, massName);
       res.status(200).json(url);
     } catch (e) {
       res.status(400).send(`Error downloading file from S3: \n ${e}`);

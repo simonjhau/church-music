@@ -9,7 +9,14 @@ import {
   multerUpload,
   uploadFile,
 } from '../middleware/hymnFiles';
-import { dbGetFile, dbGetListOfFiles, dbUpdateFile } from '../models/hymnFiles';
+import { dbGetBookCode } from '../models/books';
+import { dbGetFileType } from '../models/fileTypes';
+import {
+  dbGetFileData,
+  dbGetListOfFiles,
+  dbUpdateFile,
+} from '../models/hymnFiles';
+import { dbGetHymnName } from '../models/hymns';
 import { s3GetSignedUrl } from '../models/s3';
 const router = express.Router({ mergeParams: true });
 // Todo - input sanitisation
@@ -34,10 +41,9 @@ router.get(
   '/:fileId',
   checkReadHymnPermissions,
   async (req: Request, res: Response) => {
-    const hymnId = req.params.hymnId;
     const fileId = req.params.fileId;
     try {
-      const fileData = await dbGetFile(hymnId, fileId);
+      const fileData = await dbGetFileData(fileId);
       res.status(200).json(fileData);
     } catch (e) {
       res.status(400).send(`Error getting file data from database: \n ${e}`);
@@ -52,13 +58,28 @@ router.get(
   async (req: Request, res: Response) => {
     const fileId = req.params.id;
     try {
-      const url = await s3GetSignedUrl('music', fileId);
+      const hymnFileName = await createHymnFileName(fileId);
+      const url = await s3GetSignedUrl('music', fileId, hymnFileName);
       res.status(200).json(url);
     } catch (e) {
       res.status(400).send(`Error downloading file from S3: \n ${e}`);
     }
   }
 );
+
+// Create file name
+const createHymnFileName = async (fileId: string): Promise<string> => {
+  const fileData = await dbGetFileData(fileId);
+  const hymnName = await dbGetHymnName(fileData.hymnId);
+  const fileType = await dbGetFileType(fileData.fileTypeId);
+  const bookCode = await dbGetBookCode(fileData.bookId);
+  const fileName =
+    `${hymnName} ${fileType}` +
+    (bookCode !== 'Other' ? ` ${bookCode}` : '') +
+    (fileData.hymnNum ? ` ${fileData.hymnNum}` : '') +
+    (fileData.comment ? ` ${fileData.comment}` : '');
+  return fileName;
+};
 
 // Upload a file
 router.post(

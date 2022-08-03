@@ -29,7 +29,7 @@ export const dbAddFile = async (
   return file.rows;
 };
 
-export const dbGetFile = async (hymnId: string, fileId: string) => {
+export const dbGetFileData = async (fileId: string) => {
   const sqlQuery = `SELECT
                     id AS "id", 
                     hymn_id AS "hymnId", 
@@ -38,10 +38,10 @@ export const dbGetFile = async (hymnId: string, fileId: string) => {
                     hymn_num AS "hymnNum", 
                     comment AS "comment"
                     FROM hymn_files 
-                    WHERE hymn_id = $1 AND id = $2;`;
-  const values = [hymnId, fileId];
+                    WHERE id = $1;`;
+  const values = [fileId];
   const file = await dbQuery(sqlQuery, values);
-  return file.rows;
+  return file.rows[0];
 };
 
 export const dbGetListOfFiles = async (hymnId: string) => {
