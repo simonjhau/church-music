@@ -21,7 +21,8 @@ export const dbGetMassesQueryName = async (query: string) => {
                     date_time AS "dateTime",
                     file_id AS "fileId"
                     FROM masses
-                    WHERE LOWER(name) LIKE LOWER('%' || $1 || '%');`;
+                    WHERE LOWER(name) LIKE LOWER('%' || $1 || '%')
+                    ORDER BY date_time DESC;`;
   const params = [query];
   const masses = await dbQuery(sqlQuery, params);
   return masses.rows;
