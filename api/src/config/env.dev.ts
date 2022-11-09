@@ -32,3 +32,4 @@ if (!clientOriginUrl) {
 }
 
 export const clientOrigins = ['http://localhost:3000'];
+export const withAuth = process.env.AUTH !== 'false';
