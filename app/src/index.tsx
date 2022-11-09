@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Auth0ProviderWithHistory from './components/Auth/Auth0ProviderWithHistory';
+import Auth0ProviderWithHistory from './components/auth/Auth0ProviderWithHistory';
 import reportWebVitals from './reportWebVitals';
 import App from './routes/App';
 

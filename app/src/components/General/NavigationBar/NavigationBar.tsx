@@ -1,15 +1,15 @@
-import { useAuth0, User } from '@auth0/auth0-react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import AuthenticationButton from '../../Auth/AuthenticationButton';
-import './NavigationBar.css';
+import { useAuth0, User } from "@auth0/auth0-react";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import AuthenticationButton from "../../auth/AuthenticationButton";
+import "./NavigationBar.css";
 
 const NavigationBar = () => {
   const { user, isAuthenticated } = useAuth0();
   let adminMode = false;
   if (isAuthenticated) {
-    adminMode = (user as User)['https://church-music/roles'].includes('admin');
+    adminMode = (user as User)["https://church-music/roles"].includes("admin");
   }
 
   return (
@@ -26,7 +26,7 @@ const NavigationBar = () => {
             )}
             {isAuthenticated && <Nav.Link href="/hymns">Hymns</Nav.Link>}
           </Nav>
-          <Nav className="justify-content-end" style={{ width: '100%' }}>
+          <Nav className="justify-content-end" style={{ width: "100%" }}>
             <AuthenticationButton />
           </Nav>
         </Navbar.Collapse>
