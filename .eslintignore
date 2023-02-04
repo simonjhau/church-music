@@ -1,0 +1,3 @@
+api/dist
+app/dist
+app/src/vite-env.d.ts
