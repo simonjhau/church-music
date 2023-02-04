@@ -1,0 +1,29 @@
+{
+  "name": "church-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "(cd api && npm install); (cd app && npm install);",
+    "build": "(cd api && npm run build); (cd app && npm run build);",
+    "start": "pm2 start ./api/dist/server.js --no-daemon",
+    "dev": "concurrently \"npm run dev --prefix api\" \"npm run dev --prefix app\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simonjhau/church-music.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simonjhau/church-music/issues"
+  },
+  "homepage": "https://github.com/simonjhau/church-music#readme",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "dependencies": {
+    "pm2": "^5.2.2"
+  }
+}

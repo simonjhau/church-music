@@ -1,8 +1,0 @@
-.searchBox {
-  margin: 0;
-  padding: 0;
-}
-
-.searchBox:disabled {
-  background-color: white;
-}
