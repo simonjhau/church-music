@@ -14,7 +14,7 @@ app.get("/api/crash", (req, res) => {
 
 app.get("/api", (req, res) => {
   console.log("api");
-  res.send("Hello World from api!!! Let's make some changes");
+  res.send("Hello World from api!!! Let's make a change");
 });
 
 app.get("/", (req, res) => {
