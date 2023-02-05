@@ -1,20 +1,17 @@
 import express from "express";
 import path from "path";
 
-const app = express();
+import { port } from "./config/index";
+import { router } from "./routes/index";
 
-const port = process.env.PORT ?? 9000;
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const appDir = path.join(__dirname, "../..", "app", "dist");
 app.use(express.static(appDir));
 
-app.get("/api/crash", () => {
-  throw new Error("crash");
-});
-
-app.get("/api", (_req, res) => {
-  res.send("Church Music");
-});
+app.use("/api", router);
 
 app.get("/", (_req, res) => {
   res.sendFile(path.join(appDir, "index.html"));
