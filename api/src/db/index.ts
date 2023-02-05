@@ -1,11 +1,11 @@
 import pg from "pg";
 
-import { dbConnectionString } from "../config/index";
+import { databaseUrl } from "../config/index";
 
 const { Pool } = pg;
 
 export const dbPool = new Pool({
-  connectionString: dbConnectionString,
+  connectionString: databaseUrl,
   ssl: {
     rejectUnauthorized: false,
   },

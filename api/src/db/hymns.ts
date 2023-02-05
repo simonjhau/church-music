@@ -64,7 +64,7 @@ export const dbDeleteHymn = async (hymnId: string): Promise<void> => {
 export const dbUpdateHymn = async (
   id: string,
   name: string,
-  lyrics?: string
+  lyrics?: string | null
 ): Promise<Hymn> => {
   const query = `UPDATE hymns SET
                   name = $1,

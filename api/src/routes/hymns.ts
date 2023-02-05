@@ -125,7 +125,7 @@ const UpdateHymnRequestParamsSchema = z
 const UpdateHymnRequestBodySchema = z
   .object({
     name: z.string(),
-    lyrics: z.string().optional(),
+    lyrics: z.string().optional().nullable(),
   })
   .strict();
 hymnsRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
