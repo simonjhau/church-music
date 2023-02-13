@@ -10,3 +10,15 @@ export const dbPool = new Pool({
     rejectUnauthorized: false,
   },
 });
+
+export const dbBeginTransaction = async (): Promise<void> => {
+  await dbPool.query("BEGIN");
+};
+
+export const dbCommit = async (): Promise<void> => {
+  await dbPool.query("COMMIT");
+};
+
+export const dbRollback = async (): Promise<void> => {
+  await dbPool.query("ROLLBACK");
+};

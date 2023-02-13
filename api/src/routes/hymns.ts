@@ -4,7 +4,6 @@ import express, {
   type Response,
 } from "express";
 import { z } from "zod";
-import { fromZodError } from "zod-validation-error";
 
 import {
   dbAddHymn,
@@ -13,25 +12,22 @@ import {
   dbGetHymns,
   dbUpdateHymn,
 } from "../db/hymns";
+import { parseData } from "../utils";
+
 export const hymnsRouter = express.Router();
 
 // Get list of hymns that match search query
-const GetHymnsRequestSchema = z
-  .object({
-    q: z.string(),
-  })
-  .strict();
+const GetHymnsRequestSchema = z.object({
+  q: z.string(),
+});
 hymnsRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
-  const result = GetHymnsRequestSchema.safeParse(req.query);
-  if (!result.success) {
-    throw new Error(
-      `Problem with get hymns request query: \n ${
-        fromZodError(result.error).message
-      }`
-    );
-  }
+  const validReqParams = parseData(
+    GetHymnsRequestSchema,
+    req.query,
+    "Problem with get hymns request query"
+  );
 
-  const query = result.data.q;
+  const query = validReqParams.q;
   dbGetHymns(query)
     .then((hymns) => res.status(200).json(hymns))
     .catch((err) => {
@@ -46,16 +42,13 @@ const HymnByIdRequestSchema = z
   })
   .strict();
 hymnsRouter.get("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const result = HymnByIdRequestSchema.safeParse(req.params);
-  if (!result.success) {
-    throw new Error(
-      `Problem with get hymn by ID request parameters: \n ${
-        fromZodError(result.error).message
-      }`
-    );
-  }
+  const validReqParams = parseData(
+    HymnByIdRequestSchema,
+    req.params,
+    "Problem with get hymn by ID request parameters"
+  );
 
-  const hymnId = result.data.id;
+  const hymnId = validReqParams.id;
   dbGetHymnById(hymnId)
     .then((hymn) => res.status(200).json(hymn))
     .catch((err) => {
@@ -70,16 +63,13 @@ const AddHymnRequestSchema = z
   })
   .strict();
 hymnsRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
-  const result = AddHymnRequestSchema.safeParse(req.body);
-  if (!result.success) {
-    throw new Error(
-      `Problem with add hymn request body: \n ${
-        fromZodError(result.error).message
-      }`
-    );
-  }
+  const validReqBody = parseData(
+    AddHymnRequestSchema,
+    req.body,
+    "Problem with add hymn request body"
+  );
 
-  const hymnName = result.data.name;
+  const hymnName = validReqBody.name;
   dbAddHymn(hymnName)
     .then((newHymn) => {
       res.location(`/hymns/${newHymn.id}`);
@@ -98,16 +88,13 @@ hymnsRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
 hymnsRouter.delete(
   "/:id",
   (req: Request, res: Response, next: NextFunction) => {
-    const result = HymnByIdRequestSchema.safeParse(req.params);
-    if (!result.success) {
-      throw new Error(
-        `Problem with delete hymn request parameters: \n ${
-          fromZodError(result.error).message
-        }`
-      );
-    }
+    const validReqParams = parseData(
+      HymnByIdRequestSchema,
+      req.params,
+      "Problem with delete hymn request parameters"
+    );
 
-    const hymnId = result.data.id;
+    const hymnId = validReqParams.id;
     dbDeleteHymn(hymnId)
       .then(() => res.status(200).send(`Hymn ${hymnId} deleted successfully`))
       .catch((err) => {
@@ -129,27 +116,21 @@ const UpdateHymnRequestBodySchema = z
   })
   .strict();
 hymnsRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const paramsResult = UpdateHymnRequestParamsSchema.safeParse(req.params);
-  if (!paramsResult.success) {
-    throw new Error(
-      `Problem with update hymn request params: \n ${
-        fromZodError(paramsResult.error).message
-      }`
-    );
-  }
+  const validReqParams = parseData(
+    UpdateHymnRequestParamsSchema,
+    req.params,
+    "Problem with update hymn request params"
+  );
 
-  const bodyResult = UpdateHymnRequestBodySchema.safeParse(req.body);
-  if (!bodyResult.success) {
-    throw new Error(
-      `Problem with update hymn request body: \n ${
-        fromZodError(bodyResult.error).message
-      }`
-    );
-  }
+  const validReqBody = parseData(
+    UpdateHymnRequestBodySchema,
+    req.body,
+    "Problem with update hymn request body"
+  );
 
-  const hymnId = paramsResult.data.id;
-  const hymnName = bodyResult.data.name;
-  const hymnLyrics = bodyResult.data.lyrics;
+  const hymnId = validReqParams.id;
+  const hymnName = validReqBody.name;
+  const hymnLyrics = validReqBody.lyrics;
 
   dbUpdateHymn(hymnId, hymnName, hymnLyrics)
     .then((hymn) => {

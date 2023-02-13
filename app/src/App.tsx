@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import reactLogo from "./assets/react.svg";
 import "./App.css";
+
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+import reactLogo from "./assets/react.svg";
 
 function App() {
   const [post, setPost] = useState(null);

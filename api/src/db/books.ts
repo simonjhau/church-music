@@ -26,10 +26,3 @@ export const dbGetBooks = async (): Promise<Book[]> => {
   );
   return books;
 };
-
-// export const dbGetBookCode = async (bookId: number) => {
-//   const sqlQuery = `SELECT book_code As "bookCode" FROM books WHERE id = $1;`;
-//   const values = [bookId];
-//   const book = await dbQuery(sqlQuery, values);
-//   return book.rows[0].bookCode;
-// };
