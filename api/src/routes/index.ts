@@ -23,7 +23,7 @@ router.use("/masses", massesRouter);
 
 router.get("/status", (_req: Request, res: Response, next: NextFunction) => {
   checkDbPoolConnection()
-    .then(() => res.status(200))
+    .then(() => res.json({ msg: "ok" }))
     .catch((err) => {
       next(err);
     });
