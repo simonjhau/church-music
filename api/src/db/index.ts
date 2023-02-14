@@ -11,6 +11,10 @@ export const dbPool = new Pool({
   },
 });
 
+export const checkDbPoolConnection = async (): Promise<void> => {
+  await dbPool.query("SELECT NOW()");
+};
+
 export const dbBeginTransaction = async (): Promise<void> => {
   await dbPool.query("BEGIN");
 };
