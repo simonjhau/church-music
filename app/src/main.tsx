@@ -7,8 +7,6 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { Auth0ProviderWithNavigate } from "./Auth0ProviderWithNavigate";
 
-console.log("here3");
-
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>

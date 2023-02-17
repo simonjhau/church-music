@@ -9,16 +9,12 @@ interface Auth0ProviderWithNavigateProps {
 export const Auth0ProviderWithNavigate = ({
   children,
 }: PropsWithChildren<Auth0ProviderWithNavigateProps>): JSX.Element | null => {
-  console.log("here1");
-
   const navigate = useNavigate();
 
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
   const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
   const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI;
   const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
-
-  console.log({ redirectUri });
 
   const onRedirectCallback = (appState?: AppState): void => {
     navigate(appState?.returnTo ?? window.location.pathname);
