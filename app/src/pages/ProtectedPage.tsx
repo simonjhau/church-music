@@ -1,8 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 
-const apiServerUrl = import.meta.env.VITE_API_SERVER_URL as string;
-
 export const ProtectedPage: React.FC = () => {
   const [message, setMessage] = useState<string>("");
 
