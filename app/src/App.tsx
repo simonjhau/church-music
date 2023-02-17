@@ -1,24 +1,31 @@
 import "./App.css";
 
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { Container } from "@mui/material";
+import { type ReactElement } from "react";
+import { Route, Routes } from "react-router-dom";
 
-import reactLogo from "./assets/react.svg";
+import { AuthenticationGuard } from "./components/AuthenticationGuard";
+import { NavBar } from "./components/NavBar";
+import { CallbackPage } from "./pages/CallbackPage";
+import { HomePage } from "./pages/HomePage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { ProtectedPage } from "./pages/ProtectedPage";
 
-function App() {
-  const [post, setPost] = useState(null);
-
-  useEffect(() => {
-    axios.get("/api").then((response: any) => {
-      setPost(response.data);
-    });
-  }, []);
-
+function App(): ReactElement {
   return (
-    <div>
-      <h1>Title</h1>
-      <h1>{post}</h1>
-    </div>
+    <Container sx={{ bgcolor: "white", height: "100%", width: "100" }}>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/protected"
+          element={<AuthenticationGuard component={ProtectedPage} />}
+        />
+
+        <Route path="/callback" element={<CallbackPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Container>
   );
 }
 

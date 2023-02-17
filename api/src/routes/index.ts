@@ -3,7 +3,9 @@ import express, {
   type Request,
   type Response,
 } from "express";
+import { auth } from "express-oauth2-jwt-bearer";
 
+import { auth0Audience, auth0Domain } from "../config/index";
 import { checkDbPoolConnection } from "../db";
 import { booksRouter } from "./books";
 import { fileTypesRouter } from "./fileTypes";
@@ -14,13 +16,6 @@ import { massesRouter } from "./masses";
 
 export const router = express.Router();
 
-router.use("/books", booksRouter);
-router.use("/fileTypes", fileTypesRouter);
-router.use("/hymns/:hymnId/files", hymnFilesRouter);
-router.use("/hymns", hymnsRouter);
-router.use("/hymnTypes", hymnTypesRouter);
-router.use("/masses", massesRouter);
-
 router.get("/status", (_req: Request, res: Response, next: NextFunction) => {
   checkDbPoolConnection()
     .then(() => res.json({ msg: "ok" }))
@@ -28,6 +23,21 @@ router.get("/status", (_req: Request, res: Response, next: NextFunction) => {
       next(err);
     });
 });
+
+// Authorization middleware. When used, the Access Token must
+// exist and be verified against the Auth0 JSON Web Key Set.
+const checkJwt = auth({
+  audience: auth0Audience,
+  issuerBaseURL: `https://${auth0Domain}`,
+});
+router.use(checkJwt);
+
+router.use("/books", booksRouter);
+router.use("/fileTypes", fileTypesRouter);
+router.use("/hymns/:hymnId/files", hymnFilesRouter);
+router.use("/hymns", hymnsRouter);
+router.use("/hymnTypes", hymnTypesRouter);
+router.use("/masses", massesRouter);
 
 router.get("/auth", (_req: Request, res: Response) => {
   res.json({ msg: "authenticated" });

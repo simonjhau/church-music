@@ -8,11 +8,16 @@ const {
   AWS_ACCESS_KEY,
   AWS_SECRET_KEY,
   AUTH,
+  AUTH0_AUDIENCE,
+  AUTH0_DOMAIN,
   DATABASE_URL,
   PORT,
 } = process.env;
 
 export const withAuth = AUTH === "false";
+export const auth0Audience = AUTH0_AUDIENCE ?? "";
+export const auth0Domain = AUTH0_DOMAIN ?? "";
+
 export const databaseUrl = DATABASE_URL ?? "";
 export const port = PORT ?? 9000;
 
