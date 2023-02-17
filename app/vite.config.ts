@@ -20,7 +20,6 @@ export default defineConfig(({ command, mode }) => {
       define[envVar] = JSON.stringify([envVar]);
     }
   }
-  console.log(define);
 
   return {
     plugins: [react()],

@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "(cd api && npm install); (cd app && npm install);",
-    "build": "(cd api && npm run build); (cd app && npm run build);",
-    "start": "pm2 start ./api/dist/server.js --no-daemon",
-    "dev": "concurrently \"npm run dev --prefix api\" \"npm run dev --prefix app\"",
+    "postinstall": "(cd server && npm install); (cd app && npm install);",
+    "build": "(cd server && npm run build); (cd app && npm run build);",
+    "start": "pm2 start ./server/dist/server.js --no-daemon",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix app\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx prettier --write . && npx eslint --fix . --ext .ts",
     "lint:check": "npx prettier --check . && npx eslint . --ext .ts"
