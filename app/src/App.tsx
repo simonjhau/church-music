@@ -11,7 +11,6 @@ import { HomePage } from "./pages/HomePage";
 import { HymnsPage } from "./pages/HymnsPage";
 import { MassesPage } from "./pages/MassesPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { ProtectedPage } from "./pages/ProtectedPage";
 
 function App(): ReactElement {
   return (
@@ -35,6 +34,7 @@ function App(): ReactElement {
           path="/masses"
           element={<AuthenticationGuard component={MassesPage} />}
         />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Container>
