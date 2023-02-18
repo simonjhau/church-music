@@ -42,7 +42,15 @@ const MassCard: React.FC<Props> = ({ mass }) => {
   };
 
   return (
-    <Box sx={{ bgcolor: "#dee0f1", p: 2, borderRadius: "0.5em", m: 2 }}>
+    <Box
+      sx={{
+        bgcolor: "#dee0f1",
+        p: 2,
+        borderRadius: "0.5em",
+        my: 2,
+        mx: { xs: 0, sm: 2 },
+      }}
+    >
       <Typography variant="h5">{dateTime}</Typography>
       <Typography variant="h6">{mass.name}</Typography>
       <Button

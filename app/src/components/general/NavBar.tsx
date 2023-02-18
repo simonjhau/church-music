@@ -15,7 +15,13 @@ export const NavBar = (): ReactElement => {
       <CssBaseline />
       <AppBar component="nav">
         <Toolbar>
-          <Box sx={{ flexGrow: 1, display: { xs: "flex" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              flexShrink: 1,
+              display: { xs: "flexwrap", sm: "flex" },
+            }}
+          >
             <Link to="/">
               <Typography
                 variant="h6"
@@ -23,8 +29,9 @@ export const NavBar = (): ReactElement => {
                 sx={{
                   marginRight: 3,
                   display: { sm: "block" },
-                  textAlign: "left",
+                  textAlign: { sm: "left", xs: "center" },
                   color: "white",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Church Music
