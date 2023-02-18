@@ -42,7 +42,7 @@ export const CalendarPage: React.FC = () => {
   return loading ? (
     <PageLoader />
   ) : (
-    <Container sx={{ marginTop: 6 }}>
+    <Container>
       <Typography variant="h4">Upcoming Masses</Typography>
       {futureMasses.length > 0 ? (
         futureMasses.map((mass) => {
