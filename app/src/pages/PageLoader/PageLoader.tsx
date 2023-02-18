@@ -1,3 +1,5 @@
+import "./PageLoader.css";
+
 import React from "react";
 
 export const PageLoader: React.FC = () => {

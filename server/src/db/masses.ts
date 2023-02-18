@@ -56,7 +56,7 @@ export const dbGetMassData = async (massId: string): Promise<Mass> => {
                     file_id AS "fileId"
                     FROM masses
                     WHERE id = $1;`;
-  const res = (await dbPool.query(sqlQuery, [massId])).rows;
+  const res = (await dbPool.query(sqlQuery, [massId])).rows[0];
   const mass = parseData(
     MassSchema,
     res,
