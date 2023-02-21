@@ -1,5 +1,3 @@
-import "./App.css";
-
 import { Container } from "@mui/material";
 import { type ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
