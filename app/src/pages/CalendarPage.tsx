@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Container, Divider, Typography } from "@mui/material";
+import { Divider, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -23,12 +23,12 @@ export const CalendarPage: React.FC = () => {
     };
 
     getMasses()
-      .then(() => {
-        setLoading(false);
-      })
       .catch((e) => {
         const msg = e instanceof Error ? e.message : "Unknown error";
         alert(msg);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -42,17 +42,21 @@ export const CalendarPage: React.FC = () => {
   return loading ? (
     <PageLoader />
   ) : (
-    <Container>
-      <Typography variant="h4">Upcoming Masses</Typography>
+    <Stack sx={{ textAlign: "center", alignItems: "center", mx: { xs: 1 } }}>
+      <Typography variant="h4" sx={{ my: 2 }}>
+        Upcoming Masses
+      </Typography>
       {futureMasses.length > 0 ? (
         futureMasses.map((mass) => {
           return <MassCard key={mass.id} mass={mass}></MassCard>;
         })
       ) : (
-        <Typography variant="h5">No masses found</Typography>
+        <Typography variant="h5" sx={{ my: 2 }}>
+          No masses found
+        </Typography>
       )}
 
-      <Divider variant="middle" />
+      <Divider variant="middle" sx={{ minWidth: { xs: "90%", sm: "500px" } }} />
 
       <Typography sx={{ my: 2 }} variant="h4">
         Previous Masses
@@ -62,8 +66,10 @@ export const CalendarPage: React.FC = () => {
           return <MassCard key={mass.id} mass={mass}></MassCard>;
         })
       ) : (
-        <Typography variant="h5">No masses found</Typography>
+        <Typography variant="h5" sx={{ my: 2 }}>
+          No masses found
+        </Typography>
       )}
-    </Container>
+    </Stack>
   );
 };

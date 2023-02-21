@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Box, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { type ReactElement } from "react";
 
 export const HomePage = (): ReactElement => {
@@ -10,11 +10,11 @@ export const HomePage = (): ReactElement => {
   };
 
   return (
-    <Box>
-      <Typography variant="h4">
+    <Container sx={{ textAlign: "center" }}>
+      <Typography variant="h4" sx={{ align: "right" }}>
         Hi {user?.nickname ? capitalizeFirstLetter(user.nickname) : "there"} 👋
         , welcome to the church music app!
       </Typography>
-    </Box>
+    </Container>
   );
 };

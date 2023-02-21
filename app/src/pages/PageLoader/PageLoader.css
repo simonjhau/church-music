@@ -1,9 +1,13 @@
+.loaderPage {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
 .loader {
   height: 5rem;
   width: 5rem;
-
   margin: auto;
-
   animation: spin 2s infinite linear;
 }
 

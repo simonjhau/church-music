@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Box, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import React from "react";
@@ -42,12 +42,16 @@ const MassCard: React.FC<Props> = ({ mass }) => {
   };
 
   return (
-    <Box
+    <Stack
       sx={{
+        minWidth: "450px",
+        maxWidth: "500px",
+        justifyContent: "center",
+        alignItems: "center",
         bgcolor: "#dee0f1",
         p: 2,
         borderRadius: "0.5em",
-        my: 2,
+        my: 1,
         mx: { xs: 0, sm: 2 },
       }}
     >
@@ -60,7 +64,7 @@ const MassCard: React.FC<Props> = ({ mass }) => {
       >
         Get Music
       </Button>
-    </Box>
+    </Stack>
   );
 };
 
