@@ -18,7 +18,6 @@ export const NavBar = (): ReactElement => {
           <Box
             sx={{
               flexGrow: 1,
-              flexShrink: 1,
               display: { xs: "flexwrap", sm: "flex" },
             }}
           >
@@ -28,7 +27,6 @@ export const NavBar = (): ReactElement => {
                 component="div"
                 sx={{
                   marginRight: 3,
-                  display: { sm: "block" },
                   textAlign: { sm: "left", xs: "center" },
                   color: "white",
                   whiteSpace: "nowrap",
@@ -38,11 +36,18 @@ export const NavBar = (): ReactElement => {
               </Typography>
             </Link>
 
-            {navItems.map((item) => (
-              <Link to={item} key={`${item}-key`}>
-                <Button sx={{ color: "#fff" }}>{item}</Button>
-              </Link>
-            ))}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "space-evenly", sm: "flex-start" },
+              }}
+            >
+              {navItems.map((item) => (
+                <Link to={item} key={`${item}-key`}>
+                  <Button sx={{ color: "#fff" }}>{item}</Button>
+                </Link>
+              ))}
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>

@@ -1,0 +1,135 @@
+import { useAuth0 } from "@auth0/auth0-react";
+import {
+  Box,
+  CircularProgress,
+  debounce,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import match from "autosuggest-highlight/match";
+import parse from "autosuggest-highlight/parse";
+import axios from "axios";
+import { Fragment, type ReactElement, useEffect, useState } from "react";
+import { z } from "zod";
+
+const HymnSchema = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+    lyrics: z.string().nullable(),
+  })
+  .strict();
+export type Hymn = z.infer<typeof HymnSchema>;
+
+export const SearchBox = (): ReactElement => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const [value, setValue] = useState<Hymn | null>(null);
+  const [inputValue, setInputValue] = useState("");
+  const [options, setOptions] = useState<readonly Hymn[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (inputValue === "") {
+      setOptions([]);
+      setLoading(false);
+      return undefined;
+    }
+
+    const getHymnsThatMatchSearchQuery = async (): Promise<void> => {
+      const token = await getAccessTokenSilently();
+      const res = await axios.get(`/api/hymns/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          q: inputValue,
+        },
+      });
+      setOptions(res.data);
+      setLoading(false);
+    };
+
+    getHymnsThatMatchSearchQuery().catch((err) => {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      setLoading(false);
+      alert(msg);
+    });
+  }, [inputValue]);
+
+  return (
+    <Autocomplete
+      size="small"
+      id="async-search"
+      getOptionLabel={(option) => option.name}
+      filterOptions={(x) => x}
+      options={options}
+      autoComplete
+      includeInputInList
+      filterSelectedOptions
+      value={value}
+      noOptionsText="No hymns"
+      onChange={(
+        _event: React.SyntheticEvent<Element, Event>,
+        selectedHymn: Hymn | null
+      ) => {
+        if (selectedHymn) {
+          // setOptions([selectedHymn]);
+          // setOptions(selectedHymn ? [selectedHymn, ...options] : options);
+          setValue(selectedHymn);
+        }
+      }}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      onInputChange={(_event, newInputValue) => {
+        setLoading(true);
+        setInputValue(newInputValue);
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Search for a hymn"
+          fullWidth
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <Fragment>
+                {loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
+                {params.InputProps.endAdornment}
+              </Fragment>
+            ),
+          }}
+        />
+      )}
+      renderOption={(props, option) => {
+        const text = option.name;
+        const matches = match(option.name, inputValue);
+        const parts = parse(text, matches);
+
+        return (
+          <li {...props} key={option.id}>
+            <Grid container alignItems="center">
+              <Grid
+                item
+                sx={{ width: "calc(100% - 44px)", wordWrap: "break-word" }}
+              >
+                {parts.map((part, index) => (
+                  <Box
+                    key={index}
+                    component="span"
+                    sx={{ fontWeight: part.highlight ? "bold" : "regular" }}
+                  >
+                    {part.text}
+                  </Box>
+                ))}
+              </Grid>
+            </Grid>
+          </li>
+        );
+      }}
+    />
+  );
+};

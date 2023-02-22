@@ -43,7 +43,7 @@ export const CalendarPage: React.FC = () => {
     <PageLoader />
   ) : (
     <Stack sx={{ textAlign: "center", alignItems: "center", mx: { xs: 1 } }}>
-      <Typography variant="h4" sx={{ my: 2 }}>
+      <Typography variant="h4" sx={{ marginBottom: 2 }}>
         Upcoming Masses
       </Typography>
       {futureMasses.length > 0 ? (
