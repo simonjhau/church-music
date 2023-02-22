@@ -42,7 +42,12 @@ export const CalendarPage: React.FC = () => {
   return loading ? (
     <PageLoader />
   ) : (
-    <Stack sx={{ textAlign: "center", alignItems: "center", mx: { xs: 1 } }}>
+    <Stack
+      sx={{
+        textAlign: "center",
+        alignItems: "center",
+      }}
+    >
       <Typography variant="h4" sx={{ marginBottom: 2 }}>
         Upcoming Masses
       </Typography>

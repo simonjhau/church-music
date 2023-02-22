@@ -44,8 +44,8 @@ const MassCard: React.FC<Props> = ({ mass }) => {
   return (
     <Stack
       sx={{
-        minWidth: "450px",
-        maxWidth: "500px",
+        width: "100%",
+        maxWidth: "450px",
         justifyContent: "center",
         alignItems: "center",
         bgcolor: "#dee0f1",
