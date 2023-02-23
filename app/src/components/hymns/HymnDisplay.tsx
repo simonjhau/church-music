@@ -5,7 +5,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 // import { useEditMode } from "../../../context/EditModeContext";
-import { type File, type Hymn } from "../../types";
+import { type File, type Hymn, HymnSchema } from "../../types";
+import { parseData } from "../../utils";
 // import EditHymnBar from "./EditHymnBar";
 // import HymnFilesList from "./HymnFilesList.tsx1";
 
@@ -27,13 +28,14 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
 
   useEffect(() => {
     const getFiles = async (): Promise<void> => {
-      // Get list of files for this hymns
-      const token = await getAccessTokenSilently();
-      const res = await axios.get(`/api/hymns/${hymnData.id}/files`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setFiles(res.data);
-
+      if (hymnData) {
+        // Get list of files for this hymns
+        const token = await getAccessTokenSilently();
+        const res = await axios.get(`/api/hymns/${hymnData.id}/files`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFiles(res.data);
+      }
       // setLocalHymnData(hymnData);
     };
 
@@ -43,10 +45,15 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
     });
   }, [hymnData]);
 
-  const editLocalHymnData = (key: keyof HymnInterface, data: any): void => {
+  const editLocalHymnData = (key: keyof Hymn, data: string): void => {
     const updatedHymnData = { ...localHymnData };
     updatedHymnData[key] = data;
-    setLocalHymnData(updatedHymnData);
+    const validHymn = parseData(
+      HymnSchema,
+      updatedHymnData,
+      "Error editing local hymn data"
+    );
+    setLocalHymnData(validHymn);
   };
 
   const handleHymnNameChange = (e: React.ChangeEvent): void => {
