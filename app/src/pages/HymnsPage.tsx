@@ -2,17 +2,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Container, Grid, Stack } from "@mui/material";
 import axios from "axios";
 import { type ReactElement, useEffect, useState } from "react";
-import { z } from "zod";
 
 import { SearchBox } from "../components/general/SearchBox";
+import { HymnDisplay } from "../components/hymns/HymnDisplay";
 import NewHymnButtonModal from "../components/hymns/NewHymnButtonModal";
-
-const HymnSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  lyrics: z.string(),
-});
-type Hymn = z.infer<typeof HymnSchema>;
+import { type Hymn } from "../types";
 
 export const HymnsPage = (): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
@@ -23,13 +17,8 @@ export const HymnsPage = (): ReactElement => {
   //   // setEditMode(false);
   // }, []);
 
-  const defaultHymnData: Hymn = {
-    id: "",
-    name: "",
-    lyrics: "",
-  };
-
-  const [hymnData, setHymnData] = useState<Hymn>(defaultHymnData);
+  const [hymnData, setHymnData] = useState<Hymn | null>(null);
+  // console.log(hymnData);
 
   const refreshHymnData = (endpoint: string): void => {
     const getHymns = async (): Promise<void> => {
@@ -40,7 +29,7 @@ export const HymnsPage = (): ReactElement => {
         });
         setHymnData(res.data[0]);
       } else {
-        setHymnData(defaultHymnData);
+        setHymnData(null);
       }
     };
 
@@ -60,16 +49,23 @@ export const HymnsPage = (): ReactElement => {
         }}
       >
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={8}>
-            <SearchBox />
+          <Grid item xs={12} sm={8}>
+            <SearchBox value={hymnData} setValue={setHymnData} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} sm={4}>
             <NewHymnButtonModal
               initialHymnName=""
               refreshHymnData={refreshHymnData}
             />
           </Grid>
         </Grid>
+
+        {hymnData && (
+          <HymnDisplay
+            hymnData={hymnData}
+            refreshHymnData={refreshHymnData}
+          ></HymnDisplay>
+        )}
       </Stack>
     </Container>
   );

@@ -9,7 +9,7 @@
     "start": "pm2 start ./server/dist/server.js --no-daemon",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix app\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx prettier --write . && npx eslint --fix . --ext .ts",
+    "lint": "npx prettier --write . && npx eslint --fix . --ext .ts,.tsx",
     "lint:check": "npx prettier --check . && npx eslint . --ext .ts"
   },
   "repository": {

@@ -81,7 +81,7 @@ const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
         onClick={handleOpen}
         variant="contained"
         fullWidth
-        // sx={{ height: "100", minHeight: "30px" }}
+        sx={{ whiteSpace: "nowrap", minWidth: "max-content" }}
       >
         New Hymn
       </Button>

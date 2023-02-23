@@ -1,32 +1,22 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import {
-  Box,
-  CircularProgress,
-  debounce,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, Grid, TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import axios from "axios";
-import { Fragment, type ReactElement, useEffect, useState } from "react";
-import { z } from "zod";
+import { Fragment, useEffect, useState } from "react";
 
-const HymnSchema = z
-  .object({
-    id: z.string(),
-    name: z.string(),
-    lyrics: z.string().nullable(),
-  })
-  .strict();
-export type Hymn = z.infer<typeof HymnSchema>;
+import { type Hymn } from "../../types";
 
-export const SearchBox = (): ReactElement => {
+interface Props {
+  value: Hymn | null;
+  setValue: (h: Hymn) => void;
+}
+
+export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
   const { getAccessTokenSilently } = useAuth0();
 
-  const [value, setValue] = useState<Hymn | null>(null);
+  // const [value, setValue] = useState<Hymn | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<readonly Hymn[]>([]);
   const [loading, setLoading] = useState(false);
@@ -77,7 +67,7 @@ export const SearchBox = (): ReactElement => {
       ) => {
         if (selectedHymn) {
           // setOptions([selectedHymn]);
-          // setOptions(selectedHymn ? [selectedHymn, ...options] : options);
+          setOptions(selectedHymn ? [selectedHymn, ...options] : options);
           setValue(selectedHymn);
         }
       }}
