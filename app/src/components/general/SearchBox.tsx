@@ -10,13 +10,12 @@ import { type Hymn } from "../../types";
 
 interface Props {
   value: Hymn | null;
-  setValue: (h: Hymn) => void;
+  setValue: (h: Hymn | null) => void;
 }
 
 export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
   const { getAccessTokenSilently } = useAuth0();
 
-  // const [value, setValue] = useState<Hymn | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<readonly Hymn[]>([]);
   const [loading, setLoading] = useState(false);
@@ -66,7 +65,6 @@ export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
         selectedHymn: Hymn | null
       ) => {
         if (selectedHymn) {
-          // setOptions([selectedHymn]);
           setOptions(selectedHymn ? [selectedHymn, ...options] : options);
           setValue(selectedHymn);
         }
@@ -74,6 +72,7 @@ export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
       isOptionEqualToValue={(option, value) => option.id === value.id}
       onInputChange={(_event, newInputValue) => {
         setLoading(true);
+        setValue(null);
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (

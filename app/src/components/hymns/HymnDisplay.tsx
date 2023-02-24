@@ -1,25 +1,26 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { TextField, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-// import { useEditMode } from "../../../context/EditModeContext";
 import { type File, type Hymn, HymnSchema } from "../../types";
 import { parseData } from "../../utils";
 // import EditHymnBar from "./EditHymnBar";
-// import HymnFilesList from "./HymnFilesList.tsx1";
+import { HymnFilesList } from "./HymnFilesList";
 
 interface Props {
   hymnData: Hymn | null;
   refreshHymnData: (endpoint: string) => void;
+  editMode: boolean;
 }
 
-export const HymnDisplay: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
+export const HymnDisplay: React.FC<Props> = ({
+  hymnData,
+  refreshHymnData,
+  editMode,
+}) => {
   const { getAccessTokenSilently } = useAuth0();
-
-  // Context
-  // const { editMode } = useEditMode();
 
   const [localHymnData, setLocalHymnData] = useState(hymnData);
   const [files, setFiles] = useState<File[]>([
@@ -135,12 +136,13 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, refreshHymnData }) => {
           <br />
           <Typography variant="h5">Music Files</Typography>
 
-          {/* <HymnFilesList
-        hymnId={hymnData.id}
-        files={files}
-        setFiles={setFiles}
-        refreshHymnData={refreshHymnData}
-      /> */}
+          <HymnFilesList
+            hymnId={localHymnData.id}
+            files={files}
+            setFiles={setFiles}
+            refreshHymnData={refreshHymnData}
+            editMode={editMode}
+          />
           <br />
           <Typography variant="h5">Lyrics</Typography>
           <div className="lyrics">

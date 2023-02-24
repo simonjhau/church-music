@@ -105,7 +105,7 @@ const FileDataNamesSchema = z.object({
   hymnName: z.string(),
   fileType: z.string(),
   bookCode: z.string(),
-  hymnNum: z.string(),
+  hymnNum: z.string().nullable(),
   comment: z.string(),
 });
 type FileDataNames = z.infer<typeof FileDataNamesSchema>;
@@ -113,7 +113,7 @@ export const dbGetFileDataNames = async (
   fileId: string
 ): Promise<FileDataNames> => {
   const query = `SELECT
-                  id AS "id",
+                  hf.id AS "id",
                   h.name AS "hymnName",
                   ft.name AS "fileType",
                   b.book_code AS "bookCode",
@@ -123,7 +123,7 @@ export const dbGetFileDataNames = async (
                   JOIN hymns h ON h.id = hf.hymn_id
                   JOIN file_types ft ON ft.id = hf.file_type_id
                   JOIN books b on b.id = hf.book_id
-                  WHERE id = $1;`;
+                  WHERE hf.id = $1;`;
   const res = (await dbPool.query(query, [fileId])).rows[0];
   const fileDataNames = parseData(
     FileDataNamesSchema,

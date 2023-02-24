@@ -70,6 +70,7 @@ hymnFilesRouter.get(
 // Get hymn file given file ID
 const GetFileRequestSchema = z
   .object({
+    hymnId: z.string(),
     id: z.string(),
   })
   .strict();
@@ -81,7 +82,6 @@ hymnFilesRouter.get(
       req.params,
       "Problem with get file request params"
     );
-
     const fileId = validReqParams.id;
     getHymnFileName(fileId)
       .then(async (fileName) => {

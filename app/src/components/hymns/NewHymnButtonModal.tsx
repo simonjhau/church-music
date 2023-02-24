@@ -1,10 +1,10 @@
-import { useAuth0 } from "@auth0/auth0-react";
+// import { useAuth0 } from "@auth0/auth0-react";
 import { TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
+// import axios from "axios";
 import { useRef, useState } from "react";
 
 interface NewHymnModalProps {
@@ -16,7 +16,7 @@ const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
   initialHymnName,
   refreshHymnData,
 }) => {
-  const { getAccessTokenSilently } = useAuth0();
+  // const { getAccessTokenSilently } = useAuth0();
   const [open, setOpen] = useState(false);
   const handleOpen = (): void => {
     setOpen(true);
@@ -32,31 +32,31 @@ const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
     name.current = e.target.value;
   };
 
-  const handleSaveHymn = async () => {
-    if (!name) {
-      alert("Error: Name cannot be blank");
-    }
+  // const handleSaveHymn = async (): Promise<void> => {
+  //   if (!name) {
+  //     alert("Error: Name cannot be blank");
+  //   }
 
-    const hymnData = {
-      name,
-    };
+  //   const hymnData = {
+  //     name,
+  //   };
 
-    const token = await getAccessTokenSilently();
-    axios
-      .post("/hymns", hymnData, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        alert("Mass saved successfully");
-        name.current = "";
-        handleClose();
-        refreshHymnData(res.headers.location);
-      })
-      .catch((e) => {
-        const msg = e instanceof Error ? "e.message" : "Unknown error";
-        alert(`Error saving mass:\n${msg}`);
-      });
-  };
+  //   const token = await getAccessTokenSilently();
+  //   axios
+  //     .post("/hymns", hymnData, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+  //     .then((res) => {
+  //       alert("Mass saved successfully");
+  //       name.current = "";
+  //       handleClose();
+  //       refreshHymnData(res.headers.location);
+  //     })
+  //     .catch((e) => {
+  //       const msg = e instanceof Error ? "e.message" : "Unknown error";
+  //       alert(`Error saving mass:\n${msg}`);
+  //     });
+  // };
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Container, Grid, Stack } from "@mui/material";
 import axios from "axios";
-import { type ReactElement, useEffect, useState } from "react";
+import { type ReactElement, useState } from "react";
 
 import { SearchBox } from "../components/general/SearchBox";
 import { HymnDisplay } from "../components/hymns/HymnDisplay";
@@ -18,7 +18,7 @@ export const HymnsPage = (): ReactElement => {
   // }, []);
 
   const [hymnData, setHymnData] = useState<Hymn | null>(null);
-  // console.log(hymnData);
+  const [editMode, setEditMode] = useState(false);
 
   const refreshHymnData = (endpoint: string): void => {
     const getHymns = async (): Promise<void> => {
@@ -64,6 +64,7 @@ export const HymnsPage = (): ReactElement => {
           <HymnDisplay
             hymnData={hymnData}
             refreshHymnData={refreshHymnData}
+            editMode={editMode}
           ></HymnDisplay>
         )}
       </Stack>
