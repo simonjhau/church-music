@@ -50,7 +50,12 @@ export const HymnsPage = (): ReactElement => {
       >
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={8}>
-            <SearchBox value={hymnData} setValue={setHymnData} />
+            <SearchBox
+              type="hymn"
+              value={hymnData}
+              setValue={setHymnData}
+              apiUrl="/api/hymns/"
+            />
           </Grid>
           <Grid item xs={12} sm={4}>
             <NewHymnButtonModal

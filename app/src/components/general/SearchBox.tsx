@@ -6,18 +6,25 @@ import parse from "autosuggest-highlight/parse";
 import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
 
-import { type Hymn } from "../../types";
+import { type Base } from "../../types";
 
-interface Props {
-  value: Hymn | null;
-  setValue: (h: Hymn | null) => void;
+interface Props<T> {
+  type: string;
+  value: T | null;
+  setValue: (value: T | null) => void;
+  apiUrl: string;
 }
 
-export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
+export const SearchBox = <T extends Base>({
+  type,
+  value,
+  setValue,
+  apiUrl,
+}: Props<T>): JSX.Element => {
   const { getAccessTokenSilently } = useAuth0();
 
   const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState<readonly Hymn[]>([]);
+  const [options, setOptions] = useState<readonly T[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -27,9 +34,9 @@ export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
       return undefined;
     }
 
-    const getHymnsThatMatchSearchQuery = async (): Promise<void> => {
+    const getValuesThatMatchSearchQuery = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.get(`/api/hymns/`, {
+      const res = await axios.get(apiUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -41,7 +48,7 @@ export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
       setLoading(false);
     };
 
-    getHymnsThatMatchSearchQuery().catch((err) => {
+    getValuesThatMatchSearchQuery().catch((err) => {
       const msg = err instanceof Error ? err.message : "Unknown error";
       setLoading(false);
       alert(msg);
@@ -59,14 +66,14 @@ export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
       includeInputInList
       filterSelectedOptions
       value={value}
-      noOptionsText="No hymns"
+      noOptionsText={`No ${type}s`}
       onChange={(
         _event: React.SyntheticEvent<Element, Event>,
-        selectedHymn: Hymn | null
+        selected: T | null
       ) => {
-        if (selectedHymn) {
-          setOptions(selectedHymn ? [selectedHymn, ...options] : options);
-          setValue(selectedHymn);
+        if (selected) {
+          setOptions(selected ? [selected, ...options] : options);
+          setValue(selected);
         }
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -77,7 +84,7 @@ export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Search for a hymn"
+          label={`Search for a ${type}`}
           fullWidth
           InputProps={{
             ...params.InputProps,
