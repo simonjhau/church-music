@@ -72,7 +72,6 @@ export const SearchBox = ({ value, setValue }: Props): JSX.Element => {
       isOptionEqualToValue={(option, value) => option.id === value.id}
       onInputChange={(_event, newInputValue) => {
         setLoading(true);
-        setValue(null);
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (

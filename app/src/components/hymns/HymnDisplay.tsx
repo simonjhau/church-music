@@ -37,7 +37,7 @@ export const HymnDisplay: React.FC<Props> = ({
         });
         setFiles(res.data);
       }
-      // setLocalHymnData(hymnData);
+      setLocalHymnData(hymnData);
     };
 
     getFiles().catch((err) => {
