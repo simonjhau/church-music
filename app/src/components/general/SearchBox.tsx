@@ -64,9 +64,8 @@ export const SearchBox = <T extends Base>({
       options={options}
       autoComplete
       includeInputInList
-      filterSelectedOptions
       value={value}
-      noOptionsText={`No ${type}s`}
+      noOptionsText={`No ${type} found`}
       onChange={(
         _event: React.SyntheticEvent<Element, Event>,
         selected: T | null

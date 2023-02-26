@@ -11,6 +11,12 @@ export const HymnSchema = BaseSchema.extend({
 }).strict();
 export type Hymn = z.infer<typeof HymnSchema>;
 
+export const MassSchema = BaseSchema.extend({
+  dateTime: z.string().nullable(),
+  fileId: z.string().nullable(),
+}).strict();
+export type Mass = z.infer<typeof MassSchema>;
+
 export const BookSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -31,4 +37,16 @@ export interface File {
   bookId: number;
   hymnNum: number;
   comment: string;
+}
+
+export interface MassHymn {
+  id: string;
+  name: string;
+  hymnTypeId: number;
+  fileIds: string[];
+}
+
+export interface HymnType {
+  id: number;
+  name: string;
 }
