@@ -171,17 +171,20 @@ export const MassDisplay = ({
   //   return massValid;
   // };
 
-  // const handleOpenMusic = async () => {
-  //   const token = await getAccessTokenSilently();
-  //   axios
-  //     .get(`/masses/${localMassData.id}/file`, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     })
-  //     .then((res) => window.open(res.data))
-  //     .catch((e) => {
-  //       alert(`Failed to get mass file:\n${e}`);
-  //     });
-  // };
+  const handleOpenMusic = (): void => {
+    const openMusic = async (): Promise<void> => {
+      const token = await getAccessTokenSilently();
+      const res = await axios.get(`api/masses/${localMassData.id}/file`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      window.open(res.data);
+    };
+
+    openMusic().catch((err) => {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      alert(`Failed to get mass file:\n${msg}`);
+    });
+  };
 
   return (
     <div>
@@ -221,11 +224,7 @@ export const MassDisplay = ({
 
           {localMassData.fileId && (
             <div className="d-grid gap-2">
-              <Button
-                variant="contained"
-                fullWidth
-                // onClick={handleOpenMusic}
-              >
+              <Button variant="contained" fullWidth onClick={handleOpenMusic}>
                 Open Music
               </Button>
             </div>
