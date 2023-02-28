@@ -1,5 +1,12 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Box, CircularProgress, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  type SxProps,
+  TextField,
+  type Theme,
+} from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
@@ -13,6 +20,7 @@ interface Props<T> {
   value: T | null;
   setValue: (value: T | null) => void;
   apiUrl: string;
+  sx?: SxProps<Theme>;
 }
 
 export const SearchBox = <T extends Base>({
@@ -20,6 +28,7 @@ export const SearchBox = <T extends Base>({
   value,
   setValue,
   apiUrl,
+  sx
 }: Props<T>): JSX.Element => {
   const { getAccessTokenSilently } = useAuth0();
 
@@ -124,6 +133,7 @@ export const SearchBox = <T extends Base>({
           </li>
         );
       }}
+      sx={{ ...sx }}
     />
   );
 };

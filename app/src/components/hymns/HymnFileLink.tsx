@@ -6,6 +6,11 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 
 import {
+  TypeAndBookProvider,
+  useBooks,
+  useFileTypes,
+} from "../../context/TypesAndBooksContext";
+import {
   type Book,
   BookSchema,
   type File,
@@ -31,43 +36,8 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
   editMode,
 }) => {
   const { getAccessTokenSilently } = useAuth0();
-  const [fileTypes, setFileTypes] = useState<FileType[]>([]);
-  const [books, setBooks] = useState<Book[]>([]);
-
-  useEffect(() => {
-    const getBooksAndFileTypes = async (): Promise<void> => {
-      const token = await getAccessTokenSilently();
-
-      const booksRes = (
-        await axios.get("api/books", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      ).data;
-      const validBooks = parseData(
-        z.array(BookSchema),
-        booksRes,
-        "Problem getting books"
-      );
-      setBooks(validBooks);
-
-      const fileTypesRes = (
-        await axios.get("api/fileTypes", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      ).data;
-      const validFileTypes = parseData(
-        z.array(FileTypeSchema),
-        fileTypesRes,
-        "Problem getting file types"
-      );
-      setFileTypes(validFileTypes);
-    };
-
-    getBooksAndFileTypes().catch((e) => {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      alert(msg);
-    });
-  }, []);
+  const fileTypes = useFileTypes();
+  const books = useBooks();
 
   const handleFileClick: React.MouseEventHandler = (e) => {
     const getFile = async (): Promise<void> => {

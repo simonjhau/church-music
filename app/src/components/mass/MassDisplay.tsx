@@ -9,7 +9,7 @@ import { type Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
 
 import { type Mass, type MassHymn } from "../../types";
-// import DraggableHymnsList from "../DraggableHymnsList/DraggableHymnsList";
+import DraggableHymnsList from "./DraggableHymnsList";
 // import EditMassBar from "../EditMassBar/EditMassBar";
 
 interface Props {
@@ -231,10 +231,10 @@ export const MassDisplay = ({
           )}
           <br />
 
-          {/* <DraggableHymnsList
+          <DraggableHymnsList
             hymnsData={localMassHymns}
             setHymnsData={setLocalMassHymns}
-          /> */}
+          />
         </div>
       )}
     </div>

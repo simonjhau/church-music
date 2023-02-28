@@ -6,6 +6,7 @@ import { type ReactElement, useState } from "react";
 import { SearchBox } from "../components/general/SearchBox";
 import { HymnDisplay } from "../components/hymns/HymnDisplay";
 import NewHymnButtonModal from "../components/hymns/NewHymnButtonModal";
+import { TypeAndBookProvider } from "../context/TypesAndBooksContext";
 import { type Hymn } from "../types";
 
 export const HymnsPage = (): ReactElement => {
@@ -40,39 +41,41 @@ export const HymnsPage = (): ReactElement => {
   };
 
   return (
-    <Container
-      sx={{ alignItems: "center", maxWidth: { md: "700px", lg: "700px" } }}
-    >
-      <Stack
-        sx={{
-          py: 2,
-        }}
+    <TypeAndBookProvider>
+      <Container
+        sx={{ alignItems: "center", maxWidth: { md: "700px", lg: "700px" } }}
       >
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={8}>
-            <SearchBox
-              type="hymn"
-              value={hymnData}
-              setValue={setHymnData}
-              apiUrl="/api/hymns/"
-            />
+        <Stack
+          sx={{
+            py: 2,
+          }}
+        >
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={8}>
+              <SearchBox
+                type="hymn"
+                value={hymnData}
+                setValue={setHymnData}
+                apiUrl="/api/hymns/"
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <NewHymnButtonModal
+                initialHymnName=""
+                refreshHymnData={refreshHymnData}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <NewHymnButtonModal
-              initialHymnName=""
-              refreshHymnData={refreshHymnData}
-            />
-          </Grid>
-        </Grid>
 
-        {hymnData && (
-          <HymnDisplay
-            hymnData={hymnData}
-            refreshHymnData={refreshHymnData}
-            editMode={editMode}
-          ></HymnDisplay>
-        )}
-      </Stack>
-    </Container>
+          {hymnData && (
+            <HymnDisplay
+              hymnData={hymnData}
+              refreshHymnData={refreshHymnData}
+              editMode={editMode}
+            ></HymnDisplay>
+          )}
+        </Stack>
+      </Container>
+    </TypeAndBookProvider>
   );
 };

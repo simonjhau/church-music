@@ -17,27 +17,15 @@ export const MassSchema = BaseSchema.extend({
 }).strict();
 export type Mass = z.infer<typeof MassSchema>;
 
-export const BookSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  bookCode: z.string(),
+export const FileSchema = z.object({
+  id: z.string(),
+  hymnName: z.string(),
+  fileTypeId: z.number(),
+  bookId: z.number(),
+  hymnNum: z.number().nullable(),
+  comment: z.string(),
 });
-export type Book = z.infer<typeof BookSchema>;
-
-export const FileTypeSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-});
-export type FileType = z.infer<typeof FileTypeSchema>;
-
-export interface File {
-  id: string;
-  name: string;
-  fileTypeId: number;
-  bookId: number;
-  hymnNum: number;
-  comment: string;
-}
+export type File = z.infer<typeof FileSchema>;
 
 export interface MassHymn {
   id: string;
@@ -45,6 +33,19 @@ export interface MassHymn {
   hymnTypeId: number;
   fileIds: string[];
 }
+
+export const FileTypeSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+export type FileType = z.infer<typeof FileTypeSchema>;
+
+export const BookSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  bookCode: z.string(),
+});
+export type Book = z.infer<typeof BookSchema>;
 
 export interface HymnType {
   id: number;

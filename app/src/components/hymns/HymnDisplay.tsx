@@ -23,9 +23,7 @@ export const HymnDisplay: React.FC<Props> = ({
   const { getAccessTokenSilently } = useAuth0();
 
   const [localHymnData, setLocalHymnData] = useState(hymnData);
-  const [files, setFiles] = useState<File[]>([
-    { id: "", name: "", fileTypeId: 0, bookId: 0, hymnNum: 0, comment: "" },
-  ]);
+  const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
     const getFiles = async (): Promise<void> => {

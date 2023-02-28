@@ -5,6 +5,7 @@ import { type ReactElement, useState } from "react";
 
 import { SearchBox } from "../components/general/SearchBox";
 import { MassDisplay } from "../components/mass/MassDisplay";
+import { TypeAndBookProvider } from "../context/TypesAndBooksContext";
 // import NewHymnButtonModal from "../components/hymns/NewHymnButtonModal";
 import { type Mass } from "../types";
 
@@ -20,7 +21,6 @@ export const MassesPage = (): ReactElement => {
   const [massData, setMassData] = useState<Mass | null>(null);
 
   const refreshMassData = (endpoint: string | undefined): void => {
-    console.log(endpoint);
     const getHymns = async (): Promise<void> => {
       if (endpoint) {
         const token = await getAccessTokenSilently();
@@ -40,32 +40,34 @@ export const MassesPage = (): ReactElement => {
   };
 
   return (
-    <Container
-      sx={{ alignItems: "center", maxWidth: { md: "700px", lg: "700px" } }}
-    >
-      <Stack
-        sx={{
-          py: 2,
-        }}
+    <TypeAndBookProvider>
+      <Container
+        sx={{ alignItems: "center", maxWidth: { md: "700px", lg: "700px" } }}
       >
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={8}>
-            <SearchBox
-              type="mass"
-              value={massData}
-              setValue={setMassData}
-              apiUrl="/api/masses/"
-            />
+        <Stack
+          sx={{
+            py: 2,
+          }}
+        >
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={8}>
+              <SearchBox
+                type="mass"
+                value={massData}
+                setValue={setMassData}
+                apiUrl="/api/masses/"
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-        {massData && (
-          <MassDisplay
-            massData={massData}
-            refreshMassData={refreshMassData}
-          ></MassDisplay>
-        )}
-      </Stack>
-    </Container>
+          {massData && (
+            <MassDisplay
+              massData={massData}
+              refreshMassData={refreshMassData}
+            ></MassDisplay>
+          )}
+        </Stack>
+      </Container>
+    </TypeAndBookProvider>
   );
 };
