@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import {
   Box,
   CircularProgress,
+  debounce,
   Grid,
   type SxProps,
   TextField,
@@ -11,7 +12,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import axios from "axios";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 import { type Base } from "../../types";
 
@@ -28,7 +29,7 @@ export const SearchBox = <T extends Base>({
   value,
   setValue,
   apiUrl,
-  sx
+  sx,
 }: Props<T>): JSX.Element => {
   const { getAccessTokenSilently } = useAuth0();
 
@@ -36,32 +37,41 @@ export const SearchBox = <T extends Base>({
   const [options, setOptions] = useState<readonly T[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const getValuesThatMatchSearchQuery = async (
+    query: string
+  ): Promise<void> => {
+    const token = await getAccessTokenSilently();
+    const res = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        q: query,
+      },
+    });
+    setOptions(res.data);
+    setLoading(false);
+  };
+
+  const fetch = useMemo(
+    () =>
+      debounce((query: string) => {
+        getValuesThatMatchSearchQuery(query).catch((err) => {
+          const msg = err instanceof Error ? err.message : "Unknown error";
+          setLoading(false);
+          alert(msg);
+        });
+      }, 400),
+    []
+  );
+
   useEffect(() => {
     if (inputValue === "") {
       setOptions([]);
       setLoading(false);
       return undefined;
     }
-
-    const getValuesThatMatchSearchQuery = async (): Promise<void> => {
-      const token = await getAccessTokenSilently();
-      const res = await axios.get(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          q: inputValue,
-        },
-      });
-      setOptions(res.data);
-      setLoading(false);
-    };
-
-    getValuesThatMatchSearchQuery().catch((err) => {
-      const msg = err instanceof Error ? err.message : "Unknown error";
-      setLoading(false);
-      alert(msg);
-    });
+    fetch(inputValue);
   }, [inputValue]);
 
   return (
