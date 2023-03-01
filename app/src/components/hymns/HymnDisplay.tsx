@@ -1,3 +1,5 @@
+import "./Hymn.css";
+
 import { useAuth0 } from "@auth0/auth0-react";
 import { Typography } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
@@ -6,22 +8,18 @@ import React, { useEffect, useState } from "react";
 
 import { type File, type Hymn, HymnSchema } from "../../types";
 import { parseData } from "../../utils";
-// import EditHymnBar from "./EditHymnBar";
+import { EditHymnBar } from "./EditHymnBar";
 import { HymnFilesList } from "./HymnFilesList";
 
 interface Props {
   hymnData: Hymn | null;
-  refreshHymnData: (endpoint: string) => void;
-  editMode: boolean;
+  setHymnData: (hymn: Hymn | null) => void;
 }
 
-export const HymnDisplay: React.FC<Props> = ({
-  hymnData,
-  refreshHymnData,
-  editMode,
-}) => {
+export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
   const { getAccessTokenSilently } = useAuth0();
 
+  const [editMode, setEditMode] = useState(false);
   const [localHymnData, setLocalHymnData] = useState(hymnData);
   const [files, setFiles] = useState<File[]>([]);
 
@@ -60,65 +58,76 @@ export const HymnDisplay: React.FC<Props> = ({
     editLocalHymnData("name", updatedHymnName);
   };
 
-  // const handleLyricsChange = (e: React.ChangeEvent) => {
-  //   const updatedLyrics = (e.target as HTMLTextAreaElement).value;
-  //   editLocalHymnData("lyrics", updatedLyrics);
-  // };
+  const handleLyricsChange = (e: React.ChangeEvent): void => {
+    const updatedLyrics = (e.target as HTMLTextAreaElement).value;
+    editLocalHymnData("lyrics", updatedLyrics);
+  };
 
-  // const handleSaveChanges = async () => {
-  //   // Update the hymn data
-  //   const token = await getAccessTokenSilently();
-  //   axios
-  //     .put(
-  //       `/hymns/${localHymnData.id}`,
-  //       {
-  //         name: localHymnData.name,
-  //         lyrics: localHymnData.lyrics,
-  //       },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     )
-  //     .then((res) => {
-  //       alert(`Hymn saved successfully`);
-  //       refreshHymnData(res.headers.location);
-  //     })
-  //     .catch((e) => {
-  //       alert(`Error saving hymns:\n${e.response.status}: ${e.response.data}`);
-  //     });
-  // };
+  const handleSaveChanges = (): void => {
+    const saveHymn = async (): Promise<void> => {
+      const token = await getAccessTokenSilently();
+      if (localHymnData) {
+        const res = await axios.put(
+          `api/hymns/${localHymnData.id}`,
+          {
+            name: localHymnData.name,
+            lyrics: localHymnData.lyrics,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert(`Hymn saved successfully`);
+        const hymn = parseData(
+          HymnSchema,
+          res.data.hymn,
+          "Problem saving hymn"
+        );
+        setHymnData(hymn);
+      }
+    };
 
-  // const handleDelete = async () => {
-  //   if (window.confirm(`Are you sure you want to delete`)) {
-  //     const token = await getAccessTokenSilently();
-  //     await axios
-  //       .delete(`/hymns/${localHymnData.id}`, {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       })
-  //       .then((res) => {
-  //         alert(`Hymn deleted successfully`);
-  //         refreshHymnData("");
-  //       })
-  //       .catch((e) => {
-  //         alert(
-  //           `Error deleting hymn:\n${e.response.status}: ${e.response.data}`
-  //         );
-  //       });
-  //   }
-  // };
+    saveHymn().catch((e) => {
+      const msg = e instanceof Error ? e.message : "Unknown error";
+      alert(`Error saving hymns:\n${msg}`);
+    });
+  };
 
-  // const handleCancelChanges = () => {
-  //   setLocalHymnData(hymnData);
-  // };
+  const handleDelete = (): void => {
+    const deleteHymn = async (): Promise<void> => {
+      if (window.confirm(`Are you sure you want to delete`)) {
+        if (localHymnData) {
+          const token = await getAccessTokenSilently();
+          await axios.delete(`api/hymns/${localHymnData.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          alert(`Hymn deleted successfully`);
+          setHymnData(null);
+        }
+      }
+    };
+
+    deleteHymn().catch((err) => {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      alert(`Error saving hymns:\n${msg}`);
+    });
+  };
+
+  const handleCancelChanges = (): void => {
+    setLocalHymnData(hymnData);
+  };
 
   return (
     <div>
       {localHymnData && (
         <div>
-          {/* <EditHymnBar
-        handleSaveChanges={handleSaveChanges}
-        handleDelete={handleDelete}
-        handleCancelChanges={handleCancelChanges}
-      /> */}
+          <EditHymnBar
+            editMode={editMode}
+            setEditMode={setEditMode}
+            handleSaveChanges={handleSaveChanges}
+            handleDelete={handleDelete}
+            handleCancelChanges={handleCancelChanges}
+          />
           <InputBase
+            disabled={!editMode}
             fullWidth
             multiline
             minRows={1}
@@ -126,6 +135,7 @@ export const HymnDisplay: React.FC<Props> = ({
               style: {
                 fontSize: 36,
                 lineHeight: 2,
+                WebkitTextFillColor: "black",
               },
             }}
             value={localHymnData.name}
@@ -138,19 +148,20 @@ export const HymnDisplay: React.FC<Props> = ({
             hymnId={localHymnData.id}
             files={files}
             setFiles={setFiles}
-            refreshHymnData={refreshHymnData}
+            setHymnData={setHymnData}
             editMode={editMode}
           />
           <br />
           <Typography variant="h5">Lyrics</Typography>
           <div className="lyrics">
             <InputBase
+              className="lyricsText"
               fullWidth
               multiline
-              className="lyricsText"
-              // disabled={!editMode}
+              disabled={!editMode}
               value={localHymnData.lyrics ? localHymnData.lyrics : ""}
-              // onChange={handleLyricsChange}
+              onChange={handleLyricsChange}
+              inputProps={{ style: { WebkitTextFillColor: "black" } }}
             ></InputBase>
           </div>
         </div>

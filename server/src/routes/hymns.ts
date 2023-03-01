@@ -72,12 +72,8 @@ hymnsRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
   const hymnName = validReqBody.name;
   dbAddHymn(hymnName)
     .then((newHymn) => {
-      res.location(`/hymns/${newHymn.id}`);
-      res
-        .status(201)
-        .send(
-          `Hymn "${newHymn.name}" (${newHymn.id}) successfully added to database`
-        );
+      res.location(`api/hymns/${newHymn.id}`);
+      res.status(201).json(newHymn);
     })
     .catch((err) => {
       next(err);
@@ -134,8 +130,7 @@ hymnsRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
 
   dbUpdateHymn(hymnId, hymnName, hymnLyrics)
     .then((hymn) => {
-      res.location(`/hymns/${hymnId}`);
-      res.status(200).json({ message: "Hymn saved sucessfully", hymn });
+      res.status(200).json({ hymn });
     })
     .catch((err) => {
       next(err);

@@ -1,6 +1,7 @@
+import Stack from "@mui/material/Stack";
 import React from "react";
 
-import { type File } from "../../types";
+import { type File, type Hymn } from "../../types";
 // import AddEditFileButtonModal, {
 //   ModalType,
 // } from "../AddEditFileButtonModal/AddEditFileButtonModal";
@@ -10,7 +11,7 @@ interface HymnFilesListProps {
   hymnId: string;
   files: File[];
   setFiles: (files: File[]) => void;
-  refreshHymnData: (endpoint: string) => void;
+  setHymnData: (hymn: Hymn | null) => void;
   editMode: boolean;
 }
 
@@ -18,11 +19,17 @@ export const HymnFilesList: React.FC<HymnFilesListProps> = ({
   hymnId,
   files,
   setFiles,
-  refreshHymnData,
+  setHymnData,
   editMode,
 }) => {
   return (
-    <div>
+    <Stack
+      sx={{
+        justifyContent: "flex-start",
+        align: "left",
+        alignItems: "flex-start",
+      }}
+    >
       {files.length > 0 &&
         files.map((file) => {
           return (
@@ -30,7 +37,7 @@ export const HymnFilesList: React.FC<HymnFilesListProps> = ({
               key={file.id}
               hymnId={hymnId}
               file={file}
-              refreshHymnData={refreshHymnData}
+              setHymnData={setHymnData}
               editMode={editMode}
             />
           );
@@ -47,6 +54,6 @@ export const HymnFilesList: React.FC<HymnFilesListProps> = ({
           <Col></Col>
         </Row>
       )} */}
-    </div>
+    </Stack>
   );
 };

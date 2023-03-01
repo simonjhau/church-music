@@ -19,7 +19,7 @@ export type Mass = z.infer<typeof MassSchema>;
 
 export const FileSchema = z.object({
   id: z.string(),
-  hymnName: z.string(),
+  hymnName: z.string().optional(),
   fileTypeId: z.number(),
   bookId: z.number(),
   hymnNum: z.number().nullable(),

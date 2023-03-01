@@ -11,9 +11,9 @@ import { z } from "zod";
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
 import { FileSchema, type MassHymn } from "../../types";
 import { parseData } from "../../utils";
+import { Dropdown } from "../general/HymnTypesDropdown";
 import { SearchBox } from "../general/SearchBox";
 import { FileCheckBoxes } from "./FileCheckBoxes";
-import { Dropdown } from "./HymnTypesDropdown";
 
 interface Props {
   massHymn: MassHymn | null;

@@ -44,6 +44,7 @@ hymnFilesRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
 // Get file data given file ID
 const GetFileDataRequestSchema = z
   .object({
+    hymnId: z.string(),
     fileId: z.string(),
   })
   .strict();

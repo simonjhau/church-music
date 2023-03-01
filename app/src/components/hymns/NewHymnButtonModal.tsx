@@ -1,22 +1,37 @@
-// import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { TextField } from "@mui/material";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
-// import axios from "axios";
+import axios from "axios";
 import { useRef, useState } from "react";
+
+import { type Hymn, HymnSchema } from "../../types";
+import { parseData } from "../../utils";
+
+const style = {
+  position: "absolute" as const,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 interface NewHymnModalProps {
   initialHymnName: string;
-  refreshHymnData: (endpoint: string) => void;
+  setHymnData: (hymn: Hymn | null) => void;
 }
 
-const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
+export const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
   initialHymnName,
-  refreshHymnData,
+  setHymnData,
 }) => {
-  // const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   const [open, setOpen] = useState(false);
   const handleOpen = (): void => {
     setOpen(true);
@@ -32,51 +47,36 @@ const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
     name.current = e.target.value;
   };
 
-  // const handleSaveHymn = async (): Promise<void> => {
-  //   if (!name) {
-  //     alert("Error: Name cannot be blank");
-  //   }
+  const handleSaveHymn = (): void => {
+    if (!name) {
+      alert("Error: Name cannot be blank");
+      return;
+    }
 
-  //   const hymnData = {
-  //     name,
-  //   };
+    const hymnData = {
+      name: name.current,
+    };
 
-  //   const token = await getAccessTokenSilently();
-  //   axios
-  //     .post("/hymns", hymnData, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     })
-  //     .then((res) => {
-  //       alert("Mass saved successfully");
-  //       name.current = "";
-  //       handleClose();
-  //       refreshHymnData(res.headers.location);
-  //     })
-  //     .catch((e) => {
-  //       const msg = e instanceof Error ? "e.message" : "Unknown error";
-  //       alert(`Error saving mass:\n${msg}`);
-  //     });
-  // };
+    const addHymn = async (): Promise<void> => {
+      const token = await getAccessTokenSilently();
+      const res = await axios.post("api/hymns", hymnData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const hymn = parseData(HymnSchema, res.data, "Problem adding new hymn");
+      alert("Mass saved successfully");
+      name.current = "";
+      handleClose();
+      setHymnData(hymn);
+    };
+
+    addHymn().catch((e) => {
+      const msg = e instanceof Error ? e.message : "Unknown error";
+      alert(`Error saving mass:\n${msg}`);
+    });
+  };
 
   return (
     <>
-      {/* <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>New Hymn</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Input label="Hymn Name" onChange={handleNameChange} value={name} />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSaveHymn}>
-            Save Hymn
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
-
       <Button
         onClick={handleOpen}
         variant="contained"
@@ -91,20 +91,39 @@ const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={{}}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            New Hymn
-          </Typography>
-          <TextField
-            id="outlined-basic"
-            label="Name"
-            variant="outlined"
-            onChange={handleNameChange}
-          />
-        </Box>
+        <Grid container sx={style} spacing={2}>
+          <Grid item xs={12}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              New Hymn
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Name"
+              variant="outlined"
+              onChange={handleNameChange}
+            />
+          </Grid>
+          <Grid item xs={6}></Grid>
+          <Grid item xs={3}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="error"
+              onClick={handleClose}
+            >
+              Close
+            </Button>
+          </Grid>
+          <Grid item xs={3}>
+            <Button fullWidth variant="contained" onClick={handleSaveHymn}>
+              Save
+            </Button>
+          </Grid>
+        </Grid>
       </Modal>
     </>
   );
 };
-
-export default NewHymnButtonModal;
