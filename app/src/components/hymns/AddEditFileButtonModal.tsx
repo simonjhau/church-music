@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import EditIcon from "@mui/icons-material/Edit";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
@@ -221,9 +222,21 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
 
   return (
     <>
-      <IconButton aria-label="edit" sx={{ p: 0.7 }} onClick={handleShow}>
-        <EditIcon />
-      </IconButton>
+      {fileId ? (
+        <IconButton aria-label="edit" sx={{ p: 0.7 }} onClick={handleShow}>
+          <EditIcon />
+        </IconButton>
+      ) : (
+        <Button
+          variant="contained"
+          color="warning"
+          size="small"
+          sx={{ width: { sm: "50%", xs: "100%" } }}
+          onClick={handleShow}
+        >
+          +
+        </Button>
+      )}
 
       {/* <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

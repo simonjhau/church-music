@@ -2,9 +2,7 @@ import Stack from "@mui/material/Stack";
 import React from "react";
 
 import { type File, type Hymn } from "../../types";
-// import AddEditFileButtonModal, {
-//   ModalType,
-// } from "../AddEditFileButtonModal/AddEditFileButtonModal";
+import { AddEditFileButtonModal } from "./AddEditFileButtonModal";
 import { HymnFileLink } from "./HymnFileLink";
 
 interface HymnFilesListProps {
@@ -34,7 +32,7 @@ export const HymnFilesList: React.FC<HymnFilesListProps> = ({
         files.map((file) => {
           return (
             <HymnFileLink
-              key={file.id}
+              key={`${file.id}-link`}
               hymnId={hymnId}
               file={file}
               setHymnData={setHymnData}
@@ -42,18 +40,9 @@ export const HymnFilesList: React.FC<HymnFilesListProps> = ({
             />
           );
         })}
-      {/* {editMode && (
-        <Row>
-          <Col className="d-grid">
-            <AddEditFileButtonModal
-              modalType={ModalType.Add}
-              hymnId={hymnId}
-              refreshHymnData={refreshHymnData}
-            />
-          </Col>
-          <Col></Col>
-        </Row>
-      )} */}
+      {editMode && (
+        <AddEditFileButtonModal hymnId={hymnId} setHymnData={setHymnData} />
+      )}
     </Stack>
   );
 };

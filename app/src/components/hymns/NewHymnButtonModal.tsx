@@ -91,7 +91,7 @@ export const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Grid container sx={style} spacing={2}>
+        <Grid container sx={style} rowSpacing={2} columnSpacing={1}>
           <Grid item xs={12}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               New Hymn

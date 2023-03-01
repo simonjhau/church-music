@@ -74,7 +74,7 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
 
   return (
     <Grid container spacing={1}>
-      <Grid item xs={3}>
+      <Grid item xs={6} sm={3}>
         <Button onClick={handleFileClick}>
           {fileTypes.find((fileType) => fileType.id === file.fileTypeId)?.name}
           {" - "}

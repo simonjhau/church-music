@@ -1,5 +1,3 @@
-import "./Hymn.css";
-
 import { useAuth0 } from "@auth0/auth0-react";
 import { Typography } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
