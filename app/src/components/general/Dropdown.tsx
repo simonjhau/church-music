@@ -4,21 +4,21 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 
-import { type HymnType } from "../../types";
+import { type NumberIdBase } from "../../types";
 
-interface Props {
+interface Props<T> {
   label: string;
-  options: HymnType[];
-  value: string;
-  setValue: (ht: number) => void;
+  options: T[];
+  value: number;
+  setValue: (id: number) => void;
 }
 
-export const Dropdown = ({
+export const Dropdown = <T extends NumberIdBase>({
   label,
   options,
   value,
   setValue,
-}: Props): JSX.Element => {
+}: Props<T>): JSX.Element => {
   const handleChange = (event: SelectChangeEvent): void => {
     setValue(parseInt(event.target.value));
   };
@@ -30,10 +30,9 @@ export const Dropdown = ({
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={value}
+          value={String(value)}
           onChange={handleChange}
           size="small"
-          sx={{ mx: 2, my: 1 }}
         >
           {options.map((option) => {
             return (

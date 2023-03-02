@@ -10,7 +10,7 @@ import {
   dbGetFileDataNames,
   dbGetListOfFiles,
   dbUpdateFile,
-  FileParamsSchema,
+  UploadedFileParamsSchema,
 } from "../db/hymnFiles";
 import { deleteFile, multerUpload, uploadFile } from "../models/hymnFiles";
 import { s3GetSignedUrl } from "../s3";
@@ -101,12 +101,15 @@ const getHymnFileName = async (fileId: string): Promise<string> => {
   const fileName =
     `${fileDataNames.hymnName} ${fileDataNames.fileType}` +
     (fileDataNames.bookCode !== "Other" ? ` ${fileDataNames.bookCode}` : "") +
-    (fileDataNames.hymnNum === "" ? ` ${fileDataNames.hymnNum}` : "") +
+    (fileDataNames.hymnNum ? String(fileDataNames.hymnNum) : "") +
     (fileDataNames.comment === "" ? ` ${fileDataNames.comment}` : "");
   return fileName;
 };
 
 // Upload a file
+const AddFileReqParamsSchema = z.object({
+  hymnId: z.string(),
+});
 hymnFilesRouter.post(
   "/",
   multerUpload.single("file"),
@@ -116,9 +119,13 @@ hymnFilesRouter.post(
       return;
     }
 
-    // Ensure all parameters are present
+    const validReqParams = parseData(
+      AddFileReqParamsSchema,
+      req.params,
+      "Problem with delete file request params"
+    );
     const validFileParams = parseData(
-      FileParamsSchema,
+      UploadedFileParamsSchema,
       req.body,
       "Problem with upload file request body"
     );
@@ -127,9 +134,11 @@ hymnFilesRouter.post(
       return;
     }
 
-    uploadFile(validFileParams, req.file)
-      .then(() => {
-        res.status(201);
+    const hymnId = validReqParams.hymnId;
+
+    uploadFile(validFileParams, hymnId, req.file)
+      .then((file) => {
+        res.status(201).json(file);
       })
       .catch((err) => {
         next(err);
@@ -176,15 +185,15 @@ hymnFilesRouter.put(
     );
 
     const validFileData = parseData(
-      FileParamsSchema,
-      req.params,
+      UploadedFileParamsSchema,
+      req.body,
       "Problem with update file data body"
     );
 
     const hymnId = validReqParams.hymnId;
     const fileId = validReqParams.fileId;
     dbUpdateFile(hymnId, fileId, validFileData)
-      .then(() => res.status(200))
+      .then(() => res.status(200).send("File updated successfully"))
       .catch((err) => {
         next(err);
       });

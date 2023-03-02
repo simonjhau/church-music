@@ -146,7 +146,6 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
             hymnId={localHymnData.id}
             files={files}
             setFiles={setFiles}
-            setHymnData={setHymnData}
             editMode={editMode}
           />
           <br />

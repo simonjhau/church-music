@@ -11,7 +11,7 @@ import { z } from "zod";
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
 import { FileSchema, type MassHymn } from "../../types";
 import { parseData } from "../../utils";
-import { Dropdown } from "../general/HymnTypesDropdown";
+import { Dropdown } from "../general/Dropdown";
 import { SearchBox } from "../general/SearchBox";
 import { FileCheckBoxes } from "./FileCheckBoxes";
 
@@ -101,7 +101,7 @@ const DraggableHymn: React.FC<Props> = ({
               <Dropdown
                 label="Hymn Type"
                 options={hymnTypes}
-                value={String(massHymn?.hymnTypeId ?? "")}
+                value={massHymn?.hymnTypeId ?? 0}
                 setValue={handleHymnTypeSelect}
               />
               <SearchBox

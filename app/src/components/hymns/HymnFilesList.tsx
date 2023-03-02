@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import React from "react";
 
-import { type File, type Hymn } from "../../types";
+import { type File } from "../../types";
 import { AddEditFileButtonModal } from "./AddEditFileButtonModal";
 import { HymnFileLink } from "./HymnFileLink";
 
@@ -9,7 +9,6 @@ interface HymnFilesListProps {
   hymnId: string;
   files: File[];
   setFiles: (files: File[]) => void;
-  setHymnData: (hymn: Hymn | null) => void;
   editMode: boolean;
 }
 
@@ -17,7 +16,6 @@ export const HymnFilesList: React.FC<HymnFilesListProps> = ({
   hymnId,
   files,
   setFiles,
-  setHymnData,
   editMode,
 }) => {
   return (
@@ -35,13 +33,17 @@ export const HymnFilesList: React.FC<HymnFilesListProps> = ({
               key={`${file.id}-link`}
               hymnId={hymnId}
               file={file}
-              setHymnData={setHymnData}
+              setFiles={setFiles}
               editMode={editMode}
             />
           );
         })}
       {editMode && (
-        <AddEditFileButtonModal hymnId={hymnId} setHymnData={setHymnData} />
+        <AddEditFileButtonModal
+          hymnId={hymnId}
+          setFiles={setFiles}
+          fileId={null}
+        />
       )}
     </Stack>
   );

@@ -34,20 +34,15 @@ export interface MassHymn {
   fileIds: string[];
 }
 
-export const FileTypeSchema = z.object({
+export const NumberIdBaseSchema = z.object({
   id: z.number(),
   name: z.string(),
 });
-export type FileType = z.infer<typeof FileTypeSchema>;
+export type NumberIdBase = z.infer<typeof NumberIdBaseSchema>;
+export type FileType = z.infer<typeof NumberIdBaseSchema>;
+export type HymnType = z.infer<typeof NumberIdBaseSchema>;
 
-export const BookSchema = z.object({
-  id: z.number(),
-  name: z.string(),
+export const BookSchema = NumberIdBaseSchema.extend({
   bookCode: z.string(),
 });
 export type Book = z.infer<typeof BookSchema>;
-
-export interface HymnType {
-  id: number;
-  name: string;
-}

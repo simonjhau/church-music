@@ -2,7 +2,12 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 
-import { dbAddFile, dbDeleteFile, type FileParams } from "../db/hymnFiles";
+import {
+  dbAddFile,
+  dbDeleteFile,
+  type DbFileParams,
+  type UploadedFileParams,
+} from "../db/hymnFiles";
 import { dbBeginTransaction, dbCommit, dbRollback } from "../db/index";
 import { s3DeleteFile, s3UploadFile } from "../s3";
 
@@ -38,15 +43,17 @@ export const deleteLocalFile = async (path: string): Promise<void> => {
 };
 
 export const uploadFile = async (
-  fileParams: FileParams,
+  fileParams: UploadedFileParams,
+  hymnId: string,
   file: Express.Multer.File
-): Promise<void> => {
+): Promise<DbFileParams> => {
   try {
     await dbBeginTransaction();
-    const uploadedFile = await dbAddFile(fileParams);
+    const uploadedFile = await dbAddFile(fileParams, hymnId);
     await s3UploadFile(file.path, uploadedFile.id, "music");
     await dbCommit();
     await deleteLocalFile(file.path);
+    return uploadedFile;
   } catch (err) {
     await dbRollback();
     throw err;

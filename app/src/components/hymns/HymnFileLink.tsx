@@ -1,39 +1,27 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { z } from "zod";
 
 import { useBooks, useFileTypes } from "../../context/TypesAndBooksContext";
-import {
-  type Book,
-  BookSchema,
-  type File,
-  type FileType,
-  FileTypeSchema,
-  type Hymn,
-} from "../../types";
+import { type File, FileSchema } from "../../types";
 import { parseData } from "../../utils";
 import { AddEditFileButtonModal } from "./AddEditFileButtonModal";
-// import AddEditFileButtonModal, {
-//   ModalType,
-// } from "../AddEditFileButtonModal/AddEditFileButtonModal";
 
 interface HymnFileLinkProps {
   hymnId: string;
   file: File;
-  setHymnData: (hymn: Hymn | null) => void;
+  setFiles: (file: File[]) => void;
   editMode: boolean;
 }
 
 export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
   hymnId,
   file,
-  setHymnData,
+  setFiles,
   editMode,
 }) => {
   const { getAccessTokenSilently } = useAuth0();
@@ -58,11 +46,24 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
     const deleteFile = async (): Promise<void> => {
       if (window.confirm(`Are you sure you want to delete`)) {
         const token = await getAccessTokenSilently();
-        await axios.delete(`/hymns/${hymnId}/files/${file.id}`, {
+        const deleteRes = await axios.delete(
+          `api/hymns/${hymnId}/files/${file.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        alert(deleteRes.data);
+
+        // Get updated hymn
+        const filesRes = await axios.get(`api/hymns/${hymnId}/files`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // to do: fix this
-        // refreshHymnData(`api/hymns/${hymnId}`);
+        const files = parseData(
+          z.array(FileSchema),
+          filesRes.data,
+          "Problem getting files"
+        );
+        setFiles(files);
       }
     };
 
@@ -88,13 +89,10 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
           <AddEditFileButtonModal
             hymnId={hymnId}
             fileId={file.id}
-            setHymnData={setHymnData}
+            setFiles={setFiles}
           />
 
-          <IconButton
-            aria-label="delete"
-            onClick={handleDeleteFile}
-          >
+          <IconButton aria-label="delete" onClick={handleDeleteFile}>
             <DeleteIcon />
           </IconButton>
         </>
@@ -102,5 +100,3 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
     </Grid>
   );
 };
-
-export default HymnFileLink;
