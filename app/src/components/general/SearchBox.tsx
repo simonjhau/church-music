@@ -90,7 +90,11 @@ export const SearchBox = <T extends Base>({
         selected: T | null
       ) => {
         if (selected) {
-          setOptions(selected ? [selected, ...options] : options);
+          setOptions(
+            options.some((option) => option.id === selected.id)
+              ? options
+              : [selected, ...options]
+          );
           setValue(selected);
         }
       }}

@@ -61,14 +61,12 @@ export const FileCheckBoxes: React.FC<Props> = ({
       const msg = err instanceof Error ? err.message : "Unknonn error";
       alert(msg);
     });
-    // eslint-disable-next-line
   }, [hymnId]);
 
   // Change checked boxes if selected hymns changes
   useEffect(() => {
     const newSelected = files.map((file) => selectedFileIds.includes(file.id));
     setSelected(newSelected);
-    // eslint-disable-next-line
   }, [selectedFileIds]);
 
   const onFileClicked = (fileIndex: number): void => {
@@ -91,6 +89,7 @@ export const FileCheckBoxes: React.FC<Props> = ({
         files.map((file, fileIndex) => {
           return (
             <FormControlLabel
+              sx={{ m: 0 }}
               key={file.id}
               label={`
           ${
@@ -101,6 +100,7 @@ export const FileCheckBoxes: React.FC<Props> = ({
               } ${file.comment ? ` - ${file.comment}` : ""}`}
               control={
                 <Checkbox
+                  size="small"
                   checked={selected[fileIndex]}
                   onChange={(e) => {
                     onFileClicked(fileIndex);

@@ -43,7 +43,7 @@ const DraggableHymn: React.FC<Props> = ({
   const setHymnData = (hymn: MassHymn | null): void => {
     const setHymnDataAsync = async (hymn: MassHymn): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.get(`/hymns/${hymn.id}/files`, {
+      const res = await axios.get(`api/hymns/${hymn.id}/files`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const files = res.data;
@@ -71,15 +71,14 @@ const DraggableHymn: React.FC<Props> = ({
     updateHymnsData(hymnIndex, "fileIds", selectedFiles);
   };
 
-  // const handleDelete = (e: React.MouseEvent): void => {
-  //   e.preventDefault();
-  //   handleDeleteHymn(hymnIndex);
-  // };
+  const handleDelete = (_e: React.MouseEvent): void => {
+    handleDeleteHymn(hymnIndex);
+  };
 
   return (
     <Stack
       className="draggableHymn"
-      sx={{ my: 2, bgcolor: "#dee0f1", borderRadius: "0.3em" }}
+      sx={{ my: 2, bgcolor: "#dee0f1", borderRadius: "0.3em", px: 2, pb: 2 }}
     >
       <Draggable key={hymnIndex} draggableId={`${hymnIndex}`} index={hymnIndex}>
         {(provided) => (
@@ -92,12 +91,16 @@ const DraggableHymn: React.FC<Props> = ({
               <Typography variant="h6" sx={{ flex: 1, p: 2 }}>
                 {hymnIndex + 1}
               </Typography>
-              <IconButton aria-label="delete" sx={{ p: 2 }}>
+              <IconButton
+                aria-label="delete"
+                sx={{ p: 2 }}
+                onClick={handleDelete}
+              >
                 <DeleteIcon />
               </IconButton>
             </Grid>
 
-            <Stack>
+            <Stack spacing={2}>
               <Dropdown
                 label="Hymn Type"
                 options={hymnTypes}
@@ -109,7 +112,6 @@ const DraggableHymn: React.FC<Props> = ({
                 value={massHymn}
                 setValue={setHymnData}
                 apiUrl="/api/hymns/"
-                sx={{ mx: 2, my: 1 }}
               />
               {massHymn && (
                 <FileCheckBoxes

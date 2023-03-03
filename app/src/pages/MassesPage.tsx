@@ -5,18 +5,12 @@ import { type ReactElement, useState } from "react";
 
 import { SearchBox } from "../components/general/SearchBox";
 import { MassDisplay } from "../components/mass/MassDisplay";
+import { NewMassButtonModal } from "../components/mass/NewMassButtonModal";
 import { TypeAndBookProvider } from "../context/TypesAndBooksContext";
-// import NewHymnButtonModal from "../components/hymns/NewHymnButtonModal";
 import { type Mass } from "../types";
 
 export const MassesPage = (): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
-
-  // Set edit mode to false on first render
-  // const { setEditMode } = useEditMode();
-  // useEffect(() => {
-  //   // setEditMode(false);
-  // }, []);
 
   const [massData, setMassData] = useState<Mass | null>(null);
 
@@ -50,12 +44,18 @@ export const MassesPage = (): ReactElement => {
           }}
         >
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={12} sm={9}>
               <SearchBox
                 type="mass"
                 value={massData}
                 setValue={setMassData}
                 apiUrl="/api/masses/"
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <NewMassButtonModal
+                initialMassName=""
+                setMassData={setMassData}
               />
             </Grid>
           </Grid>

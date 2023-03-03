@@ -1,15 +1,18 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, TextField } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
 import { type Dayjs } from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { type Mass, type MassHymn } from "../../types";
+import { useHymnTypes } from "../../context/TypesAndBooksContext";
+import { type Mass, type MassHymn, MassSchema } from "../../types";
+import { parseData } from "../../utils";
 import DraggableHymnsList from "./DraggableHymnsList";
+import EditMassBar from "./EditMassBar";
 // import EditMassBar from "../EditMassBar/EditMassBar";
 
 interface Props {
@@ -23,7 +26,7 @@ export const MassDisplay = ({
 }: Props): JSX.Element => {
   // Context
   const { getAccessTokenSilently } = useAuth0();
-  // const [hymnTypes, setHymnTypes] = useState<HymnType[]>();
+  const hymnTypes = useHymnTypes();
 
   const [localMassData, setLocalMassData] = useState(massData);
 
@@ -53,123 +56,143 @@ export const MassDisplay = ({
     setLocalMassHymns(massHymns);
   }, [massHymns]);
 
-  // const editLocalMassData = (key: keyof Mass, data: string): void => {
-  //   const updatedMassData = { ...localMassData };
-  //   updatedMassData[key] = data;
-  //   setLocalMassData(updatedMassData);
-  // };
-
-  // const handleMassNameChange = (e: React.ChangeEvent): void => {
-  //   const updatedHymnName = (e.target as HTMLTextAreaElement).value;
-  //   editLocalMassData("name", updatedHymnName);
-  // };
-
-  const handleMassDateTimeChange = (_newValue: Dayjs | null): void => {
-    // const updatedDateTime = value;
-    // editLocalMassData("dateTime", updatedDateTime);
+  const editLocalMassData = (key: keyof Mass, data: string): void => {
+    const updatedMassData = { ...localMassData };
+    updatedMassData[key] = data;
+    setLocalMassData(updatedMassData);
   };
 
-  // const handleDuplicate = async () => {
-  //   // Update the hymn data
-  //   const token = await getAccessTokenSilently();
-  //   axios
-  //     .post(`/masses/${localMassData.id}/copy`, massData, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     })
-  //     .then((res) => {
-  //       alert("Mass duplicated successfully");
-  //       refreshMassData(res.headers.location);
-  //     })
-  //     .catch((e) => {
-  //       alert(`Error saving mass:\n${e.response.status}: ${e.response.data}`);
-  //     });
-  // };
+  const handleMassNameChange = (e: React.ChangeEvent): void => {
+    const updatedHymnName = (e.target as HTMLTextAreaElement).value;
+    editLocalMassData("name", updatedHymnName);
+  };
 
-  // const handleSaveChanges = async () => {
-  //   // Update the hymn data
-  //   if (massValid()) {
-  //     const massData = {
-  //       ...localMassData,
-  //       hymns: localMassHymns,
-  //     };
+  const handleMassDateTimeChange = (newValue: Dayjs | null): void => {
+    const updatedDateTime = newValue?.toISOString() ?? "";
+    editLocalMassData("dateTime", updatedDateTime);
+  };
 
-  //     const token = await getAccessTokenSilently();
-  //     axios
-  //       .put(`/masses/${localMassData.id}`, massData, {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       })
-  //       .then((res) => {
-  //         alert("Mass saved successfully");
-  //         refreshMassData(res.headers.location);
-  //       })
-  //       .catch((e) => {
-  //         alert(`Error saving mass:\n${e.response.status}: ${e.response.data}`);
-  //       });
-  //   } else {
-  //     const errorStr = `Error(s) in mass:\n\n${massErrors.current}`;
-  //     alert(errorStr);
-  //   }
-  // };
+  const handleDuplicate = (): void => {
+    const duplicateMass = async (): Promise<void> => {
+      const token = await getAccessTokenSilently();
+      const res = await axios.post(
+        `api/masses/${localMassData.id}/copy`,
+        massData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-  // const handleDelete = async () => {
-  //   if (window.confirm(`Are you sure you want to delete`)) {
-  //     const token = await getAccessTokenSilently();
-  //     await axios
-  //       .delete(`/masses/${localMassData.id}`, {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       })
-  //       .then((res) => {
-  //         alert(`Mass deleted successfully`);
-  //         refreshMassData("");
-  //       })
-  //       .catch((e) => {
-  //         alert(
-  //           `Error deleting mass:\n${e.response.status}: ${e.response.data}`
-  //         );
-  //       });
-  //   }
-  // };
+      // const _duplicatedMass = parseData(
+      //   MassSchema,
+      //   res.data,
+      //   "Problem saving mass"
+      // );
+      alert("Mass duplicated successfully");
+      // to do: fix this
+      // setMassData(duplicatedMass);
+    };
 
-  // const handleCancelChanges = () => {
-  //   setLocalMassData(massData);
-  //   setLocalMassHymns(massHymns);
-  // };
+    duplicateMass().catch((err) => {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      alert(`Error duplicating mass:${msg}`);
+    });
+  };
+
+  const handleSaveChanges = (): void => {
+    const saveMass = async (): Promise<void> => {
+      if (massValid()) {
+        const massData = {
+          ...localMassData,
+          hymns: localMassHymns,
+        };
+
+        const token = await getAccessTokenSilently();
+        const res = await axios.put(
+          `api/masses/${localMassData.id}`,
+          massData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        // const updatedMass = parseData(
+        //   MassSchema,
+        //   res.data,
+        //   "Problem saving mass"
+        // );
+
+        alert("Mass saved successfully");
+        // to do: fix this
+        // setMassData(updatedMass);
+      }
+    };
+
+    saveMass().catch((err) => {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      alert(`Error saving mass:${msg}`);
+    });
+  };
+
+  const handleDelete = (): void => {
+    const deleteMass = async (): Promise<void> => {
+      if (window.confirm(`Are you sure you want to delete`)) {
+        const token = await getAccessTokenSilently();
+        await axios.delete(`api/masses/${localMassData.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        alert(`Mass deleted successfully`);
+        refreshMassData("");
+      }
+    };
+
+    deleteMass().catch((err) => {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      alert(`Error deleting mass:${msg}`);
+    });
+  };
+
+  const handleCancelChanges = (): void => {
+    setLocalMassData(massData);
+    setLocalMassHymns(massHymns);
+  };
 
   // Mass validation. To do: use zod for this
-  // const massErrors = useRef<string>("");
-  // const generateErrorString = (hymnIndex: number, error: string) => {
-  //   return `Hymn ${hymnIndex + 1} ${
-  //     hymnTypes[localMassHymns[hymnIndex].hymnTypeId].name
-  //   } - ${error}\n`;
-  // };
-  // const massValid = () => {
-  //   let errors = "";
-  //   let massValid = true;
+  const massErrors = useRef<string>("");
+  const generateErrorString = (hymnIndex: number, error: string): string => {
+    return `Hymn ${hymnIndex + 1} ${
+      hymnTypes[localMassHymns[hymnIndex].hymnTypeId].name
+    } - ${error}\n`;
+  };
+  const massValid = (): boolean => {
+    let errors = "";
+    let massValid = true;
 
-  //   if (!localMassData.name) {
-  //     massValid = false;
-  //     errors += "Mass name cannot be blank\n";
-  //   }
+    if (!localMassData.name) {
+      massValid = false;
+      errors += "Mass name cannot be blank\n";
+    }
 
-  //   if (!localMassData.dateTime) {
-  //     massValid = false;
-  //     errors += "Mass date cannot be blank\n";
-  //   }
+    if (!localMassData.dateTime) {
+      massValid = false;
+      errors += "Mass date cannot be blank\n";
+    }
 
-  //   localMassHymns.forEach((hymn, index) => {
-  //     if (!hymn.id) {
-  //       massValid = false;
-  //       errors += generateErrorString(index, "No hymn selected");
-  //     } else if (hymn.fileIds.length === 0) {
-  //       massValid = false;
-  //       errors += generateErrorString(index, "No files selected");
-  //     }
-  //   });
+    localMassHymns.forEach((hymn, index) => {
+      if (!hymn.id) {
+        massValid = false;
+        errors += generateErrorString(index, "No hymn selected");
+      } else if (hymn.fileIds.length === 0) {
+        massValid = false;
+        errors += generateErrorString(index, "No files selected");
+      }
+    });
 
-  //   massErrors.current = errors;
+    massErrors.current = errors;
 
-  //   return massValid;
-  // };
+    return massValid;
+  };
 
   const handleOpenMusic = (): void => {
     const openMusic = async (): Promise<void> => {
@@ -189,13 +212,13 @@ export const MassDisplay = ({
   return (
     <div>
       {localMassData && (
-        <div>
-          {/* <EditMassBar
-        handleDuplicate={handleDuplicate}
-        handleSaveChanges={handleSaveChanges}
-        handleDelete={handleDelete}
-        handleCancelChanges={handleCancelChanges}
-      /> */}
+        <Stack spacing={1}>
+          <EditMassBar
+            handleDuplicate={handleDuplicate}
+            handleSaveChanges={handleSaveChanges}
+            handleDelete={handleDelete}
+            handleCancelChanges={handleCancelChanges}
+          />
           <InputBase
             fullWidth
             multiline
@@ -207,7 +230,7 @@ export const MassDisplay = ({
               },
             }}
             value={localMassData.name}
-            // onChange={handleMassNameChange}
+            onChange={handleMassNameChange}
           ></InputBase>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
@@ -218,13 +241,20 @@ export const MassDisplay = ({
                   : Date.now().toString().slice(0, -1)
               }
               onChange={handleMassDateTimeChange}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => (
+                <TextField size="small" fullWidth {...params} />
+              )}
             />
           </LocalizationProvider>
 
           {localMassData.fileId && (
             <div className="d-grid gap-2">
-              <Button variant="contained" fullWidth onClick={handleOpenMusic}>
+              <Button
+                size="small"
+                variant="contained"
+                fullWidth
+                onClick={handleOpenMusic}
+              >
                 Open Music
               </Button>
             </div>
@@ -235,7 +265,7 @@ export const MassDisplay = ({
             hymnsData={localMassHymns}
             setHymnsData={setLocalMassHymns}
           />
-        </div>
+        </Stack>
       )}
     </div>
   );
