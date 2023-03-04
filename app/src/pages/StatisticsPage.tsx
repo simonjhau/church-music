@@ -16,9 +16,11 @@ import { z } from "zod";
 
 import { type HymnCount, HymnCountSchema } from "../types";
 import { getErrorMessage, parseData } from "../utils";
+import { PageLoader } from "./PageLoader/PageLoader";
 
 export const StatisticsPage = (): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
+  const [loading, setLoading] = useState(true);
   const [mostPopular, setMostPopular] = useState<HymnCount[] | null>(null);
 
   const getMostPopularHymns = async (): Promise<void> => {
@@ -34,6 +36,7 @@ export const StatisticsPage = (): ReactElement => {
       "Problem getting hymn counts"
     );
     setMostPopular(hymnCounts);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -43,7 +46,9 @@ export const StatisticsPage = (): ReactElement => {
     });
   }, []);
 
-  return mostPopular ? (
+  return loading ? (
+    <PageLoader />
+  ) : (
     <Container sx={{ alignItems: "center", maxWidth: { md: "700px" } }}>
       <Typography variant="h6">
         Most popular hymns over the last year
@@ -59,7 +64,7 @@ export const StatisticsPage = (): ReactElement => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mostPopular.map((hymn, i) => (
+            {mostPopular?.map((hymn, i) => (
               <TableRow
                 key={i}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -75,7 +80,5 @@ export const StatisticsPage = (): ReactElement => {
         </Table>
       </TableContainer>
     </Container>
-  ) : (
-    <Typography>Error getting hymn statistics</Typography>
   );
 };
