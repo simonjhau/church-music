@@ -12,3 +12,10 @@ export const parseData = <T extends z.ZodTypeAny>(
   }
   return result.data;
 };
+
+export const getErrorMessage = (
+  e: unknown,
+  defaultMessage = "Unknown error"
+): string => {
+  return e instanceof Error ? e.message : defaultMessage;
+};

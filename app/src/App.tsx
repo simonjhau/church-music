@@ -9,6 +9,7 @@ import { HomePage } from "./pages/HomePage";
 import { HymnsPage } from "./pages/HymnsPage";
 import { MassesPage } from "./pages/MassesPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { StatisticsPage } from "./pages/StatisticsPage";
 
 function App(): ReactElement {
   return (
@@ -38,6 +39,10 @@ function App(): ReactElement {
           <Route
             path="/masses"
             element={<AuthenticationGuard component={MassesPage} />}
+          />
+          <Route
+            path="/statistics"
+            element={<AuthenticationGuard component={StatisticsPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />

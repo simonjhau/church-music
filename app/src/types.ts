@@ -46,3 +46,9 @@ export const BookSchema = NumberIdBaseSchema.extend({
   bookCode: z.string(),
 });
 export type Book = z.infer<typeof BookSchema>;
+
+export const HymnCountSchema = z.object({
+  name: z.string(),
+  count: z.string(),
+});
+export type HymnCount = z.infer<typeof HymnCountSchema>;

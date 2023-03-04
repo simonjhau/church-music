@@ -13,6 +13,7 @@ import { hymnFilesRouter } from "./hymnFiles";
 import { hymnsRouter } from "./hymns";
 import { hymnTypesRouter } from "./hymnTypes";
 import { massesRouter } from "./masses";
+import { statsRouter } from "./stats";
 
 export const router = express.Router();
 
@@ -38,6 +39,7 @@ router.use("/hymns/:hymnId/files", hymnFilesRouter);
 router.use("/hymns", hymnsRouter);
 router.use("/hymnTypes", hymnTypesRouter);
 router.use("/masses", massesRouter);
+router.use("/stats", statsRouter);
 
 router.get("/auth", (_req: Request, res: Response) => {
   res.json({ msg: "authenticated" });
