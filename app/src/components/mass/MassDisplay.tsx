@@ -10,7 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
 import { type Mass, type MassHymn, MassSchema } from "../../types";
-// import { parseData } from "../../utils";
+import { downloadFile } from "../../utils";
 import DraggableHymnsList from "./DraggableHymnsList";
 import EditMassBar from "./EditMassBar";
 // import EditMassBar from "../EditMassBar/EditMassBar";
@@ -200,7 +200,7 @@ export const MassDisplay = ({
       const res = await axios.get(`api/masses/${localMassData.id}/file`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      window.open(res.data);
+      downloadFile(res.data);
     };
 
     openMusic().catch((err) => {

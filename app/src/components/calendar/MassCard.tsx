@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import React from "react";
 
+import { downloadFile } from "../../utils";
+
 export interface MassInterface {
   id: string;
   name: string;
@@ -32,7 +34,7 @@ const MassCard: React.FC<Props> = ({ mass }) => {
       const res = await axios.get(`/api/masses/${mass.id}/file`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      window.open(res.data);
+      downloadFile(res.data);
     };
 
     getMassFile().catch((e) => {

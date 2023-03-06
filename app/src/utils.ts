@@ -19,3 +19,10 @@ export const getErrorMessage = (
 ): string => {
   return e instanceof Error ? e.message : defaultMessage;
 };
+
+export const downloadFile = (url: string): void => {
+  const a = document.createElement("a");
+  a.setAttribute("download", "pdf");
+  a.setAttribute("href", url);
+  a.click();
+};

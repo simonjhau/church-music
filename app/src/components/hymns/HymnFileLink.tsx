@@ -8,7 +8,7 @@ import { z } from "zod";
 
 import { useBooks, useFileTypes } from "../../context/TypesAndBooksContext";
 import { type File, FileSchema } from "../../types";
-import { parseData } from "../../utils";
+import { downloadFile, parseData } from "../../utils";
 import { AddEditFileButtonModal } from "./AddEditFileButtonModal";
 
 interface HymnFileLinkProps {
@@ -34,7 +34,7 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
       const res = await axios.get(`api/hymns/${hymnId}/files/${file.id}/file`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      window.open(res.data);
+      downloadFile(res.data);
     };
 
     getFile().catch((e) => {
