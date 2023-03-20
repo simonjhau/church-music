@@ -100,7 +100,13 @@ export const MassParamsSchema = z.object({
 });
 export type MassParams = z.infer<typeof MassParamsSchema>;
 
-export const dbAddMass = async (massParams: MassParams): Promise<Mass> => {
+export const NewMassParamsSchema = z.object({
+  name: z.string(),
+  dateTime: z.string().datetime(),
+});
+export type NewMassParams = z.infer<typeof NewMassParamsSchema>;
+
+export const dbAddMass = async (massParams: NewMassParams): Promise<Mass> => {
   const sqlQuery = `INSERT INTO masses (id, name, date_time)
                     VALUES ($1, $2, $3)
                     RETURNING
@@ -109,7 +115,7 @@ export const dbAddMass = async (massParams: MassParams): Promise<Mass> => {
                     date_time AS "dateTime",
                     file_id AS "fileId"`;
   const values = [uuidv4(), massParams.name, massParams.dateTime];
-  const res = (await dbPool.query(sqlQuery, values)).rows;
+  const res = (await dbPool.query(sqlQuery, values)).rows[0];
   const mass = parseData(MassSchema, res, `Error adding new mass to db"`);
   return mass;
 };

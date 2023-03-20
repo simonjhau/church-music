@@ -12,6 +12,7 @@ import {
   dbGetMassesByQuery,
   dbGetMassHymns,
   MassParamsSchema,
+  NewMassParamsSchema,
 } from "../db/masses";
 import {
   deleteMass,
@@ -111,14 +112,13 @@ massesRouter.get(
 // Add mass record
 massesRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
   const validMassParams = parseData(
-    MassParamsSchema,
-    req.params,
-    "Problem with get mass file request params"
+    NewMassParamsSchema,
+    req.body,
+    "Problem with add mass request body"
   );
   dbAddMass(validMassParams)
     .then((newMass) => {
-      res.location(`masses/${newMass.id}`);
-      res.status(201).send("Mass added successfully");
+      res.status(201).json(newMass);
     })
     .catch((err) => {
       next(err);

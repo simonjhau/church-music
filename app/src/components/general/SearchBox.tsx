@@ -38,7 +38,8 @@ export const SearchBox = <T extends Base>({
   const [loading, setLoading] = useState(false);
 
   const getValuesThatMatchSearchQuery = async (
-    query: string
+    query: string,
+    value: T | null
   ): Promise<void> => {
     const token = await getAccessTokenSilently();
     const res = await axios.get(apiUrl, {
@@ -49,14 +50,20 @@ export const SearchBox = <T extends Base>({
         q: query,
       },
     });
-    setOptions(res.data);
+
+    let newOptions: readonly T[] = [];
+    if (value) {
+      newOptions = [value];
+    }
+    newOptions = [...newOptions, ...res.data];
+    setOptions(newOptions);
     setLoading(false);
   };
 
   const fetch = useMemo(
     () =>
-      debounce((query: string) => {
-        getValuesThatMatchSearchQuery(query).catch((err) => {
+      debounce((query: string, value: T | null) => {
+        getValuesThatMatchSearchQuery(query, value).catch((err) => {
           const msg = err instanceof Error ? err.message : "Unknown error";
           setLoading(false);
           alert(msg);
@@ -67,11 +74,11 @@ export const SearchBox = <T extends Base>({
 
   useEffect(() => {
     if (inputValue === "") {
-      setOptions([]);
+      setOptions(value ? [value] : []);
       setLoading(false);
       return undefined;
     }
-    fetch(inputValue);
+    fetch(inputValue, value);
   }, [inputValue]);
 
   return (
@@ -83,20 +90,15 @@ export const SearchBox = <T extends Base>({
       options={options}
       autoComplete
       includeInputInList
+      filterSelectedOptions
       value={value}
       noOptionsText={`No ${type} found`}
       onChange={(
         _event: React.SyntheticEvent<Element, Event>,
-        selected: T | null
+        newValue: T | null
       ) => {
-        if (selected) {
-          setOptions(
-            options.some((option) => option.id === selected.id)
-              ? options
-              : [selected, ...options]
-          );
-          setValue(selected);
-        }
+        setOptions(newValue ? [newValue, ...options] : options);
+        setValue(newValue);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       onInputChange={(_event, newInputValue) => {

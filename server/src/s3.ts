@@ -57,10 +57,11 @@ export const s3GetSignedUrl = async (
   id: string,
   fileName: string
 ): Promise<string> => {
+  const encodedName = encodeURIComponent(fileName);
   const input = {
     Key: `${fileType}/${id}.pdf`,
     Bucket: bucketName,
-    ResponseContentDisposition: `attachment; filename=${fileName}.pdf`,
+    ResponseContentDisposition: `attachment; filename=${encodedName}.pdf`,
   };
   const command = new GetObjectCommand(input);
   const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
