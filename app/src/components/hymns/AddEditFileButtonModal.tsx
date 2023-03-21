@@ -231,7 +231,7 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
           sx={{ width: { sm: "50%", xs: "100%" } }}
           onClick={handleOpen}
         >
-          +
+          Add File
         </Button>
       )}
 

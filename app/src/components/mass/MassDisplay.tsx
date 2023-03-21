@@ -13,7 +13,6 @@ import { type Mass, type MassHymn, MassSchema } from "../../types";
 import { downloadFile, parseData } from "../../utils";
 import DraggableHymnsList from "./DraggableHymnsList";
 import EditMassBar from "./EditMassBar";
-// import EditMassBar from "../EditMassBar/EditMassBar";
 
 interface Props {
   massData: Mass;

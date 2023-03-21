@@ -66,7 +66,7 @@ export const dbGetMassData = async (massId: string): Promise<Mass> => {
 };
 
 const MassHymnSchema = z.object({
-  hymnIndex: z.number(),
+  hymnIndex: z.number().optional(),
   hymnTypeId: z.number(),
   id: z.string(),
   name: z.string(),
@@ -95,7 +95,7 @@ export const dbGetMassHymns = async (massId: string): Promise<MassHymn[]> => {
 
 export const MassParamsSchema = z.object({
   name: z.string(),
-  dateTime: z.date(),
+  dateTime: z.string().datetime(),
   hymns: z.array(MassHymnSchema),
 });
 export type MassParams = z.infer<typeof MassParamsSchema>;
@@ -165,8 +165,8 @@ export const dbUpdateMass = async (
                     date_time AS "dateTime",
                     file_id as "fileId"`;
   const values = [massParams.name, massParams.dateTime, massId];
-  const res = (await dbPool.query(sqlQuery, values)).rows;
-  const mass = parseData(MassSchema, res, `Error adding new mass to db"`);
+  const res = (await dbPool.query(sqlQuery, values)).rows[0];
+  const mass = parseData(MassSchema, res, `Error updating mass in db"`);
   return mass;
 };
 
