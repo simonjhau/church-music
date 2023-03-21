@@ -116,15 +116,14 @@ export const MassDisplay = ({
           }
         );
 
-        // const updatedMass = parseData(
-        //   MassSchema,
-        //   res.data,
-        //   "Problem saving mass"
-        // );
+        const updatedMass = parseData(
+          MassSchema,
+          res.data,
+          "Problem saving mass"
+        );
 
         alert("Mass saved successfully");
-        // to do: fix this
-        // setMassData(updatedMass);
+        setMassData(updatedMass);
       }
     };
 

@@ -18,7 +18,11 @@ import { FileCheckBoxes } from "./FileCheckBoxes";
 interface Props {
   massHymn: MassHymn | null;
   hymnIndex: number;
-  updateHymnsData: (hymnIndex: number, key: keyof MassHymn, value: any) => void;
+  updateHymnsData: (
+    hymnIndex: number,
+    key: keyof MassHymn,
+    data: MassHymn[typeof key]
+  ) => void;
   handleDeleteHymn: (hymnIndex: number) => void;
   disabled?: boolean;
 }

@@ -161,9 +161,8 @@ massesRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
 
   const massId = validReqParams.id;
   updateMass(massId, validMassParams)
-    .then(() => {
-      res.location(`/masses/${massId}`);
-      res.status(200).send("Mass saved successfully");
+    .then((updatedMass) => {
+      res.status(200).json(updatedMass);
     })
     .catch((err) => {
       next(err);
