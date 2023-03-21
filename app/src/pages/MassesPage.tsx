@@ -63,6 +63,7 @@ export const MassesPage = (): ReactElement => {
           {massData && (
             <MassDisplay
               massData={massData}
+              setMassData={setMassData}
               refreshMassData={refreshMassData}
             ></MassDisplay>
           )}

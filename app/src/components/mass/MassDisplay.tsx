@@ -10,18 +10,20 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
 import { type Mass, type MassHymn, MassSchema } from "../../types";
-import { downloadFile } from "../../utils";
+import { downloadFile, parseData } from "../../utils";
 import DraggableHymnsList from "./DraggableHymnsList";
 import EditMassBar from "./EditMassBar";
 // import EditMassBar from "../EditMassBar/EditMassBar";
 
 interface Props {
   massData: Mass;
+  setMassData: (mass: Mass) => void;
   refreshMassData: (endpoint?: string) => void;
 }
 
 export const MassDisplay = ({
   massData,
+  setMassData,
   refreshMassData,
 }: Props): JSX.Element => {
   // Context
@@ -76,21 +78,20 @@ export const MassDisplay = ({
     const duplicateMass = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
       const res = await axios.post(
-        `api/masses/${localMassData.id}/copy`,
+        `api/masses/${localMassData.id}/duplicate`,
         massData,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      // const _duplicatedMass = parseData(
-      //   MassSchema,
-      //   res.data,
-      //   "Problem saving mass"
-      // );
+      const duplicatedMass = parseData(
+        MassSchema,
+        res.data,
+        "Problem saving mass"
+      );
       alert("Mass duplicated successfully");
-      // to do: fix this
-      // setMassData(duplicatedMass);
+      setMassData(duplicatedMass);
     };
 
     duplicateMass().catch((err) => {

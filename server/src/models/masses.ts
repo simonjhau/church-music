@@ -192,9 +192,9 @@ export const saveMassPdfToS3 = async (
 export const deleteMass = async (massId: string): Promise<void> => {
   try {
     await dbBeginTransaction();
+    const fileId = (await dbGetMassData(massId)).fileId;
     await dbDeleteMassHymns(massId);
     await dbDeleteMass(massId);
-    const fileId = (await dbGetMassData(massId)).fileId;
     if (fileId !== null) {
       await s3DeleteFile(fileId, "masses");
     }

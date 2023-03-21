@@ -138,8 +138,7 @@ massesRouter.post(
     const oldMassId = validReqParams.id;
     duplicateMass(oldMassId)
       .then((newMass) => {
-        res.location(`/masses/${newMass.id}`);
-        res.status(200).send(`Mass successfully deleted from db`);
+        res.status(200).json(newMass);
       })
       .catch((err) => {
         next(err);

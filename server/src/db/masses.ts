@@ -188,14 +188,13 @@ export const dbDeleteMass = async (massId: string): Promise<void> => {
 export const dbDuplicateMass = async (oldMassId: string): Promise<Mass> => {
   const query = `INSERT INTO masses (id, name, date_time, file_id)
                     SELECT $1, CONCAT(name, ' (copy)'), date_time, ''
-                    FROM masses WHERE id = $2
+                      FROM masses WHERE id = $2
                     RETURNING
                     id,
                     name,
                     date_time AS "dateTime",
                     file_id AS "fileId";`;
   const values = [uuidv4(), oldMassId];
-  await dbPool.query(query, values);
   const res = (await dbPool.query(query, values)).rows[0];
   const mass = parseData(MassSchema, res, `Error duplicating mass in db"`);
   return mass;
@@ -206,15 +205,14 @@ export const dbDuplicateMassHymns = async (
 ): Promise<MassHymn[]> => {
   const sqlQuery = `INSERT INTO mass_hymns (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids)
                       SELECT $1, hymn_pos, hymn_type_id, hymn_id, file_ids
-                      FROM mass_hymns WHERE mass_id = $2
+                        FROM mass_hymns WHERE mass_id = $2
                       RETURNING
                       mass_id AS "massId",
-                      hymn_pos AS "hymnIndex,
+                      hymn_pos AS "hymnIndex",
                       hymn_type_id AS "hymnTypeId",
                       hymn_id AS "hymnId",
                       file_ids AS "fileIds";`;
   const values = [uuidv4(), oldMassId];
-  await dbPool.query(sqlQuery, values);
   const res = (await dbPool.query(sqlQuery, values)).rows;
   const massHymns = parseData(
     z.array(MassHymnSchema),
