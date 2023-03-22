@@ -3,9 +3,11 @@ import { Button, Stack, TextField } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
 import { type Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
 
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
@@ -232,18 +234,17 @@ export const MassDisplay = ({
             onChange={handleMassNameChange}
           ></InputBase>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-              label="Date & Time"
-              value={
-                localMassData.dateTime
-                  ? new Date(localMassData.dateTime).toISOString().slice(0, -1)
-                  : Date.now().toString().slice(0, -1)
-              }
-              onChange={handleMassDateTimeChange}
-              renderInput={(params) => (
-                <TextField size="small" fullWidth {...params} />
-              )}
-            />
+            <DemoContainer components={["DateTimePicker"]}>
+              <DateTimePicker
+                label="Date & time"
+                value={
+                  localMassData.dateTime
+                    ? dayjs(localMassData.dateTime)
+                    : dayjs()
+                }
+                onChange={handleMassDateTimeChange}
+              />
+            </DemoContainer>
           </LocalizationProvider>
 
           {localMassData.fileId && (

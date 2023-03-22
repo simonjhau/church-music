@@ -28,6 +28,7 @@ export const Dropdown = <T extends NumberIdBase>({
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">{label}</InputLabel>
         <Select
+          label={label}
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={String(value)}
