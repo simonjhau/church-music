@@ -53,7 +53,7 @@ const MassCard: React.FC<Props> = ({ mass }) => {
         bgcolor: "#dee0f1",
         p: 2,
         borderRadius: "0.5em",
-        my: 1,
+        mb: 2,
         mx: { xs: 0, sm: 2 },
       }}
     >
