@@ -205,11 +205,11 @@ export const deleteMass = async (massId: string): Promise<void> => {
   }
 };
 
-export const duplicateMass = async (massId: string): Promise<Mass> => {
+export const duplicateMass = async (originalMassId: string): Promise<Mass> => {
   try {
     await dbBeginTransaction();
-    const newMass = await dbDuplicateMass(massId);
-    await dbDuplicateMassHymns(massId);
+    const newMass = await dbDuplicateMass(originalMassId);
+    await dbDuplicateMassHymns(originalMassId, newMass.id);
     await dbCommit();
     return newMass;
   } catch (err) {
