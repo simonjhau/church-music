@@ -100,7 +100,7 @@ const UpdateHymnRequestBodySchema = z
   })
   .strict();
 hymnsRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const hymnId = req.body.id;
+  const hymnId = req.params.id;
   if (!hymnId) {
     res.sendStatus(400);
     return;
