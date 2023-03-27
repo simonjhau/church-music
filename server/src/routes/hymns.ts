@@ -36,19 +36,13 @@ hymnsRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 // Get hymn data for requested hymn ID
-const HymnByIdRequestSchema = z
-  .object({
-    id: z.string(),
-  })
-  .strict();
 hymnsRouter.get("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const validReqParams = parseData(
-    HymnByIdRequestSchema,
-    req.params,
-    "Problem with get hymn by ID request parameters"
-  );
+  const hymnId = req.params.id;
+  if (!hymnId) {
+    res.sendStatus(400);
+    return;
+  }
 
-  const hymnId = validReqParams.id;
   dbGetHymnById(hymnId)
     .then((hymn) => res.status(200).json(hymn))
     .catch((err) => {
@@ -84,13 +78,12 @@ hymnsRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
 hymnsRouter.delete(
   "/:id",
   (req: Request, res: Response, next: NextFunction) => {
-    const validReqParams = parseData(
-      HymnByIdRequestSchema,
-      req.params,
-      "Problem with delete hymn request parameters"
-    );
+    const hymnId = req.params.id;
+    if (!hymnId) {
+      res.sendStatus(400);
+      return;
+    }
 
-    const hymnId = validReqParams.id;
     dbDeleteHymn(hymnId)
       .then(() => res.status(200).send(`Hymn ${hymnId} deleted successfully`))
       .catch((err) => {
@@ -100,11 +93,6 @@ hymnsRouter.delete(
 );
 
 // Update hymn
-const UpdateHymnRequestParamsSchema = z
-  .object({
-    id: z.string(),
-  })
-  .strict();
 const UpdateHymnRequestBodySchema = z
   .object({
     name: z.string(),
@@ -112,19 +100,16 @@ const UpdateHymnRequestBodySchema = z
   })
   .strict();
 hymnsRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const validReqParams = parseData(
-    UpdateHymnRequestParamsSchema,
-    req.params,
-    "Problem with update hymn request params"
-  );
-
+  const hymnId = req.body.id;
+  if (!hymnId) {
+    res.sendStatus(400);
+    return;
+  }
   const validReqBody = parseData(
     UpdateHymnRequestBodySchema,
     req.body,
     "Problem with update hymn request body"
   );
-
-  const hymnId = validReqParams.id;
   const hymnName = validReqBody.name;
   const hymnLyrics = validReqBody.lyrics;
 

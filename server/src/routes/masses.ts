@@ -47,18 +47,14 @@ massesRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-const MassIdReqParamsSchema = z.object({
-  id: z.string(),
-});
-
 // Get mass data for given mass id
 massesRouter.get("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const validReqParams = parseData(
-    MassIdReqParamsSchema,
-    req.params,
-    "Problem with get mass data request params"
-  );
-  const massId = validReqParams.id;
+  const massId = req.params.id;
+  if (!massId) {
+    res.sendStatus(400);
+    return;
+  }
+
   dbGetMassData(massId)
     .then((mass) => {
       res.status(200).json(mass);
@@ -72,12 +68,12 @@ massesRouter.get("/:id", (req: Request, res: Response, next: NextFunction) => {
 massesRouter.get(
   "/:id/hymns",
   (req: Request, res: Response, next: NextFunction) => {
-    const validReqParams = parseData(
-      MassIdReqParamsSchema,
-      req.params,
-      "Problem with get hymns/files for mass request params"
-    );
-    const massId = validReqParams.id;
+    const massId = req.params.id;
+    if (!massId) {
+      res.sendStatus(400);
+      return;
+    }
+
     dbGetMassHymns(massId)
       .then((hymns) => {
         res.status(200).json(hymns);
@@ -92,20 +88,21 @@ massesRouter.get(
 massesRouter.get(
   "/:id/file",
   (req: Request, res: Response, next: NextFunction) => {
-    const validReqParams = parseData(
-      MassIdReqParamsSchema,
-      req.params,
-      "Problem with get mass file request params"
-    );
+    const massId = req.params.id;
+    if (!massId) {
+      res.sendStatus(400);
+      return;
+    }
 
-    const massId = validReqParams.id;
-    getMassFile(massId)
-      .then((url) => {
-        res.status(200).json(url);
-      })
-      .catch((err) => {
-        next(err);
-      });
+    if (massId) {
+      getMassFile(massId)
+        .then((url) => {
+          res.status(200).json(url);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    }
   }
 );
 
@@ -129,37 +126,38 @@ massesRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
 massesRouter.post(
   "/:id/duplicate",
   (req: Request, res: Response, next: NextFunction) => {
-    const validReqParams = parseData(
-      MassIdReqParamsSchema,
-      req.params,
-      "Problem with duplicate mass file request params"
-    );
+    const oldMassId = req.params.id;
+    if (!oldMassId) {
+      res.sendStatus(400);
+      return;
+    }
 
-    const oldMassId = validReqParams.id;
-    duplicateMass(oldMassId)
-      .then((newMass) => {
-        res.status(200).json(newMass);
-      })
-      .catch((err) => {
-        next(err);
-      });
+    if (oldMassId) {
+      duplicateMass(oldMassId)
+        .then((newMass) => {
+          res.status(200).json(newMass);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    }
   }
 );
 
 // Edit mass
 massesRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
-  const validReqParams = parseData(
-    MassIdReqParamsSchema,
-    req.params,
-    "Problem with edit mass file request params"
-  );
+  const massId = req.params.id;
+  if (!massId) {
+    res.sendStatus(400);
+    return;
+  }
+
   const validMassParams = parseData(
     MassParamsSchema,
     req.body,
     "Problem with edit mass file request params"
   );
 
-  const massId = validReqParams.id;
   updateMass(massId, validMassParams)
     .then((updatedMass) => {
       res.status(200).json(updatedMass);
@@ -173,13 +171,12 @@ massesRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
 massesRouter.delete(
   "/:id",
   (req: Request, res: Response, next: NextFunction) => {
-    const validReqParams = parseData(
-      MassIdReqParamsSchema,
-      req.params,
-      "Problem with edit mass file request params"
-    );
+    const massId = req.body.id;
+    if (!massId) {
+      res.sendStatus(400);
+      return;
+    }
 
-    const massId = validReqParams.id;
     deleteMass(massId)
       .then(() => {
         res.status(200).send(`Mass successfully deleted from db`);
