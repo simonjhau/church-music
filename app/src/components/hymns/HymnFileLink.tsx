@@ -1,8 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
 import axios from "axios";
 import { z } from "zod";
 
@@ -74,16 +74,17 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
   };
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={6} sm={3}>
-        <Button onClick={handleFileClick}>
-          {fileTypes.find((fileType) => fileType.id === file.fileTypeId)?.name}
-          {" - "}
-          {books.find((book) => book.id === file.bookId)?.bookCode}
-          {file.hymnNum ? ` - ${file.hymnNum}` : ""}
-          {file.comment ? ` - ${file.comment}` : ""}
-        </Button>
-      </Grid>
+    <Stack direction="row" spacing={1}>
+      <Button
+        onClick={handleFileClick}
+        sx={{ whiteSpace: "nowrap", minWidth: "max-content" }}
+      >
+        {fileTypes.find((fileType) => fileType.id === file.fileTypeId)?.name}
+        {" - "}
+        {books.find((book) => book.id === file.bookId)?.bookCode}
+        {file.hymnNum ? ` - ${file.hymnNum}` : ""}
+        {file.comment ? ` - ${file.comment}` : ""}
+      </Button>
       {editMode && (
         <>
           <AddEditFileButtonModal
@@ -97,6 +98,6 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
           </IconButton>
         </>
       )}
-    </Grid>
+    </Stack>
   );
 };
