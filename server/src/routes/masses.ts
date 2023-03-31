@@ -171,7 +171,7 @@ massesRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
 massesRouter.delete(
   "/:id",
   (req: Request, res: Response, next: NextFunction) => {
-    const massId = req.body.id;
+    const massId = req.params.id;
     if (!massId) {
       res.sendStatus(400);
       return;
