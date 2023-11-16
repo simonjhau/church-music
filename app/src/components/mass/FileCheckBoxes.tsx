@@ -37,7 +37,7 @@ export const FileCheckBoxes: React.FC<Props> = ({
     const getFiles = async (): Promise<void> => {
       if (hymnId) {
         const token = await getAccessTokenSilently();
-        const res = await axios.get(`api/hymns/${hymnId}/files`, {
+        const res = await axios.get(`/api/hymns/${hymnId}/files`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const files = res.data;

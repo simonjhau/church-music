@@ -1,7 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Container, Grid, Stack } from "@mui/material";
 import axios from "axios";
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { SearchBox } from "../components/general/SearchBox";
 import { MassDisplay } from "../components/mass/MassDisplay";
@@ -12,6 +13,7 @@ import { type Mass } from "../types";
 export const MassesPage = (): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
 
+  const massId = useParams()["*"];
   const [massData, setMassData] = useState<Mass | null>(null);
 
   const refreshMassData = (endpoint: string | undefined): void => {
@@ -21,7 +23,7 @@ export const MassesPage = (): ReactElement => {
         const res = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setMassData(res.data[0]);
+        setMassData(res.data);
       } else {
         setMassData(null);
       }
@@ -32,6 +34,12 @@ export const MassesPage = (): ReactElement => {
       alert(msg);
     });
   };
+
+  useEffect(() => {
+    if (massId) {
+      refreshMassData(`/api/masses/${massId}`);
+    }
+  }, []);
 
   return (
     <TypeAndBookProvider>

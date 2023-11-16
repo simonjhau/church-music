@@ -101,7 +101,7 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
     const getFile = async (): Promise<void> => {
       if (fileId) {
         const token = await getAccessTokenSilently();
-        const res = await axios.get(`api/hymns/${hymnId}/files/${fileId}`, {
+        const res = await axios.get(`/api/hymns/${hymnId}/files/${fileId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const file = parseData(FileSchema, res.data, "Problem getting file");
@@ -166,13 +166,13 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
             hymnNum,
             comment,
           };
-          await axios.put(`api/hymns/${hymnId}/files/${fileId}`, fileData, {
+          await axios.put(`/api/hymns/${hymnId}/files/${fileId}`, fileData, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
           alert("File updated successfully");
 
-          const res = await axios.get(`api/hymns/${hymnId}/files`, {
+          const res = await axios.get(`/api/hymns/${hymnId}/files`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const files = parseData(
@@ -183,7 +183,7 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
           setFiles(files);
           handleClose();
         } else {
-          await axios.post(`api/hymns/${hymnId}/files`, formData, {
+          await axios.post(`/api/hymns/${hymnId}/files`, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${token}`,
@@ -192,7 +192,7 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
 
           alert("File uploaded successfully");
 
-          const res = await axios.get(`api/hymns/${hymnId}/files`, {
+          const res = await axios.get(`/api/hymns/${hymnId}/files`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const files = parseData(

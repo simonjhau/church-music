@@ -31,7 +31,7 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
   const handleFileClick: React.MouseEventHandler = (e) => {
     const getFile = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.get(`api/hymns/${hymnId}/files/${file.id}/file`, {
+      const res = await axios.get(`/api/hymns/${hymnId}/files/${file.id}/file`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       downloadFile(res.data);
@@ -47,7 +47,7 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
       if (window.confirm(`Are you sure you want to delete`)) {
         const token = await getAccessTokenSilently();
         const deleteRes = await axios.delete(
-          `api/hymns/${hymnId}/files/${file.id}`,
+          `/api/hymns/${hymnId}/files/${file.id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -55,7 +55,7 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
         alert(deleteRes.data);
 
         // Get updated hymn
-        const filesRes = await axios.get(`api/hymns/${hymnId}/files`, {
+        const filesRes = await axios.get(`/api/hymns/${hymnId}/files`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const files = parseData(

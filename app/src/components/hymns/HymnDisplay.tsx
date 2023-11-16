@@ -66,7 +66,7 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
       const token = await getAccessTokenSilently();
       if (localHymnData) {
         const res = await axios.put(
-          `api/hymns/${localHymnData.id}`,
+          `/api/hymns/${localHymnData.id}`,
           {
             name: localHymnData.name,
             lyrics: localHymnData.lyrics,
@@ -94,7 +94,7 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
       if (window.confirm(`Are you sure you want to delete`)) {
         if (localHymnData) {
           const token = await getAccessTokenSilently();
-          await axios.delete(`api/hymns/${localHymnData.id}`, {
+          await axios.delete(`/api/hymns/${localHymnData.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           alert(`Hymn deleted successfully`);

@@ -33,11 +33,11 @@ function App(): ReactElement {
             element={<AuthenticationGuard component={CalendarPage} />}
           />
           <Route
-            path="/hymns"
+            path="/hymns/*"
             element={<AuthenticationGuard component={HymnsPage} />}
           />
           <Route
-            path="/masses"
+            path="/masses/*"
             element={<AuthenticationGuard component={MassesPage} />}
           />
           <Route

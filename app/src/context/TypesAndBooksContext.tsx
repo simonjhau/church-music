@@ -45,24 +45,24 @@ export const TypeAndBookProvider = ({ children }: Props): ReactElement => {
       // Get list of file types
       const token = await getAccessTokenSilently();
 
-      const fileTypesRes = await axios.get("api/fileTypes", {
+      const fileTypesRes = await axios.get("/api/fileTypes", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFileTypes(fileTypesRes.data);
 
       // Get list of hymn types
-      const hymnTypesRes = await axios.get("api/hymnTypes", {
+      const hymnTypesRes = await axios.get("/api/hymnTypes", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setHymnTypes(hymnTypesRes.data);
 
       // Get list of books
-      const booksRes = await axios.get("api/books", {
+      const booksRes = await axios.get("/api/books", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBooks(booksRes.data);
       otherBookId.current = booksRes.data.find(
-        (book: Book) => book.name === "Other"
+        (book: Book) => book.name === "Other",
       ).id;
     };
 

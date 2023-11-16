@@ -41,7 +41,7 @@ export const MassDisplay = ({
     const getMassHymns = async (): Promise<void> => {
       if (massData) {
         const token = await getAccessTokenSilently();
-        const res = await axios.get(`api/masses/${massData.id}/hymns`, {
+        const res = await axios.get(`/api/masses/${massData.id}/hymns`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMassHymns(res.data);
@@ -79,7 +79,7 @@ export const MassDisplay = ({
     const duplicateMass = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
       const res = await axios.post(
-        `api/masses/${localMassData.id}/duplicate`,
+        `/api/masses/${localMassData.id}/duplicate`,
         massData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -111,7 +111,7 @@ export const MassDisplay = ({
 
         const token = await getAccessTokenSilently();
         const res = await axios.put(
-          `api/masses/${localMassData.id}`,
+          `/api/masses/${localMassData.id}`,
           massData,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -139,7 +139,7 @@ export const MassDisplay = ({
     const deleteMass = async (): Promise<void> => {
       if (window.confirm(`Are you sure you want to delete`)) {
         const token = await getAccessTokenSilently();
-        await axios.delete(`api/masses/${localMassData.id}`, {
+        await axios.delete(`/api/masses/${localMassData.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -198,7 +198,7 @@ export const MassDisplay = ({
   const handleOpenMusic = (): void => {
     const openMusic = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.get(`api/masses/${localMassData.id}/file`, {
+      const res = await axios.get(`/api/masses/${localMassData.id}/file`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       downloadFile(res.data);

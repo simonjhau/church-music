@@ -59,7 +59,7 @@ export const NewHymnButtonModal: React.FC<NewHymnModalProps> = ({
 
     const addHymn = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.post("api/hymns", hymnData, {
+      const res = await axios.post("/api/hymns", hymnData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const hymn = parseData(HymnSchema, res.data, "Problem adding new hymn");

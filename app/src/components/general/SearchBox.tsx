@@ -13,6 +13,7 @@ import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import axios from "axios";
 import { Fragment, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { type Base } from "../../types";
 
@@ -32,6 +33,7 @@ export const SearchBox = <T extends Base>({
   sx,
 }: Props<T>): JSX.Element => {
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<readonly T[]>([]);
@@ -39,7 +41,7 @@ export const SearchBox = <T extends Base>({
 
   const getValuesThatMatchSearchQuery = async (
     query: string,
-    value: T | null
+    value: T | null,
   ): Promise<void> => {
     const token = await getAccessTokenSilently();
     const res = await axios.get(apiUrl, {
@@ -69,7 +71,7 @@ export const SearchBox = <T extends Base>({
           alert(msg);
         });
       }, 400),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -95,10 +97,13 @@ export const SearchBox = <T extends Base>({
       noOptionsText={`No ${type} found`}
       onChange={(
         _event: React.SyntheticEvent<Element, Event>,
-        newValue: T | null
+        newValue: T | null,
       ) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
+        if (newValue) {
+          navigate(newValue.id);
+        }
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       onInputChange={(_event, newInputValue) => {

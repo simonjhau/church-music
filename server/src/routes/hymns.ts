@@ -66,7 +66,7 @@ hymnsRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
   const hymnName = validReqBody.name;
   dbAddHymn(hymnName)
     .then((newHymn) => {
-      res.location(`api/hymns/${newHymn.id}`);
+      res.location(`/api/hymns/${newHymn.id}`);
       res.status(201).json(newHymn);
     })
     .catch((err) => {

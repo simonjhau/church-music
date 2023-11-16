@@ -60,7 +60,7 @@ export const NewMassButtonModal: React.FC<NewMassModalProps> = ({
 
     const addmass = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.post("api/masses", massData, {
+      const res = await axios.post("/api/masses", massData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const mass = parseData(MassSchema, res.data, "Problem adding new mass");

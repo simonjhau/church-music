@@ -47,7 +47,7 @@ const DraggableHymn: React.FC<Props> = ({
   const setHymnData = (hymn: MassHymn | null): void => {
     const setHymnDataAsync = async (hymn: MassHymn): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.get(`api/hymns/${hymn.id}/files`, {
+      const res = await axios.get(`/api/hymns/${hymn.id}/files`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const files = res.data;
