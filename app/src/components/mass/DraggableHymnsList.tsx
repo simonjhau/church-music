@@ -9,6 +9,7 @@ import {
   type DropResult,
 } from "react-beautiful-dnd";
 
+import { useHymnTypes } from "../../context/TypesAndBooksContext";
 import { type MassHymn } from "../../types";
 import DraggableHymn from "./DraggableHymn";
 
@@ -21,6 +22,8 @@ const DraggableHymnsList: React.FC<Props> = ({
   hymnsData: massHymns,
   setHymnsData,
 }) => {
+  const hymnTypes = useHymnTypes();
+
   // Reorder hymns after dragging
   const handleOnDragEnd = (res: DropResult): void => {
     if (!res.destination) return;
@@ -34,7 +37,7 @@ const DraggableHymnsList: React.FC<Props> = ({
   const updateHymnsData = (
     hymnIndex: number,
     key: keyof MassHymn,
-    data: MassHymn[typeof key]
+    data: MassHymn[typeof key],
   ): void => {
     const updatedHymn = massHymns.map((massHymn, i) => {
       if (i === hymnIndex) {
@@ -54,10 +57,19 @@ const DraggableHymnsList: React.FC<Props> = ({
 
   const handleAddHymn = (index: number): void => {
     const tempHymns = [...massHymns];
+
+    let newHymnTypeId = 0;
+    if (index > 0) {
+      newHymnTypeId = Math.min(
+        tempHymns[index - 1].hymnTypeId + 1,
+        hymnTypes.length - 1,
+      );
+    }
+
     tempHymns.splice(index, 0, {
       id: ``,
       name: "",
-      hymnTypeId: index > 0 ? tempHymns[index - 1].hymnTypeId + 1 : 0,
+      hymnTypeId: newHymnTypeId,
       fileIds: [],
     });
     setHymnsData(tempHymns);
