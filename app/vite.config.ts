@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
+import mkcert from "vite-plugin-mkcert";
 
 const envVars = [
   "VITE_AUTH0_DOMAIN",
@@ -22,11 +23,12 @@ export default defineConfig(({ command, mode }) => {
   }
 
   return {
-    plugins: [react()],
+    plugins: [react(), mkcert()],
     server: {
+      https: true,
       proxy: {
         "/api": {
-          target: "http://127.0.0.1:9000",
+          target: "http://localhost:9000",
           changeOrigin: true,
           secure: false,
           ws: true,

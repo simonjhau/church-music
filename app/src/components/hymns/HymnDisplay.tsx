@@ -1,8 +1,11 @@
+import "react-quill/dist/quill.snow.css";
+
 import { useAuth0 } from "@auth0/auth0-react";
 import { Typography } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import ReactQuill from "react-quill";
 
 import { type File, type Hymn, HymnSchema } from "../../types";
 import { parseData } from "../../utils";
@@ -46,7 +49,7 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
     const validHymn = parseData(
       HymnSchema,
       updatedHymnData,
-      "Error editing local hymn data"
+      "Error editing local hymn data",
     );
     setLocalHymnData(validHymn);
   };
@@ -56,8 +59,7 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
     editLocalHymnData("name", updatedHymnName);
   };
 
-  const handleLyricsChange = (e: React.ChangeEvent): void => {
-    const updatedLyrics = (e.target as HTMLTextAreaElement).value;
+  const handleLyricsChange = (updatedLyrics: string): void => {
     editLocalHymnData("lyrics", updatedLyrics);
   };
 
@@ -71,13 +73,13 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
             name: localHymnData.name,
             lyrics: localHymnData.lyrics,
           },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         alert(`Hymn saved successfully`);
         const hymn = parseData(
           HymnSchema,
           res.data.hymn,
-          "Problem saving hymn"
+          "Problem saving hymn",
         );
         setHymnData(hymn);
       }
@@ -150,16 +152,19 @@ export const HymnDisplay: React.FC<Props> = ({ hymnData, setHymnData }) => {
           />
           <br />
           <Typography variant="h5">Lyrics</Typography>
-          <div className="lyrics">
-            <InputBase
+          <div className="lyrics" style={{ marginTop: 8 }}>
+            <div
               className="lyricsText"
-              fullWidth
-              multiline
-              disabled={!editMode}
-              value={localHymnData.lyrics ? localHymnData.lyrics : ""}
-              onChange={handleLyricsChange}
-              inputProps={{ style: { WebkitTextFillColor: "black" } }}
-            ></InputBase>
+              dangerouslySetInnerHTML={{ __html: localHymnData.lyrics ?? "" }}
+            />
+            {editMode && (
+              <ReactQuill
+                style={{ marginTop: 20 }}
+                theme="snow"
+                value={localHymnData.lyrics ? localHymnData.lyrics : ""}
+                onChange={handleLyricsChange}
+              />
+            )}
           </div>
         </div>
       )}
