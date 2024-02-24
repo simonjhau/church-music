@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { type SxProps, type Theme } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
@@ -16,6 +17,7 @@ interface Props {
   selectedFileIds: string[];
   updateSelectedFiles: (selectedFiles: string[]) => void;
   disabled?: boolean;
+  sx?: SxProps<Theme>;
 }
 
 export const FileCheckBoxes: React.FC<Props> = ({
@@ -24,6 +26,7 @@ export const FileCheckBoxes: React.FC<Props> = ({
   selectedFileIds,
   updateSelectedFiles,
   disabled = false,
+  sx = undefined,
 }) => {
   const { getAccessTokenSilently } = useAuth0();
   const books = useBooks();
@@ -44,13 +47,13 @@ export const FileCheckBoxes: React.FC<Props> = ({
         const validFiles = parseData(
           z.array(FileSchema),
           files,
-          "Problem getting files"
+          "Problem getting files",
         );
 
         setFiles(validFiles);
 
         const newSelected = validFiles.map((file) =>
-          selectedFileIds.includes(file.id)
+          selectedFileIds.includes(file.id),
         );
         setSelected(newSelected);
       } else {
@@ -83,7 +86,7 @@ export const FileCheckBoxes: React.FC<Props> = ({
   };
 
   return (
-    <FormGroup>
+    <FormGroup sx={sx}>
       {files.length > 0 &&
         files.length === selected.length &&
         files.map((file, fileIndex) => {
@@ -96,8 +99,8 @@ export const FileCheckBoxes: React.FC<Props> = ({
             fileTypes.find((fileType) => fileType.id === file.fileTypeId)
               ?.name ?? ""
           } - ${books.find((book) => book.id === file.bookId)?.name ?? ""} ${
-                file.hymnNum ? ` - ${file.hymnNum}` : ""
-              } ${file.comment ? ` - ${file.comment}` : ""}`}
+            file.hymnNum ? ` - ${file.hymnNum}` : ""
+          } ${file.comment ? ` - ${file.comment}` : ""}`}
               control={
                 <Checkbox
                   size="small"

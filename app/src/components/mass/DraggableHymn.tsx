@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LyricsIcon from "@mui/icons-material/Lyrics";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
@@ -21,7 +22,7 @@ interface Props {
   updateHymnsData: (
     hymnIndex: number,
     key: keyof MassHymn,
-    data: MassHymn[typeof key]
+    data: MassHymn[typeof key],
   ) => void;
   handleDeleteHymn: (hymnIndex: number) => void;
   disabled?: boolean;
@@ -54,7 +55,7 @@ const DraggableHymn: React.FC<Props> = ({
       const validFiles = parseData(
         z.array(FileSchema),
         files,
-        "Problem getting files"
+        "Problem getting files",
       );
       const fileIds = validFiles.map((file) => file.id);
       updateSelectedFiles(fileIds);
@@ -79,6 +80,13 @@ const DraggableHymn: React.FC<Props> = ({
     handleDeleteHymn(hymnIndex);
   };
 
+  const openInNewTab = (url: string): void => {
+    const newWindow = window.open(url, "_blank", "noopener, noreferrer");
+    if (newWindow) {
+      newWindow.opener = null;
+    }
+  };
+
   return (
     <Stack
       className="draggableHymn"
@@ -97,7 +105,7 @@ const DraggableHymn: React.FC<Props> = ({
               </Typography>
               <IconButton
                 aria-label="delete"
-                sx={{ p: 2 }}
+                sx={{ p: 2, margin: "auto" }}
                 onClick={handleDelete}
               >
                 <DeleteIcon />
@@ -117,13 +125,25 @@ const DraggableHymn: React.FC<Props> = ({
                 setValue={setHymnData}
                 apiUrl="/api/hymns/"
               />
-              {massHymn && (
-                <FileCheckBoxes
-                  label="Music Files"
-                  hymnId={massHymn.id}
-                  selectedFileIds={massHymn.fileIds}
-                  updateSelectedFiles={updateSelectedFiles}
-                />
+              {massHymn?.id && (
+                <Grid container>
+                  <FileCheckBoxes
+                    label="Music Files"
+                    hymnId={massHymn.id}
+                    selectedFileIds={massHymn.fileIds}
+                    updateSelectedFiles={updateSelectedFiles}
+                    sx={{ flex: 1 }}
+                  />
+                  <IconButton
+                    aria-label="lyrics"
+                    sx={{ p: 2, height: "fit-content" }}
+                    onClick={() => {
+                      openInNewTab(`/Hymns/${massHymn?.id}`);
+                    }}
+                  >
+                    <LyricsIcon />
+                  </IconButton>
+                </Grid>
               )}
             </Stack>
           </li>
