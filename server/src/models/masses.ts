@@ -1,10 +1,18 @@
 import fs from "fs";
-import { degrees, PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import {
+  degrees,
+  PDFDocument,
+  PDFName,
+  type PDFPage,
+  type PDFRef,
+  rgb,
+  StandardFonts,
+} from "pdf-lib";
 import { type Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 
+import { dbBeginTransaction, dbCommit, dbRollback } from "../db";
 import { dbGetHymnTypes } from "../db/hymnTypes";
-import { dbBeginTransaction, dbCommit, dbRollback } from "../db/index";
 import {
   dbAddMassFileInfo,
   dbAddMassHymns,
@@ -27,7 +35,7 @@ import { deleteFilesInDirectory } from "../utils";
 
 export const updateMass = async (
   massId: string,
-  massParams: MassParams
+  massParams: MassParams,
 ): Promise<Mass> => {
   // Update masses table
   try {
@@ -48,7 +56,7 @@ export const updateMass = async (
 
 const streamToFile = async (
   inputStream: Readable,
-  filePath: string
+  filePath: string,
 ): Promise<void> => {
   await new Promise((resolve, reject) => {
     const fileWriteStream = fs.createWriteStream(filePath);
@@ -63,10 +71,11 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
   const mergedPdf = await PDFDocument.create();
   const helveticaFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
   const helveticaBoldFont = await mergedPdf.embedFont(
-    StandardFonts.HelveticaBold
+    StandardFonts.HelveticaBold,
   );
 
   const page = mergedPdf.addPage();
+  const contentsPageRef = page.ref;
   const { width, height } = page.getSize();
 
   // Write heading
@@ -113,6 +122,38 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
     });
   });
 
+  const addLinkToContentsPage = (page: PDFPage): PDFRef => {
+    const size = 25;
+    const x = 25;
+    const y = height - 45;
+
+    page.drawText("^", {
+      x,
+      y,
+      size,
+      font: helveticaFont,
+      color: rgb(0, 0, 0),
+    });
+
+    return mergedPdf.context.register(
+      mergedPdf.context.obj({
+        Type: "Annot",
+        Subtype: "Link",
+        // Bounds of the link on the page
+        Rect: [
+          x, // lower left x coordinate
+          y, // lower left y coordinate
+          x + 25, // upper right x coordinate
+          y + 25, // upper right y coordinate
+        ],
+        Border: [0, 0, 0],
+        C: [0, 0, 0],
+        // Page to be visited when the link is clicked
+        Dest: [contentsPageRef, "Contents", null, null, null],
+      }),
+    );
+  };
+
   // Create downloads folder if it doesn't exist
   const downloadsFolder = "downloads/";
   if (!fs.existsSync(downloadsFolder)) {
@@ -132,7 +173,7 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
       const document = await PDFDocument.load(fs.readFileSync(filePath));
       const copiedPages = await mergedPdf.copyPages(
         document,
-        document.getPageIndices()
+        document.getPageIndices(),
       );
       copiedPages.forEach((page) => {
         let { width, height } = page.getSize();
@@ -161,6 +202,10 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
+
+        const link = addLinkToContentsPage(page);
+        page.node.set(PDFName.of("Annots"), mergedPdf.context.obj([link]));
+
         mergedPdf.addPage(page);
       });
     }
@@ -173,7 +218,7 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
 // Save mass file to S3
 export const saveMassPdfToS3 = async (
   massId: string,
-  massParams: MassParams
+  massParams: MassParams,
 ): Promise<void> => {
   const fileId = (await dbGetMassData(massId)).fileId ?? uuidv4();
 
@@ -221,8 +266,7 @@ export const duplicateMass = async (originalMassId: string): Promise<Mass> => {
 export const getMassFile = async (massId: string): Promise<string | null> => {
   const mass = await dbGetMassData(massId);
   if (mass.fileId !== null) {
-    const url = await s3GetSignedUrl("masses", mass.fileId, mass.name);
-    return url;
+    return await s3GetSignedUrl("masses", mass.fileId, mass.name);
   }
   return null;
 };
