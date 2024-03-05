@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import EditIcon from "@mui/icons-material/Edit";
+import { Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -178,7 +179,7 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
           const files = parseData(
             z.array(FileSchema),
             res.data,
-            "Problem getting files"
+            "Problem getting files",
           );
           setFiles(files);
           handleClose();
@@ -198,7 +199,7 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
           const files = parseData(
             z.array(FileSchema),
             res.data,
-            "Problem getting files"
+            "Problem getting files",
           );
           setFiles(files);
         }
@@ -220,9 +221,11 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
   return (
     <>
       {fileId ? (
-        <IconButton aria-label="edit" sx={{ p: 0.7 }} onClick={handleOpen}>
-          <EditIcon />
-        </IconButton>
+        <Tooltip title="Edit Hymn File Metadata">
+          <IconButton aria-label="edit" sx={{ p: 0.7 }} onClick={handleOpen}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
       ) : (
         <Button
           variant="contained"

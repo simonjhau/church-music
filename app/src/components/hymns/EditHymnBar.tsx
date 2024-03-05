@@ -1,5 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
+import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
@@ -45,20 +46,25 @@ export const EditHymnBar: React.FC<EditBarProps> = ({
   return editMode ? (
     <Grid container spacing={2} sx={{ marginTop: 0 }}>
       <Grid item sm={9}>
-        <IconButton
-          aria-label="delete"
-          sx={{ p: 0.7 }}
-          onClick={handleSaveChangesClick}
-        >
-          <SaveIcon />
-        </IconButton>
-        <IconButton
-          aria-label="delete"
-          sx={{ p: 0.7 }}
-          onClick={handleDeleteChangesClick}
-        >
-          <DeleteIcon />
-        </IconButton>
+        <Tooltip title="Save Hymn">
+          <IconButton
+            aria-label="save"
+            sx={{ p: 0.7 }}
+            onClick={handleSaveChangesClick}
+          >
+            <SaveIcon />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Delete Hymn">
+          <IconButton
+            aria-label="delete"
+            sx={{ p: 0.7 }}
+            onClick={handleDeleteChangesClick}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
       </Grid>
       <Grid item sm={3}>
         <Button variant="outlined" fullWidth onClick={handleCancelChangesClick}>

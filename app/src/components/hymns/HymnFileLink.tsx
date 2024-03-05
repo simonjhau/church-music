@@ -3,6 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
 import { z } from "zod";
 
@@ -31,9 +32,12 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
   const handleFileClick: React.MouseEventHandler = (e) => {
     const getFile = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
-      const res = await axios.get(`/api/hymns/${hymnId}/files/${file.id}/file`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        `/api/hymns/${hymnId}/files/${file.id}/file`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       downloadFile(res.data);
     };
 
@@ -50,7 +54,7 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
           `/api/hymns/${hymnId}/files/${file.id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
         alert(deleteRes.data);
 
@@ -61,7 +65,7 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
         const files = parseData(
           z.array(FileSchema),
           filesRes.data,
-          "Problem getting files"
+          "Problem getting files",
         );
         setFiles(files);
       }
@@ -93,9 +97,11 @@ export const HymnFileLink: React.FC<HymnFileLinkProps> = ({
             setFiles={setFiles}
           />
 
-          <IconButton aria-label="delete" onClick={handleDeleteFile}>
-            <DeleteIcon />
-          </IconButton>
+          <Tooltip title="Delete Hymn File">
+            <IconButton aria-label="delete" onClick={handleDeleteFile}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         </>
       )}
     </Stack>

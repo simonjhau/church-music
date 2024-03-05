@@ -41,7 +41,7 @@ const EditBar: React.FC<EditBarProps> = ({
 
   return (
     <Box sx={{ marginTop: 0 }}>
-      <Tooltip title="Duplicate">
+      <Tooltip title="Duplicate Mass">
         <IconButton
           aria-label="duplicate"
           sx={{ p: 0.7 }}
@@ -51,7 +51,7 @@ const EditBar: React.FC<EditBarProps> = ({
         </IconButton>
       </Tooltip>
 
-      <Tooltip title="Save">
+      <Tooltip title="Save Mass">
         <IconButton
           aria-label="save"
           sx={{ p: 0.7 }}
@@ -61,7 +61,7 @@ const EditBar: React.FC<EditBarProps> = ({
         </IconButton>
       </Tooltip>
 
-      <Tooltip title="Delete">
+      <Tooltip title="Delete Mass">
         <IconButton
           aria-label="delete"
           sx={{ p: 0.7 }}
@@ -71,7 +71,7 @@ const EditBar: React.FC<EditBarProps> = ({
         </IconButton>
       </Tooltip>
 
-      <Tooltip title="Revert">
+      <Tooltip title="Revert Mass">
         <IconButton
           aria-label="cancel"
           sx={{ p: 0.7 }}
