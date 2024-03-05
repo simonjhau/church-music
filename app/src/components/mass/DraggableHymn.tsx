@@ -1,6 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LyricsIcon from "@mui/icons-material/Lyrics";
+import { Tooltip } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
@@ -103,13 +104,16 @@ const DraggableHymn: React.FC<Props> = ({
               <Typography variant="h6" sx={{ flex: 1, p: 2 }}>
                 {hymnIndex + 1}
               </Typography>
-              <IconButton
-                aria-label="delete"
-                sx={{ p: 2, margin: "auto" }}
-                onClick={handleDelete}
-              >
-                <DeleteIcon />
-              </IconButton>
+
+              <Tooltip title="Delete">
+                <IconButton
+                  aria-label="delete"
+                  sx={{ p: 2, margin: "auto" }}
+                  onClick={handleDelete}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
             </Grid>
 
             <Stack spacing={2}>
@@ -134,15 +138,17 @@ const DraggableHymn: React.FC<Props> = ({
                     updateSelectedFiles={updateSelectedFiles}
                     sx={{ flex: 1 }}
                   />
-                  <IconButton
-                    aria-label="lyrics"
-                    sx={{ p: 2, height: "fit-content" }}
-                    onClick={() => {
-                      openInNewTab(`/Hymns/${massHymn?.id}`);
-                    }}
-                  >
-                    <LyricsIcon />
-                  </IconButton>
+                  <Tooltip title="Music & Lyrics">
+                    <IconButton
+                      aria-label="lyrics"
+                      sx={{ p: 2, height: "fit-content" }}
+                      onClick={() => {
+                        openInNewTab(`/Hymns/${massHymn?.id}`);
+                      }}
+                    >
+                      <LyricsIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               )}
             </Stack>

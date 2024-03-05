@@ -2,6 +2,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import UndoIcon from "@mui/icons-material/Undo";
+import { Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 
@@ -40,34 +41,45 @@ const EditBar: React.FC<EditBarProps> = ({
 
   return (
     <Box sx={{ marginTop: 0 }}>
-      <IconButton
-        aria-label="duplicate"
-        sx={{ p: 0.7 }}
-        onClick={handleDuplicateClick}
-      >
-        <ContentCopyIcon />
-      </IconButton>
-      <IconButton
-        aria-label="save"
-        sx={{ p: 0.7 }}
-        onClick={handleSaveChangesClick}
-      >
-        <SaveIcon />
-      </IconButton>
-      <IconButton
-        aria-label="delete"
-        sx={{ p: 0.7 }}
-        onClick={handleDeleteChangesClick}
-      >
-        <DeleteIcon />
-      </IconButton>
-      <IconButton
-        aria-label="cancel"
-        sx={{ p: 0.7 }}
-        onClick={handleCancelChangesClick}
-      >
-        <UndoIcon />
-      </IconButton>
+      <Tooltip title="Duplicate">
+        <IconButton
+          aria-label="duplicate"
+          sx={{ p: 0.7 }}
+          onClick={handleDuplicateClick}
+        >
+          <ContentCopyIcon />
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip title="Save">
+        <IconButton
+          aria-label="save"
+          sx={{ p: 0.7 }}
+          onClick={handleSaveChangesClick}
+        >
+          <SaveIcon />
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip title="Delete">
+        <IconButton
+          aria-label="delete"
+          sx={{ p: 0.7 }}
+          onClick={handleDeleteChangesClick}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip title="Revert">
+        <IconButton
+          aria-label="cancel"
+          sx={{ p: 0.7 }}
+          onClick={handleCancelChangesClick}
+        >
+          <UndoIcon />
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 };
