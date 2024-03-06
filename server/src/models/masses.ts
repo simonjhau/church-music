@@ -23,6 +23,7 @@ import {
   dbGetMassData,
   dbUpdateMass,
   type Mass,
+  type MassHymn,
   type MassParams,
 } from "../db/masses";
 import {
@@ -75,7 +76,7 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
   );
 
   const page = mergedPdf.addPage();
-  const contentsPageRef = page.ref;
+  const contentsPage = page;
   const { width, height } = page.getSize();
 
   // Write heading
@@ -104,31 +105,57 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
 
   // Write list of hymns
   const fontSize = 16;
-  hymns.forEach((hymn, index) => {
+  const writeContentsPageEntry = (
+    hymn: MassHymn,
+    index: number,
+    firstPage: PDFPage,
+  ): PDFRef => {
     const hymnType = hymnTypes[hymn.hymnTypeId]?.name ?? "";
-    page.drawText(`${index + 1}. ${hymnType}:`, {
+    contentsPage.drawText(`${index + 1}. ${hymnType}:`, {
       x: 50,
       y: height - 145 - index * 1.5 * fontSize,
       size: fontSize,
       font: helveticaBoldFont,
       color: rgb(0, 0, 0),
     });
-    page.drawText(hymn.name, {
-      x: width / 2 - 50,
-      y: height - 145 - index * 1.5 * fontSize,
+
+    const x = width / 2 - 50;
+    const y = height - 145 - index * 1.5 * fontSize;
+    contentsPage.drawText(hymn.name, {
+      x,
+      y,
       size: fontSize,
       font: helveticaFont,
       color: rgb(0, 0, 0),
     });
-  });
+
+    const textWidth = (fontSize * hymn.name.length * 2) / 3;
+    return mergedPdf.context.register(
+      mergedPdf.context.obj({
+        Type: "Annot",
+        Subtype: "Link",
+        // Bounds of the link on the page
+        Rect: [
+          x, // lower left x coordinate
+          y, // lower left y coordinate
+          x + textWidth, // upper right x coordinate
+          y + fontSize, // upper right y coordinate
+        ],
+        Border: [0, 0, 0],
+        C: [0, 0, 1],
+        // Page to be visited when the link is clicked
+        Dest: [firstPage.ref, "XYZ", null, null, null],
+      }),
+    );
+  };
 
   const addLinkToContentsPage = (page: PDFPage): PDFRef => {
     const size = 25;
     const x = 25;
-    const y = height - 45;
+    const y = page.getHeight() - 45;
 
     page.drawText("^", {
-      x,
+      x: x + 5,
       y,
       size,
       font: helveticaFont,
@@ -147,9 +174,9 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
           y + 25, // upper right y coordinate
         ],
         Border: [0, 0, 0],
-        C: [0, 0, 0],
+        C: [0, 0, 1],
         // Page to be visited when the link is clicked
-        Dest: [contentsPageRef, "Contents", null, null, null],
+        Dest: [contentsPage.ref, "XYZ", null, null, null],
       }),
     );
   };
@@ -160,9 +187,11 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
     fs.mkdirSync(downloadsFolder);
   }
 
-  let hymnIndex = 1;
+  let hymnIndex = 0;
+  const links: PDFRef[] = [];
   for (const hymn of hymns) {
     const fileIds = hymn.fileIds;
+    let firstPage: PDFPage | null = null;
     for (const fileId of fileIds) {
       // Save file locally
       const filePath = `${downloadsFolder}${fileId}.pdf`;
@@ -195,7 +224,7 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
           [width, height] = [height, width];
         }
 
-        page.drawText(`${hymnIndex}`, {
+        page.drawText(`${hymnIndex + 1}`, {
           x: width - 40,
           y: height - 35,
           size: 16,
@@ -206,11 +235,22 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
         const link = addLinkToContentsPage(page);
         page.node.set(PDFName.of("Annots"), mergedPdf.context.obj([link]));
 
-        mergedPdf.addPage(page);
+        const addedPage = mergedPdf.addPage(page);
+        if (!firstPage) {
+          firstPage = addedPage;
+        }
       });
     }
+
+    if (firstPage) {
+      const link = writeContentsPageEntry(hymn, hymnIndex, firstPage);
+      links.push(link);
+    }
+
     hymnIndex++;
   }
+
+  contentsPage.node.set(PDFName.of("Annots"), mergedPdf.context.obj(links));
 
   fs.writeFileSync(`downloads/${massParams.name}.pdf`, await mergedPdf.save());
 };

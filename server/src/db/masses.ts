@@ -14,53 +14,50 @@ const MassSchema = z.object({
 export type Mass = z.infer<typeof MassSchema>;
 
 export const dbGetAllMasses = async (): Promise<Mass[]> => {
-  const sqlQuery = `SELECT
-                  id AS "id",
-                  name AS "name",
-                  date_time AS "dateTime",
-                  file_id AS "fileId"
-                  FROM masses
-                  ORDER BY date_time DESC`;
+  const sqlQuery = `SELECT id        AS "id",
+                             name      AS "name",
+                             date_time AS "dateTime",
+                             file_id   AS "fileId"
+                      FROM masses
+                      ORDER BY date_time DESC`;
   const res = (await dbPool.query(sqlQuery)).rows;
   const masses = parseData(
     z.array(MassSchema),
     res,
-    `Error getting all masses from db"`
+    `Error getting all masses from db"`,
   );
   return masses;
 };
 
 export const dbGetMassesByQuery = async (query: string): Promise<Mass[]> => {
-  const sqlQuery = `SELECT
-                    id AS "id",
-                    name AS "name",
-                    date_time AS "dateTime",
-                    file_id AS "fileId"
-                    FROM masses
-                    WHERE LOWER(name) LIKE LOWER('%' || $1 || '%')
-                    ORDER BY date_time DESC;`;
+  const sqlQuery = `SELECT id        AS "id",
+                             name      AS "name",
+                             date_time AS "dateTime",
+                             file_id   AS "fileId"
+                      FROM masses
+                      WHERE LOWER(name) LIKE LOWER('%' || $1 || '%')
+                      ORDER BY date_time DESC;`;
   const res = (await dbPool.query(sqlQuery, [query])).rows;
   const masses = parseData(
     z.array(MassSchema),
     res,
-    `Error getting all masses from db"`
+    `Error getting all masses from db"`,
   );
   return masses;
 };
 
 export const dbGetMassData = async (massId: string): Promise<Mass> => {
-  const sqlQuery = `SELECT
-                    id AS "id",
-                    name AS "name",
-                    date_time AS "dateTime",
-                    file_id AS "fileId"
-                    FROM masses
-                    WHERE id = $1;`;
+  const sqlQuery = `SELECT id        AS "id",
+                             name      AS "name",
+                             date_time AS "dateTime",
+                             file_id   AS "fileId"
+                      FROM masses
+                      WHERE id = $1;`;
   const res = (await dbPool.query(sqlQuery, [massId])).rows[0];
   const mass = parseData(
     MassSchema,
     res,
-    `Error getting mass "${massId}" from db"`
+    `Error getting mass "${massId}" from db"`,
   );
   return mass;
 };
@@ -72,23 +69,22 @@ const MassHymnSchema = z.object({
   name: z.string(),
   fileIds: z.array(z.string()),
 });
-type MassHymn = z.infer<typeof MassHymnSchema>;
+export type MassHymn = z.infer<typeof MassHymnSchema>;
 export const dbGetMassHymns = async (massId: string): Promise<MassHymn[]> => {
-  const query = `SELECT
-                    mass_hymns.hymn_pos AS "hymnIndex",
-                    mass_hymns.hymn_type_id AS "hymnTypeId",
-                    mass_hymns.hymn_id AS "id",
-                    hymn.name AS "name",
-                    mass_hymns.file_Ids AS "fileIds"
-                    FROM mass_hymns
-                    INNER JOIN hymns hymn ON mass_hymns.hymn_id = hymn.id
-                    WHERE mass_id = $1
-                    ORDER BY hymn_pos;`;
+  const query = `SELECT mass_hymns.hymn_pos     AS "hymnIndex",
+                          mass_hymns.hymn_type_id AS "hymnTypeId",
+                          mass_hymns.hymn_id      AS "id",
+                          hymn.name               AS "name",
+                          mass_hymns.file_Ids     AS "fileIds"
+                   FROM mass_hymns
+                            INNER JOIN hymns hymn ON mass_hymns.hymn_id = hymn.id
+                   WHERE mass_id = $1
+                   ORDER BY hymn_pos;`;
   const res = (await dbPool.query(query, [massId])).rows;
   const massHymns = parseData(
     z.array(MassHymnSchema),
     res,
-    `Error getting hymns for mass "${massId}" from db"`
+    `Error getting hymns for mass "${massId}" from db"`,
   );
   return massHymns;
 };
@@ -108,12 +104,12 @@ export type NewMassParams = z.infer<typeof NewMassParamsSchema>;
 
 export const dbAddMass = async (massParams: NewMassParams): Promise<Mass> => {
   const sqlQuery = `INSERT INTO masses (id, name, date_time)
-                    VALUES ($1, $2, $3)
-                    RETURNING
-                    id,
-                    name,
-                    date_time AS "dateTime",
-                    file_id AS "fileId"`;
+                      VALUES ($1, $2, $3)
+                      RETURNING
+                          id,
+                          name,
+                          date_time AS "dateTime",
+                          file_id AS "fileId"`;
   const values = [uuidv4(), massParams.name, massParams.dateTime];
   const res = (await dbPool.query(sqlQuery, values)).rows[0];
   const mass = parseData(MassSchema, res, `Error adding new mass to db"`);
@@ -123,7 +119,7 @@ export const dbAddMass = async (massParams: NewMassParams): Promise<Mass> => {
 // Add mass hymns to mass_hymns table
 export const dbAddMassHymns = async (
   massId: string,
-  massParams: MassParams
+  massParams: MassParams,
 ): Promise<void> => {
   const hymns = massParams.hymns;
 
@@ -134,7 +130,7 @@ export const dbAddMassHymns = async (
       index,
       hymn.hymnTypeId,
       hymn.id,
-      hymn.fileIds
+      hymn.fileIds,
     );
   }, "");
 
@@ -142,9 +138,10 @@ export const dbAddMassHymns = async (
 
   const sqlQuery = format(
     `INSERT INTO mass_hymns
-    (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids)
-    VALUES %s;`,
-    hymnsDataString
+             (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids)
+        VALUES
+        %s;`,
+    hymnsDataString,
   );
 
   await dbPool.query(sqlQuery);
@@ -153,17 +150,17 @@ export const dbAddMassHymns = async (
 // Duplicate mass in masses table
 export const dbUpdateMass = async (
   massId: string,
-  massParams: MassParams
+  massParams: MassParams,
 ): Promise<Mass> => {
-  const sqlQuery = `UPDATE masses SET
-                    name = $1,
-                    date_time = $2
-                    WHERE id = $3
-                    RETURNING
-                    id,
-                    name,
-                    date_time AS "dateTime",
-                    file_id as "fileId"`;
+  const sqlQuery = `UPDATE masses
+                      SET name      = $1,
+                          date_time = $2
+                      WHERE id = $3
+                      RETURNING
+                          id,
+                          name,
+                          date_time AS "dateTime",
+                          file_id as "fileId"`;
   const values = [massParams.name, massParams.dateTime, massId];
   const res = (await dbPool.query(sqlQuery, values)).rows[0];
   const mass = parseData(MassSchema, res, `Error updating mass in db"`);
@@ -172,28 +169,32 @@ export const dbUpdateMass = async (
 
 export const dbAddMassFileInfo = async (
   massFileId: string,
-  massId: string
+  massId: string,
 ): Promise<void> => {
-  const query = `UPDATE masses SET file_id = $1 WHERE id = $2;`;
+  const query = `UPDATE masses
+                   SET file_id = $1
+                   WHERE id = $2;`;
   const values = [massFileId, massId];
   await dbPool.query(query, values);
 };
 
 export const dbDeleteMass = async (massId: string): Promise<void> => {
-  const query = `DELETE from masses
-                    WHERE id = $1;`;
+  const query = `DELETE
+                   from masses
+                   WHERE id = $1;`;
   await dbPool.query(query, [massId]);
 };
 
 export const dbDuplicateMass = async (oldMassId: string): Promise<Mass> => {
   const query = `INSERT INTO masses (id, name, date_time)
-                    SELECT $1, CONCAT(name, ' (copy)'), date_time
-                      FROM masses WHERE id = $2
-                    RETURNING
-                    id,
-                    name,
-                    date_time AS "dateTime",
-                    file_id AS "fileId";`;
+                   SELECT $1, CONCAT(name, ' (copy)'), date_time
+                   FROM masses
+                   WHERE id = $2
+                   RETURNING
+                       id,
+                       name,
+                       date_time AS "dateTime",
+                       file_id AS "fileId";`;
   const values = [uuidv4(), oldMassId];
   const res = (await dbPool.query(query, values)).rows[0];
   const mass = parseData(MassSchema, res, `Error duplicating mass in db"`);
@@ -202,21 +203,24 @@ export const dbDuplicateMass = async (oldMassId: string): Promise<Mass> => {
 
 export const dbDuplicateMassHymns = async (
   oldMassId: string,
-  newMassId: string
+  newMassId: string,
 ): Promise<void> => {
   const sqlQuery = `INSERT INTO mass_hymns (mass_id, hymn_pos, hymn_type_id, hymn_id, file_ids)
                       SELECT $1, hymn_pos, hymn_type_id, hymn_id, file_ids
-                        FROM mass_hymns WHERE mass_id = $2
+                      FROM mass_hymns
+                      WHERE mass_id = $2
                       RETURNING
-                      hymn_pos AS "hymnIndex",
-                      hymn_type_id AS "hymnTypeId",
-                      hymn_id AS "hymnId",
-                      file_ids AS "fileIds";`;
+                          hymn_pos AS "hymnIndex",
+                          hymn_type_id AS "hymnTypeId",
+                          hymn_id AS "hymnId",
+                          file_ids AS "fileIds";`;
   const values = [newMassId, oldMassId];
   await dbPool.query(sqlQuery, values);
 };
 
 export const dbDeleteMassHymns = async (massId: string): Promise<void> => {
-  const query = `DELETE from mass_hymns WHERE mass_id = $1;`;
+  const query = `DELETE
+                   from mass_hymns
+                   WHERE mass_id = $1;`;
   await dbPool.query(query, [massId]);
 };
