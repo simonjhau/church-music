@@ -65,6 +65,22 @@ const streamToFile = async (
   });
 };
 
+const dateTimeToString = (dateTimeSql: string): string => {
+  const dateTime = new Date(dateTimeSql);
+
+  const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  return dateFormatter.format(dateTime);
+};
+
 // Create merged PDF file
 export const createMassPdf = async (massParams: MassParams): Promise<void> => {
   const hymns = massParams.hymns;
@@ -90,10 +106,9 @@ export const createMassPdf = async (massParams: MassParams): Promise<void> => {
   });
 
   // Write date
-  const dateTime = new Date(massParams.dateTime);
+  const dateTime = dateTimeToString(massParams.dateTime);
   const dateFontSize = 20;
-  const dateTimeString = dateTime.toUTCString();
-  page.drawText(`${dateTimeString.substring(0, dateTimeString.length - 7)}`, {
+  page.drawText(dateTime, {
     x: 50,
     y: height - 75 - headingFontSize,
     size: dateFontSize,
