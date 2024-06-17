@@ -1,13 +1,12 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
-import { type Dayjs } from "dayjs";
-import dayjs from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
 
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
@@ -83,13 +82,13 @@ export const MassDisplay = ({
         massData,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       const duplicatedMass = parseData(
         MassSchema,
         res.data,
-        "Problem saving mass"
+        "Problem saving mass",
       );
       alert("Mass duplicated successfully");
       setMassData(duplicatedMass);
@@ -115,13 +114,13 @@ export const MassDisplay = ({
           massData,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
 
         const updatedMass = parseData(
           MassSchema,
           res.data,
-          "Problem saving mass"
+          "Problem saving mass",
         );
 
         alert("Mass saved successfully");
@@ -184,9 +183,6 @@ export const MassDisplay = ({
       if (!hymn.id) {
         massValid = false;
         errors += generateErrorString(index, "No hymn selected");
-      } else if (hymn.fileIds.length === 0) {
-        massValid = false;
-        errors += generateErrorString(index, "No files selected");
       }
     });
 

@@ -125,7 +125,7 @@ export const dbAddMassHymns = async (
 
   const hymnsData = hymns.map((hymn, index) => {
     return format(
-      "(%L, %L, %L, %L, ARRAY[%L])",
+      "(%L, %L, %L, %L, ARRAY[%L]::text[])",
       massId,
       index,
       hymn.hymnTypeId,
