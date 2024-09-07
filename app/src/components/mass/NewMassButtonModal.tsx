@@ -5,9 +5,10 @@ import Grid from "@mui/material/Grid";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
-import { useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { type Mass, MassSchema } from "../../types";
+import { MassSchema } from "../../types";
 import { parseData } from "../../utils";
 
 const style = {
@@ -24,15 +25,15 @@ const style = {
 
 interface NewMassModalProps {
   initialMassName: string;
-  setMassData: (mass: Mass | null) => void;
 }
 
-export const NewMassButtonModal: React.FC<NewMassModalProps> = ({
+export const NewMassButtonModal = ({
   initialMassName,
-  setMassData,
-}) => {
+}: NewMassModalProps): ReactNode => {
   const { getAccessTokenSilently } = useAuth0();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
   const handleOpen = (): void => {
     setOpen(true);
   };
@@ -58,7 +59,7 @@ export const NewMassButtonModal: React.FC<NewMassModalProps> = ({
       dateTime: new Date(),
     };
 
-    const addmass = async (): Promise<void> => {
+    const addMass = async (): Promise<void> => {
       const token = await getAccessTokenSilently();
       const res = await axios.post("/api/masses", massData, {
         headers: { Authorization: `Bearer ${token}` },
@@ -67,10 +68,10 @@ export const NewMassButtonModal: React.FC<NewMassModalProps> = ({
       alert("Mass saved successfully");
       name.current = "";
       handleClose();
-      setMassData(mass);
+      navigate(`/masses/${mass.id}`);
     };
 
-    addmass().catch((e) => {
+    addMass().catch((e) => {
       const msg = e instanceof Error ? e.message : "Unknown error";
       alert(`Error saving mass:\n${msg}`);
     });

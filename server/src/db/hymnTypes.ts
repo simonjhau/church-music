@@ -12,12 +12,13 @@ const HymnTypeSchema = z
 type HymnType = z.infer<typeof HymnTypeSchema>;
 
 export const dbGetHymnTypes = async (): Promise<HymnType[]> => {
-  const query = `SELECT id, name FROM hymn_types ORDER BY id;`;
+  const query = `SELECT id, name
+                   FROM hymn_types
+                   ORDER BY id;`;
   const res = (await dbPool.query(query)).rows;
-  const hymnTypes = parseData(
+  return parseData(
     z.array(HymnTypeSchema),
     res,
-    "Error getting hymn types from db"
+    "Error getting hymn types from db",
   );
-  return hymnTypes;
 };

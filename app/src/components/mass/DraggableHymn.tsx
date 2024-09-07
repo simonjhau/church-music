@@ -128,6 +128,7 @@ const DraggableHymn: React.FC<Props> = ({
                 value={massHymn}
                 setValue={setHymnData}
                 apiUrl="/api/hymns/"
+                navigateOnSelection={false}
               />
               {massHymn?.id && (
                 <Grid container>

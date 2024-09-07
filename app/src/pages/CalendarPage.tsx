@@ -34,7 +34,7 @@ export const CalendarPage: React.FC = () => {
 
   const now = Date.now();
   const presentIndex = masses.findIndex(
-    (mass) => new Date(mass.dateTime).getTime() - now < 0
+    (mass) => new Date(mass.dateTime).getTime() - now < 0,
   );
   const futureMasses = masses.slice(0, presentIndex);
   const previousMasses = masses.slice(presentIndex);

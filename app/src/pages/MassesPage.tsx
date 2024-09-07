@@ -38,8 +38,10 @@ export const MassesPage = (): ReactElement => {
   useEffect(() => {
     if (massId) {
       refreshMassData(`/api/masses/${massId}`);
+    } else {
+      refreshMassData("");
     }
-  }, []);
+  }, [massId]);
 
   return (
     <TypeAndBookProvider>
@@ -58,13 +60,11 @@ export const MassesPage = (): ReactElement => {
                 value={massData}
                 setValue={setMassData}
                 apiUrl="/api/masses/"
+                navigateOnSelection={true}
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <NewMassButtonModal
-                initialMassName=""
-                setMassData={setMassData}
-              />
+              <NewMassButtonModal initialMassName="" />
             </Grid>
           </Grid>
 
@@ -72,7 +72,6 @@ export const MassesPage = (): ReactElement => {
             <MassDisplay
               massData={massData}
               setMassData={setMassData}
-              refreshMassData={refreshMassData}
             ></MassDisplay>
           )}
         </Stack>

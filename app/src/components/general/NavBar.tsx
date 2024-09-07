@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import { type ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-const navItems = ["Calendar", "Hymns", "Masses", "Statistics"];
+const navItems = ["calendar", "hymns", "masses", "statistics"];
 
 export const NavBar = (): ReactElement => {
   return (

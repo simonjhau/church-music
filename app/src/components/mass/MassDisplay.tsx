@@ -7,7 +7,8 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
 import dayjs, { type Dayjs } from "dayjs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { type ReactNode, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
 import { type Mass, type MassHymn, MassSchema } from "../../types";
@@ -18,20 +19,16 @@ import EditMassBar from "./EditMassBar";
 interface Props {
   massData: Mass;
   setMassData: (mass: Mass) => void;
-  refreshMassData: (endpoint?: string) => void;
 }
 
-export const MassDisplay = ({
-  massData,
-  setMassData,
-  refreshMassData,
-}: Props): JSX.Element => {
+export const MassDisplay = ({ massData, setMassData }: Props): ReactNode => {
   // Context
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
+
   const hymnTypes = useHymnTypes();
 
   const [localMassData, setLocalMassData] = useState(massData);
-
   const [massHymns, setMassHymns] = useState<MassHymn[]>([]);
   const [localMassHymns, setLocalMassHymns] = useState<MassHymn[]>(massHymns);
 
@@ -91,7 +88,7 @@ export const MassDisplay = ({
         "Problem saving mass",
       );
       alert("Mass duplicated successfully");
-      setMassData(duplicatedMass);
+      navigate(`/masses/${duplicatedMass.id}`);
     };
 
     duplicateMass().catch((err) => {
@@ -143,7 +140,7 @@ export const MassDisplay = ({
         });
 
         alert(`Mass deleted successfully`);
-        refreshMassData("");
+        navigate("/masses");
       }
     };
 

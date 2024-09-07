@@ -19,5 +19,5 @@ statsRouter.get(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );

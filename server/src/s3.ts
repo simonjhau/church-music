@@ -9,12 +9,7 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import fs from "fs";
 
-import {
-  accessKeyId,
-  bucketName,
-  region,
-  secretAccessKey,
-} from "./config/index";
+import { accessKeyId, bucketName, region, secretAccessKey } from "./config";
 
 const s3Client = new S3Client({
   region,
@@ -25,7 +20,7 @@ const s3Client = new S3Client({
 export const s3UploadFile = async (
   filePath: string,
   id: string,
-  fileType: string
+  fileType: string,
 ): Promise<void> => {
   const fileStream = fs.createReadStream(filePath);
   const input = {
@@ -40,7 +35,7 @@ export const s3UploadFile = async (
 // Download file from S3
 export const s3DownloadFile = async (
   fileType: string,
-  id: string
+  id: string,
 ): Promise<unknown> => {
   const input = {
     Key: `${fileType}/${id}.pdf`,
@@ -55,7 +50,7 @@ export const s3DownloadFile = async (
 export const s3GetSignedUrl = async (
   fileType: string,
   id: string,
-  fileName: string
+  fileName: string,
 ): Promise<string> => {
   const encodedName = encodeURIComponent(fileName);
   const input = {
@@ -64,8 +59,7 @@ export const s3GetSignedUrl = async (
     ResponseContentDisposition: `attachment; filename=${encodedName}.pdf`,
   };
   const command = new GetObjectCommand(input);
-  const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-  return url;
+  return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 };
 
 // Get list of files
@@ -75,8 +69,7 @@ export const s3GetListOfFiles =
       Bucket: bucketName,
     };
     const command = new ListObjectsV2Command(input);
-    const response = await s3Client.send(command);
-    return response;
+    return await s3Client.send(command);
   };
 
 interface FileTypesInterface {
@@ -92,7 +85,7 @@ const fileTypes: FileTypesInterface = {
 // Delete file from S3
 export const s3DeleteFile = async (
   id: string,
-  fileType: keyof FileTypesInterface
+  fileType: keyof FileTypesInterface,
 ): Promise<void> => {
   const fileTypeString = fileTypes[fileType];
   const input = {

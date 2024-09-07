@@ -22,6 +22,7 @@ interface Props<T> {
   value: T | null;
   setValue: (value: T | null) => void;
   apiUrl: string;
+  navigateOnSelection: boolean;
   sx?: SxProps<Theme>;
 }
 
@@ -30,6 +31,7 @@ export const SearchBox = <T extends Base>({
   value,
   setValue,
   apiUrl,
+  navigateOnSelection,
   sx,
 }: Props<T>): JSX.Element => {
   const { getAccessTokenSilently } = useAuth0();
@@ -101,7 +103,7 @@ export const SearchBox = <T extends Base>({
       ) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
-        if (newValue) {
+        if (newValue && navigateOnSelection) {
           navigate(newValue.id);
         }
       }}

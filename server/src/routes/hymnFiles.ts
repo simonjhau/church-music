@@ -28,7 +28,7 @@ hymnFilesRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
   const validReqParams = parseData(
     GetHymnFilesRequestSchema,
     req.params,
-    "Problem with get hymn files request params"
+    "Problem with get hymn files request params",
   );
 
   const hymnId = validReqParams.hymnId;
@@ -54,7 +54,7 @@ hymnFilesRouter.get(
     const validReqParams = parseData(
       GetFileDataRequestSchema,
       req.params,
-      "Problem with get file data request params"
+      "Problem with get file data request params",
     );
 
     const fileId = validReqParams.fileId;
@@ -65,7 +65,7 @@ hymnFilesRouter.get(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );
 
 // Get hymn file given file ID
@@ -81,7 +81,7 @@ hymnFilesRouter.get(
     const validReqParams = parseData(
       GetFileRequestSchema,
       req.params,
-      "Problem with get file request params"
+      "Problem with get file request params",
     );
     const fileId = validReqParams.id;
     getHymnFileName(fileId)
@@ -92,18 +92,18 @@ hymnFilesRouter.get(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );
 
 // Create file name
 const getHymnFileName = async (fileId: string): Promise<string> => {
   const fileDataNames = await dbGetFileDataNames(fileId);
-  const fileName =
+  return (
     `${fileDataNames.hymnName} ${fileDataNames.fileType}` +
     (fileDataNames.bookCode !== "Other" ? ` ${fileDataNames.bookCode}` : "") +
     (fileDataNames.hymnNum ? String(fileDataNames.hymnNum) : "") +
-    (fileDataNames.comment === "" ? ` ${fileDataNames.comment}` : "");
-  return fileName;
+    (fileDataNames.comment === "" ? ` ${fileDataNames.comment}` : "")
+  );
 };
 
 // Upload a file
@@ -122,12 +122,12 @@ hymnFilesRouter.post(
     const validReqParams = parseData(
       AddFileReqParamsSchema,
       req.params,
-      "Problem with delete file request params"
+      "Problem with delete file request params",
     );
     const validFileParams = parseData(
       UploadedFileParamsSchema,
       req.body,
-      "Problem with upload file request body"
+      "Problem with upload file request body",
     );
     if (validFileParams.bookId === 4 && validFileParams.hymnNum === undefined) {
       res.status(400).send(`Missing parameter 'hymnNum'`);
@@ -143,7 +143,7 @@ hymnFilesRouter.post(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );
 
 // Delete file
@@ -157,7 +157,7 @@ hymnFilesRouter.delete(
     const validReqParams = parseData(
       DeleteFileReqParamsSchema,
       req.params,
-      "Problem with delete file request params"
+      "Problem with delete file request params",
     );
 
     const hymnId = validReqParams.hymnId;
@@ -167,7 +167,7 @@ hymnFilesRouter.delete(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );
 
 // Update file given file ID
@@ -181,13 +181,13 @@ hymnFilesRouter.put(
     const validReqParams = parseData(
       UpdateFileReqParamsSchema,
       req.params,
-      "Problem with update file request params"
+      "Problem with update file request params",
     );
 
     const validFileData = parseData(
       UploadedFileParamsSchema,
       req.body,
-      "Problem with update file data body"
+      "Problem with update file data body",
     );
 
     const hymnId = validReqParams.hymnId;
@@ -197,5 +197,5 @@ hymnFilesRouter.put(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );

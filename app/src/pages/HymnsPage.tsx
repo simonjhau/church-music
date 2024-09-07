@@ -59,6 +59,7 @@ export const HymnsPage = (): ReactElement => {
                 value={hymnData}
                 setValue={setHymnData}
                 apiUrl="/api/hymns/"
+                navigateOnSelection={true}
               />
             </Grid>
             <Grid item xs={12} sm={3}>

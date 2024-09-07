@@ -31,7 +31,7 @@ massesRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
     const validQueryString = parseData(
       z.string(),
       query,
-      "Problem with get masses query param"
+      "Problem with get masses query param",
     );
     dbGetMassesByQuery(validQueryString)
       .then((masses) => res.status(200).json(masses))
@@ -81,7 +81,7 @@ massesRouter.get(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );
 
 // Get mass file given mass id
@@ -103,7 +103,7 @@ massesRouter.get(
           next(err);
         });
     }
-  }
+  },
 );
 
 // Add mass record
@@ -111,7 +111,7 @@ massesRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
   const validMassParams = parseData(
     NewMassParamsSchema,
     req.body,
-    "Problem with add mass request body"
+    "Problem with add mass request body",
   );
   dbAddMass(validMassParams)
     .then((newMass) => {
@@ -141,7 +141,7 @@ massesRouter.post(
           next(err);
         });
     }
-  }
+  },
 );
 
 // Edit mass
@@ -155,7 +155,7 @@ massesRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
   const validMassParams = parseData(
     MassParamsSchema,
     req.body,
-    "Problem with edit mass file request params"
+    "Problem with edit mass file request params",
   );
 
   updateMass(massId, validMassParams)
@@ -184,5 +184,5 @@ massesRouter.delete(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );

@@ -4,7 +4,7 @@ import { fromZodError } from "zod-validation-error";
 export const parseData = <T extends z.ZodTypeAny>(
   schema: T,
   data: unknown,
-  errString: string
+  errString: string,
 ): z.infer<T> => {
   const result = schema.safeParse(data);
   if (!result.success) {
@@ -15,7 +15,7 @@ export const parseData = <T extends z.ZodTypeAny>(
 
 export const getErrorMessage = (
   e: unknown,
-  defaultMessage = "Unknown error"
+  defaultMessage = "Unknown error",
 ): string => {
   return e instanceof Error ? e.message : defaultMessage;
 };

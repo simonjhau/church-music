@@ -2,13 +2,13 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 
+import { dbBeginTransaction, dbCommit, dbRollback } from "../db";
 import {
   dbAddFile,
   dbDeleteFile,
   type DbFileParams,
   type UploadedFileParams,
 } from "../db/hymnFiles";
-import { dbBeginTransaction, dbCommit, dbRollback } from "../db/index";
 import { s3DeleteFile, s3UploadFile } from "../s3";
 
 // Set multer disk storage settings
@@ -45,7 +45,7 @@ export const deleteLocalFile = async (path: string): Promise<void> => {
 export const uploadFile = async (
   fileParams: UploadedFileParams,
   hymnId: string,
-  file: Express.Multer.File
+  file: Express.Multer.File,
 ): Promise<DbFileParams> => {
   try {
     await dbBeginTransaction();
@@ -62,7 +62,7 @@ export const uploadFile = async (
 
 export const deleteFile = async (
   hymnId: string,
-  fileId: string
+  fileId: string,
 ): Promise<void> => {
   try {
     await dbBeginTransaction();

@@ -6,7 +6,7 @@ import { fromZodError } from "zod-validation-error";
 export const parseData = <T extends z.ZodTypeAny>(
   schema: T,
   data: unknown,
-  errString: string
+  errString: string,
 ): z.infer<T> => {
   const result = schema.safeParse(data);
   if (!result.success) {
@@ -16,7 +16,7 @@ export const parseData = <T extends z.ZodTypeAny>(
 };
 
 export const deleteFilesInDirectory = async (
-  directory: string
+  directory: string,
 ): Promise<void> => {
   const files = await readdir(directory);
   for (const file of files) {

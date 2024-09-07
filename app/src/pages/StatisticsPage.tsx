@@ -33,7 +33,7 @@ export const StatisticsPage = (): ReactElement => {
     const hymnCounts = parseData(
       z.array(HymnCountSchema),
       res.data,
-      "Problem getting hymn counts"
+      "Problem getting hymn counts",
     );
     setMostPopular(hymnCounts);
     setLoading(false);

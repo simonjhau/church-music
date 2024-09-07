@@ -18,26 +18,25 @@ const HymnFileJoinHymnSchema = z
 type HymnFileJoinHymn = z.infer<typeof HymnFileJoinHymnSchema>;
 
 export const dbGetListOfFiles = async (
-  hymnId: string
+  hymnId: string,
 ): Promise<HymnFileJoinHymn[]> => {
-  const query = `SELECT
-                    hymn_files.id AS "id",
-                    hymns.id AS "hymnId",
-                    hymns.name AS "hymnName",
-                    file_type_id AS "fileTypeId",
-                    book_id AS "bookId",
-                    hymn_num AS "hymnNum",
-                    comment AS "comment"
-                    FROM hymn_files INNER JOIN hymns ON hymn_files.hymn_id = hymns.id
-                    WHERE hymn_id = $1
-                    ORDER BY file_type_id;`;
+  const query = `SELECT hymn_files.id AS "id",
+                          hymns.id      AS "hymnId",
+                          hymns.name    AS "hymnName",
+                          file_type_id  AS "fileTypeId",
+                          book_id       AS "bookId",
+                          hymn_num      AS "hymnNum",
+                          comment       AS "comment"
+                   FROM hymn_files
+                            INNER JOIN hymns ON hymn_files.hymn_id = hymns.id
+                   WHERE hymn_id = $1
+                   ORDER BY file_type_id;`;
   const res = (await dbPool.query(query, [hymnId])).rows;
-  const hymnFiles = parseData(
+  return parseData(
     z.array(HymnFileJoinHymnSchema),
     res,
-    `Error getting hymn files for "${hymnId}" from db"`
+    `Error getting hymn files for "${hymnId}" from db"`,
   );
-  return hymnFiles;
 };
 
 export const UploadedFileParamsSchema = z
@@ -59,17 +58,17 @@ export type DbFileParams = z.infer<typeof DbFileParamsSchema>;
 
 export const dbAddFile = async (
   file: UploadedFileParams,
-  hymnId: string
+  hymnId: string,
 ): Promise<DbFileParams> => {
   const query = `INSERT INTO hymn_files
-                    (hymn_id, id, file_type_id, book_id, hymn_num, comment)
-                    VALUES ($1, $2, $3, $4, $5, $6)
-                    RETURNING
-                    id,
-                    file_type_id AS "fileTypeId",
-                    book_id AS "bookId",
-                    hymn_num AS "hymnNum",
-                    comment`;
+                       (hymn_id, id, file_type_id, book_id, hymn_num, comment)
+                   VALUES ($1, $2, $3, $4, $5, $6)
+                   RETURNING
+                       id,
+                       file_type_id AS "fileTypeId",
+                       book_id AS "bookId",
+                       hymn_num AS "hymnNum",
+                       comment`;
   const values = [
     hymnId,
     uuidv4(),
@@ -79,32 +78,29 @@ export const dbAddFile = async (
     file.comment,
   ];
   const res = (await dbPool.query(query, values)).rows[0];
-  const addedFile = parseData(
+  return parseData(
     DbFileParamsSchema,
     res,
-    `Error adding file for hymn "${hymnId}" to db"`
+    `Error adding file for hymn "${hymnId}" to db"`,
   );
-  return addedFile;
 };
 
 export const dbGetFileData = async (
-  fileId: string
+  fileId: string,
 ): Promise<UploadedFileParams> => {
-  const query = `SELECT
-                  id AS "id",
-                  file_type_id AS "fileTypeId",
-                  book_id AS "bookId",
-                  hymn_num AS "hymnNum",
-                  comment AS "comment"
-                  FROM hymn_files
-                  WHERE id = $1;`;
+  const query = `SELECT id           AS "id",
+                          file_type_id AS "fileTypeId",
+                          book_id      AS "bookId",
+                          hymn_num     AS "hymnNum",
+                          comment      AS "comment"
+                   FROM hymn_files
+                   WHERE id = $1;`;
   const res = (await dbPool.query(query, [fileId])).rows[0];
-  const fileData = parseData(
+  return parseData(
     UploadedFileParamsSchema,
     res,
-    `Error getting file "${fileId}" from db"`
+    `Error getting file "${fileId}" from db"`,
   );
-  return fileData;
 };
 
 const FileDataNamesSchema = z.object({
@@ -117,40 +113,39 @@ const FileDataNamesSchema = z.object({
 });
 type FileDataNames = z.infer<typeof FileDataNamesSchema>;
 export const dbGetFileDataNames = async (
-  fileId: string
+  fileId: string,
 ): Promise<FileDataNames> => {
-  const query = `SELECT
-                  hf.id AS "id",
-                  h.name AS "hymnName",
-                  ft.name AS "fileType",
-                  b.book_code AS "bookCode",
-                  hymn_num AS "hymnNum",
-                  comment AS "comment"
-                  FROM hymn_files hf
-                  JOIN hymns h ON h.id = hf.hymn_id
-                  JOIN file_types ft ON ft.id = hf.file_type_id
-                  JOIN books b on b.id = hf.book_id
-                  WHERE hf.id = $1;`;
+  const query = `SELECT hf.id       AS "id",
+                          h.name      AS "hymnName",
+                          ft.name     AS "fileType",
+                          b.book_code AS "bookCode",
+                          hymn_num    AS "hymnNum",
+                          comment     AS "comment"
+                   FROM hymn_files hf
+                            JOIN hymns h ON h.id = hf.hymn_id
+                            JOIN file_types ft ON ft.id = hf.file_type_id
+                            JOIN books b on b.id = hf.book_id
+                   WHERE hf.id = $1;`;
   const res = (await dbPool.query(query, [fileId])).rows[0];
-  const fileDataNames = parseData(
+  return parseData(
     FileDataNamesSchema,
     res,
-    `Error getting file "${fileId}" joined with names from db"`
+    `Error getting file "${fileId}" joined with names from db"`,
   );
-  return fileDataNames;
 };
 
 export const dbUpdateFile = async (
   hymnId: string,
   fileId: string,
-  fileParams: UploadedFileParams
+  fileParams: UploadedFileParams,
 ): Promise<void> => {
-  const query = `UPDATE hymn_files SET
-                    file_type_id = $1,
-                    book_id = $2,
-                    hymn_num = $3,
-                    comment = $4
-                    WHERE hymn_id = $5 AND id = $6;`;
+  const query = `UPDATE hymn_files
+                   SET file_type_id = $1,
+                       book_id      = $2,
+                       hymn_num     = $3,
+                       comment      = $4
+                   WHERE hymn_id = $5
+                     AND id = $6;`;
   const values = [
     fileParams.fileTypeId,
     fileParams.bookId,
@@ -164,10 +159,12 @@ export const dbUpdateFile = async (
 
 export const dbDeleteFile = async (
   hymnId: string,
-  fileId: string
+  fileId: string,
 ): Promise<void> => {
-  const sqlQuery = `DELETE FROM hymn_files WHERE
-                    hymn_id = $1 AND id = $2;`;
+  const sqlQuery = `DELETE
+                      FROM hymn_files
+                      WHERE hymn_id = $1
+                        AND id = $2;`;
   const values = [hymnId, fileId];
   await dbPool.query(sqlQuery, values);
 };

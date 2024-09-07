@@ -10,16 +10,16 @@ const HymnCountSchema = z.object({
 type HymnCount = z.infer<typeof HymnCountSchema>;
 export const dbGetMostPopularHymns = async (): Promise<HymnCount[]> => {
   const query = `SELECT h.name as "name", count(*) as count
-                  FROM mass_hymns mh
-                  JOIN hymns h ON mh.hymn_id = h.id
-                  JOIN masses m ON mh.mass_id = m.id
-                  WHERE m.date_time > now() - interval '1 year'
-                  GROUP BY h.name ORDER BY count DESC;`;
+                   FROM mass_hymns mh
+                            JOIN hymns h ON mh.hymn_id = h.id
+                            JOIN masses m ON mh.mass_id = m.id
+                   WHERE m.date_time > now() - interval '1 year'
+                   GROUP BY h.name
+                   ORDER BY count DESC;`;
   const res = (await dbPool.query(query)).rows;
-  const hymnCounts = parseData(
+  return parseData(
     z.array(HymnCountSchema),
     res,
-    `Error getting hymn counts from db"`
+    `Error getting hymn counts from db"`,
   );
-  return hymnCounts;
 };

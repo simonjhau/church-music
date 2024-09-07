@@ -12,12 +12,13 @@ const FileTypeSchema = z
 type FileType = z.infer<typeof FileTypeSchema>;
 
 export const dbGetFileTypes = async (): Promise<FileType[]> => {
-  const sqlQuery = `SELECT id, name FROM file_types ORDER BY id;`;
+  const sqlQuery = `SELECT id, name
+                      FROM file_types
+                      ORDER BY id;`;
   const res = (await dbPool.query(sqlQuery)).rows;
-  const books = parseData(
+  return parseData(
     z.array(FileTypeSchema),
     res,
-    "Error getting file types from db"
+    "Error getting file types from db",
   );
-  return books;
 };

@@ -24,7 +24,7 @@ hymnsRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
   const validReqParams = parseData(
     GetHymnsRequestSchema,
     req.query,
-    "Problem with get hymns request query"
+    "Problem with get hymns request query",
   );
 
   const query = validReqParams.q;
@@ -60,7 +60,7 @@ hymnsRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
   const validReqBody = parseData(
     AddHymnRequestSchema,
     req.body,
-    "Problem with add hymn request body"
+    "Problem with add hymn request body",
   );
 
   const hymnName = validReqBody.name;
@@ -89,7 +89,7 @@ hymnsRouter.delete(
       .catch((err) => {
         next(err);
       });
-  }
+  },
 );
 
 // Update hymn
@@ -108,7 +108,7 @@ hymnsRouter.put("/:id", (req: Request, res: Response, next: NextFunction) => {
   const validReqBody = parseData(
     UpdateHymnRequestBodySchema,
     req.body,
-    "Problem with update hymn request body"
+    "Problem with update hymn request body",
   );
   const hymnName = validReqBody.name;
   const hymnLyrics = validReqBody.lyrics;
