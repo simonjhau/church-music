@@ -1,8 +1,8 @@
 import express from "express";
 import path from "path";
 
-import { port } from "./config/index";
-import { router } from "./routes/index";
+import { port } from "./config";
+import { router } from "./routes";
 
 const app = express();
 app.use(express.json());

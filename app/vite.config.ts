@@ -23,6 +23,9 @@ export default defineConfig(({ command, mode }) => {
   }
 
   return {
+    optimizeDeps: {
+      include: ["@emotion/react", "@emotion/styled", "@mui/material/Tooltip"],
+    },
     plugins: [react(), mkcert()],
     server: {
       https: true,
