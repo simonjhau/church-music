@@ -2,9 +2,10 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import UndoIcon from "@mui/icons-material/Undo";
-import { Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import { MouseEvent, ReactElement } from "react";
 
 interface EditBarProps {
   handleDuplicate: () => void;
@@ -13,28 +14,28 @@ interface EditBarProps {
   handleCancelChanges: () => void;
 }
 
-const EditBar: React.FC<EditBarProps> = ({
+const EditBar = ({
   handleDuplicate,
   handleSaveChanges,
   handleDelete,
   handleCancelChanges,
-}) => {
-  const handleDuplicateClick = (e: React.MouseEvent): void => {
+}: EditBarProps): ReactElement => {
+  const handleDuplicateClick = (e: MouseEvent): void => {
     e.preventDefault();
     handleDuplicate();
   };
 
-  const handleSaveChangesClick = (e: React.MouseEvent): void => {
+  const handleSaveChangesClick = (e: MouseEvent): void => {
     e.preventDefault();
     handleSaveChanges();
   };
 
-  const handleDeleteChangesClick = (e: React.MouseEvent): void => {
+  const handleDeleteChangesClick = (e: MouseEvent): void => {
     e.preventDefault();
     handleDelete();
   };
 
-  const handleCancelChangesClick = (e: React.MouseEvent): void => {
+  const handleCancelChangesClick = (e: MouseEvent): void => {
     e.preventDefault();
     handleCancelChanges();
   };

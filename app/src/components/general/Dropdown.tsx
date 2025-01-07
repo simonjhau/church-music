@@ -5,8 +5,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 
 import { type NumberIdBase } from "../../types";
+import { ReactElement } from "react";
 
-interface Props<T> {
+interface DropdownProps<T> {
   label: string;
   options: T[];
   value: number;
@@ -18,7 +19,7 @@ export const Dropdown = <T extends NumberIdBase>({
   options,
   value,
   setValue,
-}: Props<T>): JSX.Element => {
+}: DropdownProps<T>): ReactElement => {
   const handleChange = (event: SelectChangeEvent): void => {
     setValue(parseInt(event.target.value));
   };

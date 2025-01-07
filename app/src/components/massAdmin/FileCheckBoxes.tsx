@@ -4,14 +4,14 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import { z } from "zod";
 
 import { useBooks, useFileTypes } from "../../context/TypesAndBooksContext";
 import { type File, FileSchema } from "../../types";
 import { parseData } from "../../utils";
 
-interface Props {
+interface FileCheckBoxesProps {
   label: string;
   hymnId: string;
   selectedFileIds: string[];
@@ -20,14 +20,14 @@ interface Props {
   sx?: SxProps<Theme>;
 }
 
-export const FileCheckBoxes: React.FC<Props> = ({
+export const FileCheckBoxes = ({
   label,
   hymnId,
   selectedFileIds,
   updateSelectedFiles,
   disabled = false,
   sx = undefined,
-}) => {
+}: FileCheckBoxesProps): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
   const books = useBooks();
   const fileTypes = useFileTypes();

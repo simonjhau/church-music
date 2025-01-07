@@ -1,15 +1,22 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import EditIcon from "@mui/icons-material/Edit";
-import { Tooltip } from "@mui/material";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
-import Modal from "@mui/material/Modal";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
-import { type ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { z } from "zod";
 
 import {
@@ -21,29 +28,17 @@ import { type File as FileParams, FileSchema } from "../../types";
 import { parseData } from "../../utils";
 import { Dropdown } from "../general/Dropdown";
 
-const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 500,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
 interface AddEditFileModalProps {
   hymnId: string;
   fileId: string | null;
   setFiles: (file: FileParams[]) => void;
 }
 
-export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
+export const AddEditFileButtonModal = ({
   hymnId,
   fileId,
   setFiles,
-}) => {
+}: AddEditFileModalProps): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
 
   const [open, setOpen] = useState(false);
@@ -238,22 +233,18 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
         </Button>
       )}
 
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography variant="h5">{modalHeading}</Typography>
-            </Grid>
-
-            {fileId === null && (
-              <>
-                <Grid item xs={3}>
-                  <Button fullWidth variant="contained" component="label">
+      {open && (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth={"sm"}>
+          <DialogTitle>{modalHeading}</DialogTitle>
+          <DialogContent>
+            <Stack spacing={2} sx={{ marginTop: "5px" }}>
+              {fileId === null && (
+                <Stack direction={"row"} spacing={2}>
+                  <Button
+                    variant="contained"
+                    sx={{ width: "130px" }}
+                    component={"label"}
+                  >
                     Upload
                     <input
                       hidden
@@ -262,37 +253,29 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
                       onChange={handleFileSelect}
                     />
                   </Button>
-                </Grid>
-                <Grid item xs={9}>
                   <TextField
                     fullWidth
                     size="small"
                     disabled
                     value={file?.name ?? ""}
                   />
-                </Grid>
-              </>
-            )}
+                </Stack>
+              )}
 
-            <Grid item xs={12}>
               <Dropdown
                 label="File Type"
                 options={fileTypes}
                 value={fileTypeId}
                 setValue={setFileTypeId}
               />
-            </Grid>
-            <Grid item xs={12}>
               <Dropdown
                 label="Book"
                 options={books}
                 value={bookId}
                 setValue={handleBookSelect}
               />
-            </Grid>
 
-            {bookId !== otherBookId && (
-              <Grid item xs={12}>
+              {bookId !== otherBookId && (
                 <TextField
                   fullWidth
                   size="small"
@@ -300,9 +283,7 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
                   onChange={handleHymnNumberChange}
                   value={hymnNum ?? ""}
                 />
-              </Grid>
-            )}
-            <Grid item xs={12}>
+              )}
               <TextField
                 fullWidth
                 size="small"
@@ -310,27 +291,18 @@ export const AddEditFileButtonModal: React.FC<AddEditFileModalProps> = ({
                 onChange={handleCommentChange}
                 value={comment}
               />
-            </Grid>
-
-            <Grid item xs={6} />
-            <Grid item xs={3}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="error"
-                onClick={handleClose}
-              >
-                Close
-              </Button>
-            </Grid>
-            <Grid item xs={3}>
-              <Button fullWidth variant="contained" onClick={handleAddFile}>
-                Save
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Modal>
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button variant="contained" color="error" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="contained" onClick={handleAddFile}>
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 };

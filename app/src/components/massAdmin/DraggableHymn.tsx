@@ -17,8 +17,9 @@ import { parseData } from "../../utils";
 import { Dropdown } from "../general/Dropdown";
 import { SearchBox } from "../general/SearchBox";
 import { FileCheckBoxes } from "./FileCheckBoxes";
+import { ReactElement } from "react";
 
-interface Props {
+interface DraggableHymnProps {
   massHymn: MassHymn | null;
   hymnIndex: number;
   updateHymnsData: (
@@ -30,12 +31,12 @@ interface Props {
   disabled?: boolean;
 }
 
-const DraggableHymn: React.FC<Props> = ({
+const DraggableHymn = ({
   massHymn,
   hymnIndex,
   updateHymnsData,
   handleDeleteHymn,
-}) => {
+}: DraggableHymnProps): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
 
   // Context

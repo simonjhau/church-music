@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import Container from "@mui/material/Container";
 import { type ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 

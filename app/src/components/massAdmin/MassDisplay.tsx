@@ -1,13 +1,14 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, Stack } from "@mui/material";
+import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
+import Stack from "@mui/material/Stack";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
 import dayjs, { type Dayjs } from "dayjs";
-import React, { type ReactNode, useEffect, useRef, useState } from "react";
+import React, { type ReactElement, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
@@ -16,12 +17,15 @@ import { downloadFile, parseData } from "../../utils";
 import DraggableHymnsList from "./DraggableHymnsList";
 import EditMassBar from "./EditMassBar";
 
-interface Props {
+interface MassDisplayProps {
   massData: Mass;
   setMassData: (mass: Mass) => void;
 }
 
-export const MassDisplay = ({ massData, setMassData }: Props): ReactNode => {
+export const MassDisplay = ({
+  massData,
+  setMassData,
+}: MassDisplayProps): ReactElement => {
   // Context
   const { getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();

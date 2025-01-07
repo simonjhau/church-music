@@ -4,6 +4,7 @@ import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
+import { MouseEvent, ReactElement } from "react";
 
 interface EditBarProps {
   editMode: boolean;
@@ -13,31 +14,31 @@ interface EditBarProps {
   handleCancelChanges: () => void;
 }
 
-export const EditHymnBar: React.FC<EditBarProps> = ({
+export const EditHymnBar = ({
   editMode,
   setEditMode,
   handleSaveChanges,
   handleDelete,
   handleCancelChanges,
-}) => {
-  const handleEditButtonClick = (e: React.MouseEvent): void => {
+}: EditBarProps): ReactElement => {
+  const handleEditButtonClick = (e: MouseEvent): void => {
     e.preventDefault();
     setEditMode(true);
   };
 
-  const handleSaveChangesClick = (e: React.MouseEvent): void => {
+  const handleSaveChangesClick = (e: MouseEvent): void => {
     e.preventDefault();
     setEditMode(false);
     handleSaveChanges();
   };
 
-  const handleDeleteChangesClick = (e: React.MouseEvent): void => {
+  const handleDeleteChangesClick = (e: MouseEvent): void => {
     e.preventDefault();
     setEditMode(false);
     handleDelete();
   };
 
-  const handleCancelChangesClick = (e: React.MouseEvent): void => {
+  const handleCancelChangesClick = (e: MouseEvent): void => {
     e.preventDefault();
     setEditMode(false);
     handleCancelChanges();

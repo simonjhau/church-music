@@ -1,23 +1,24 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import {
-  Box,
-  CircularProgress,
-  debounce,
-  Grid,
-  type SxProps,
-  TextField,
-  type Theme,
-} from "@mui/material";
+import { debounce, type SxProps, type Theme } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import TextField from "@mui/material/TextField";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import axios from "axios";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import {
+  Fragment,
+  type ReactElement,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 
 import { type Base } from "../../types";
 
-interface Props<T> {
+interface SearchBoxProps<T> {
   type: string;
   value: T | null;
   setValue: (value: T | null) => void;
@@ -33,7 +34,7 @@ export const SearchBox = <T extends Base>({
   apiUrl,
   navigateOnSelection,
   sx,
-}: Props<T>): JSX.Element => {
+}: SearchBoxProps<T>): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();
 
@@ -137,22 +138,15 @@ export const SearchBox = <T extends Base>({
 
         return (
           <li {...props} key={option.id}>
-            <Grid container alignItems="center">
-              <Grid
-                item
-                sx={{ width: "calc(100% - 44px)", wordWrap: "break-word" }}
+            {parts.map((part, index) => (
+              <Box
+                key={index}
+                component="span"
+                sx={{ fontWeight: part.highlight ? "bold" : "regular" }}
               >
-                {parts.map((part, index) => (
-                  <Box
-                    key={index}
-                    component="span"
-                    sx={{ fontWeight: part.highlight ? "bold" : "regular" }}
-                  >
-                    {part.text}
-                  </Box>
-                ))}
-              </Grid>
-            </Grid>
+                {part.text}
+              </Box>
+            ))}
           </li>
         );
       }}
