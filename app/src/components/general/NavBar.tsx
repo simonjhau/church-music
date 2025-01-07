@@ -7,7 +7,9 @@ import Typography from "@mui/material/Typography";
 import { type ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-const navItems = ["calendar", "hymns", "masses", "statistics"];
+import { theme } from "../../theme";
+
+const navItems = ["masses", "hymns", "rankings"];
 
 export const NavBar = (): ReactElement => {
   return (
@@ -26,6 +28,7 @@ export const NavBar = (): ReactElement => {
                 variant="h6"
                 component="div"
                 sx={{
+                  marginLeft: "4px",
                   marginRight: 3,
                   textAlign: { sm: "left", xs: "center" },
                   color: "white",
@@ -47,6 +50,16 @@ export const NavBar = (): ReactElement => {
                   <Button sx={{ color: "#fff" }}>{item}</Button>
                 </Link>
               ))}
+              <Link to="massAdmin" key={`mass-admin-key`}>
+                <Button
+                  sx={{ color: "#fff" }}
+                  style={{
+                    backgroundColor: theme.palette.primary.light,
+                  }}
+                >
+                  Mass Admin
+                </Button>
+              </Link>
             </Box>
           </Box>
         </Toolbar>

@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Container, Grid, Stack } from "@mui/material";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
 import axios from "axios";
 import { type ReactElement, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -47,28 +48,15 @@ export const HymnsPage = (): ReactElement => {
       <Container
         sx={{ alignItems: "center", maxWidth: { md: "700px", lg: "700px" } }}
       >
-        <Stack
-          sx={{
-            py: 2,
-          }}
-        >
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={9}>
-              <SearchBox
-                type="hymn"
-                value={hymnData}
-                setValue={setHymnData}
-                apiUrl="/api/hymns/"
-                navigateOnSelection={true}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <NewHymnButtonModal
-                initialHymnName=""
-                setHymnData={setHymnData}
-              />
-            </Grid>
-          </Grid>
+        <Stack spacing={2}>
+          <SearchBox
+            type="hymn"
+            value={hymnData}
+            setValue={setHymnData}
+            apiUrl="/api/hymns/"
+            navigateOnSelection={true}
+          />
+          <NewHymnButtonModal initialHymnName="" setHymnData={setHymnData} />
 
           {hymnData && (
             <HymnDisplay

@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import React from "react";
 
+import { theme } from "../../theme";
 import { downloadFile } from "../../utils";
 
 export interface MassInterface {
@@ -60,8 +61,8 @@ const MassCard: React.FC<Props> = ({ mass }) => {
         maxWidth: "450px",
         justifyContent: "center",
         alignItems: "center",
-        bgcolor: "#dee0f1",
-        p: 2,
+        backgroundColor: theme.palette.secondary.light,
+        padding: "16px",
         borderRadius: "0.5em",
         mb: 2,
         mx: { xs: 0, sm: 2 },
@@ -74,7 +75,7 @@ const MassCard: React.FC<Props> = ({ mass }) => {
         sx={{ marginTop: 1 }}
         onClick={handleMassFileClick}
       >
-        Get Music
+        Download Music
       </Button>
     </Stack>
   );

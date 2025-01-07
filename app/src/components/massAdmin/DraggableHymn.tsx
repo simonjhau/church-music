@@ -2,7 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LyricsIcon from "@mui/icons-material/Lyrics";
 import { Tooltip } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -11,6 +11,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { z } from "zod";
 
 import { useHymnTypes } from "../../context/TypesAndBooksContext";
+import { theme } from "../../theme";
 import { FileSchema, type MassHymn } from "../../types";
 import { parseData } from "../../utils";
 import { Dropdown } from "../general/Dropdown";
@@ -91,7 +92,11 @@ const DraggableHymn: React.FC<Props> = ({
   return (
     <Stack
       className="draggableHymn"
-      sx={{ my: 2, bgcolor: "#dee0f1", borderRadius: "0.3em", px: 2, pb: 2 }}
+      sx={{
+        padding: "16px",
+        backgroundColor: theme.palette.secondary.light,
+        borderRadius: "0.3em",
+      }}
     >
       <Draggable key={hymnIndex} draggableId={`${hymnIndex}`} index={hymnIndex}>
         {(provided) => (

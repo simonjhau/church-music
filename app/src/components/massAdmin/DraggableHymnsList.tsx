@@ -1,6 +1,5 @@
 import "./draggable.css";
 
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import {
@@ -76,19 +75,20 @@ const DraggableHymnsList: React.FC<Props> = ({
   };
 
   return (
-    <Stack>
+    <Stack spacing={2}>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         {massHymns.length > 0 && (
           <Droppable droppableId="hymns">
             {(provided) => (
-              <Box
+              <Stack
                 className="hymns"
                 {...provided.droppableProps}
                 ref={provided.innerRef}
+                spacing={2}
               >
                 {massHymns.map((hymn, hymnIndex) => {
                   return (
-                    <Stack key={`${hymnIndex}`}>
+                    <Stack key={`${hymnIndex}`} spacing={2}>
                       <Button
                         variant="contained"
                         color="secondary"
@@ -111,7 +111,7 @@ const DraggableHymnsList: React.FC<Props> = ({
                 })}
 
                 {provided.placeholder}
-              </Box>
+              </Stack>
             )}
           </Droppable>
         )}

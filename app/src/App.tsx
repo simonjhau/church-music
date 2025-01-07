@@ -4,12 +4,12 @@ import { Route, Routes } from "react-router-dom";
 
 import { NavBar } from "./components/general/NavBar";
 import { AuthenticationGuard } from "./pages/AuthenticationGuard";
-import { CalendarPage } from "./pages/CalendarPage";
 import { HomePage } from "./pages/HomePage";
+import { HymnRankingsPage } from "./pages/HymnRankingsPage";
 import { HymnsPage } from "./pages/HymnsPage";
+import { MassAdminPage } from "./pages/MassAdminPage";
 import { MassesPage } from "./pages/MassesPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { StatisticsPage } from "./pages/StatisticsPage";
 
 function App(): ReactElement {
   return (
@@ -17,8 +17,8 @@ function App(): ReactElement {
       <NavBar />
       <Container
         sx={{
-          bgcolor: "white",
-          marginTop: 11,
+          backgroundColor: "white",
+          marginTop: "80px",
           maxWidth: "md",
         }}
       >
@@ -29,20 +29,20 @@ function App(): ReactElement {
             element={<AuthenticationGuard component={HomePage} />}
           />
           <Route
-            path="/calendar"
-            element={<AuthenticationGuard component={CalendarPage} />}
+            path="/masses"
+            element={<AuthenticationGuard component={MassesPage} />}
           />
           <Route
             path="/hymns/*"
             element={<AuthenticationGuard component={HymnsPage} />}
           />
           <Route
-            path="/masses/*"
-            element={<AuthenticationGuard component={MassesPage} />}
+            path="/massAdmin/*"
+            element={<AuthenticationGuard component={MassAdminPage} />}
           />
           <Route
-            path="/statistics"
-            element={<AuthenticationGuard component={StatisticsPage} />}
+            path="/rankings"
+            element={<AuthenticationGuard component={HymnRankingsPage} />}
           />
 
           <Route path="*" element={<NotFoundPage />} />

@@ -18,7 +18,7 @@ import { type HymnCount, HymnCountSchema } from "../types";
 import { getErrorMessage, parseData } from "../utils";
 import { PageLoader } from "./PageLoader/PageLoader";
 
-export const StatisticsPage = (): ReactElement => {
+export const HymnRankingsPage = (): ReactElement => {
   const { getAccessTokenSilently } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [mostPopular, setMostPopular] = useState<HymnCount[] | null>(null);

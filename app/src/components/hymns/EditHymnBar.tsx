@@ -2,7 +2,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
 
 interface EditBarProps {
@@ -45,7 +45,7 @@ export const EditHymnBar: React.FC<EditBarProps> = ({
 
   return editMode ? (
     <Grid container spacing={2} sx={{ marginTop: 0 }}>
-      <Grid item sm={9}>
+      <Grid size={9}>
         <Tooltip title="Save Hymn">
           <IconButton
             aria-label="save"
@@ -66,7 +66,7 @@ export const EditHymnBar: React.FC<EditBarProps> = ({
           </IconButton>
         </Tooltip>
       </Grid>
-      <Grid item sm={3}>
+      <Grid size={3}>
         <Button variant="outlined" fullWidth onClick={handleCancelChangesClick}>
           Cancel
         </Button>
@@ -74,8 +74,8 @@ export const EditHymnBar: React.FC<EditBarProps> = ({
     </Grid>
   ) : (
     <Grid container spacing={2} sx={{ marginTop: 0 }}>
-      <Grid item sm={9}></Grid>
-      <Grid item sm={3}>
+      <Grid size={9}></Grid>
+      <Grid size={3}>
         <Button variant="outlined" fullWidth onClick={handleEditButtonClick}>
           Edit
         </Button>

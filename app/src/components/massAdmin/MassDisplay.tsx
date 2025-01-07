@@ -88,7 +88,7 @@ export const MassDisplay = ({ massData, setMassData }: Props): ReactNode => {
         "Problem saving mass",
       );
       alert("Mass duplicated successfully");
-      navigate(`/masses/${duplicatedMass.id}`);
+      navigate(`/massAdmin/${duplicatedMass.id}`);
     };
 
     duplicateMass().catch((err) => {
@@ -140,7 +140,7 @@ export const MassDisplay = ({ massData, setMassData }: Props): ReactNode => {
         });
 
         alert(`Mass deleted successfully`);
-        navigate("/masses");
+        navigate("/massAdmin");
       }
     };
 
@@ -206,7 +206,7 @@ export const MassDisplay = ({ massData, setMassData }: Props): ReactNode => {
   return (
     <div>
       {localMassData && (
-        <Stack spacing={1}>
+        <Stack spacing={2}>
           <EditMassBar
             handleDuplicate={handleDuplicate}
             handleSaveChanges={handleSaveChanges}
@@ -220,7 +220,7 @@ export const MassDisplay = ({ massData, setMassData }: Props): ReactNode => {
             inputProps={{
               style: {
                 fontSize: 36,
-                lineHeight: 2,
+                lineHeight: 1.5,
               },
             }}
             value={localMassData.name}
@@ -242,12 +242,7 @@ export const MassDisplay = ({ massData, setMassData }: Props): ReactNode => {
 
           {localMassData.fileId && (
             <div className="d-grid gap-2">
-              <Button
-                size="small"
-                variant="contained"
-                fullWidth
-                onClick={handleOpenMusic}
-              >
+              <Button variant="contained" fullWidth onClick={handleOpenMusic}>
                 Open Music
               </Button>
             </div>

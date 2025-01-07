@@ -1,81 +1,83 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Container, Grid, Stack } from "@mui/material";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
-import { type ReactElement, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-import { SearchBox } from "../components/general/SearchBox";
-import { MassDisplay } from "../components/mass/MassDisplay";
-import { NewMassButtonModal } from "../components/mass/NewMassButtonModal";
-import { TypeAndBookProvider } from "../context/TypesAndBooksContext";
-import { type Mass } from "../types";
+import MassCard, { type MassInterface } from "../components/masses/MassCard";
+import { PageLoader } from "./PageLoader/PageLoader";
 
-export const MassesPage = (): ReactElement => {
+export const MassesPage: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const { getAccessTokenSilently } = useAuth0();
-
-  const massId = useParams()["*"];
-  const [massData, setMassData] = useState<Mass | null>(null);
-
-  const refreshMassData = (endpoint: string | undefined): void => {
-    const getHymns = async (): Promise<void> => {
-      if (endpoint) {
-        const token = await getAccessTokenSilently();
-        const res = await axios.get(endpoint, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMassData(res.data);
-      } else {
-        setMassData(null);
-      }
-    };
-
-    getHymns().catch((e) => {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      alert(msg);
-    });
-  };
+  const [masses, setMasses] = useState<MassInterface[]>([]);
 
   useEffect(() => {
-    if (massId) {
-      refreshMassData(`/api/masses/${massId}`);
-    } else {
-      refreshMassData("");
-    }
-  }, [massId]);
+    const getMasses = async (): Promise<void> => {
+      const token = await getAccessTokenSilently();
+      const res = await axios.get(`/api/masses/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMasses(res.data);
+    };
 
-  return (
-    <TypeAndBookProvider>
-      <Container
-        sx={{ alignItems: "center", maxWidth: { md: "700px", lg: "700px" } }}
-      >
-        <Stack
-          sx={{
-            py: 2,
-          }}
-        >
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={9}>
-              <SearchBox
-                type="mass"
-                value={massData}
-                setValue={setMassData}
-                apiUrl="/api/masses/"
-                navigateOnSelection={true}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <NewMassButtonModal initialMassName="" />
-            </Grid>
-          </Grid>
+    getMasses()
+      .catch((e) => {
+        const msg = e instanceof Error ? e.message : "Unknown error";
+        alert(msg);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
-          {massData && (
-            <MassDisplay
-              massData={massData}
-              setMassData={setMassData}
-            ></MassDisplay>
-          )}
-        </Stack>
-      </Container>
-    </TypeAndBookProvider>
+  const now = Date.now();
+  const presentIndex = masses.findIndex(
+    (mass) => new Date(mass.dateTime).getTime() - now < 0,
+  );
+  const futureMasses = masses.slice(0, presentIndex);
+  const previousMasses = masses.slice(presentIndex);
+
+  return loading ? (
+    <PageLoader />
+  ) : (
+    <Stack
+      spacing={3}
+      sx={{
+        textAlign: "center",
+        alignItems: "center",
+      }}
+    >
+      <Typography variant="h4" sx={{ marginBottom: 2 }}>
+        Upcoming Masses
+      </Typography>
+      {futureMasses.length > 0 ? (
+        futureMasses.map((mass) => {
+          return <MassCard key={mass.id} mass={mass}></MassCard>;
+        })
+      ) : (
+        <Typography variant="h5" sx={{ my: 2 }}>
+          No masses found
+        </Typography>
+      )}
+
+      <Divider variant="middle" sx={{ minWidth: { xs: "90%", sm: "500px" } }} />
+
+      <Typography sx={{ my: 2 }} variant="h4">
+        Previous Masses
+      </Typography>
+      {previousMasses.length > 0 ? (
+        previousMasses.map((mass) => {
+          return <MassCard key={mass.id} mass={mass}></MassCard>;
+        })
+      ) : (
+        <Typography variant="h5" sx={{ my: 2 }}>
+          No masses found
+        </Typography>
+      )}
+    </Stack>
   );
 };
