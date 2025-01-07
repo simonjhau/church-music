@@ -1,6 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
 import React from "react";
 
@@ -55,29 +57,27 @@ const MassCard: React.FC<Props> = ({ mass }) => {
   };
 
   return (
-    <Stack
+    <Card
       sx={{
         width: "100%",
         maxWidth: "450px",
-        justifyContent: "center",
-        alignItems: "center",
         backgroundColor: theme.palette.secondary.light,
-        padding: "16px",
-        borderRadius: "0.5em",
-        mb: 2,
-        mx: { xs: 0, sm: 2 },
       }}
     >
-      <Typography variant="h5">{dateTime}</Typography>
-      <Typography variant="h6">{mass.name}</Typography>
-      <Button
-        variant="contained"
-        sx={{ marginTop: 1 }}
-        onClick={handleMassFileClick}
-      >
-        Download Music
-      </Button>
-    </Stack>
+      <Stack sx={{ padding: "16px" }}>
+        <Typography variant="h5">{dateTime}</Typography>
+        <Typography variant="h6">{mass.name}</Typography>
+        <div>
+          <Button
+            variant="contained"
+            onClick={handleMassFileClick}
+            sx={{ marginTop: 1 }}
+          >
+            Download Music
+          </Button>
+        </div>
+      </Stack>
+    </Card>
   );
 };
 
