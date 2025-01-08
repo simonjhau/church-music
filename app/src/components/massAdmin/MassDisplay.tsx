@@ -4,10 +4,10 @@ import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
 import dayjs, { type Dayjs } from "dayjs";
+import locale from "dayjs/locale/en-gb";
 import React, { type ReactElement, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -230,18 +230,17 @@ export const MassDisplay = ({
             value={localMassData.name}
             onChange={handleMassNameChange}
           ></InputBase>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DateTimePicker"]}>
-              <DateTimePicker
-                label="Date & time"
-                value={
-                  localMassData.dateTime
-                    ? dayjs(localMassData.dateTime)
-                    : dayjs()
-                }
-                onChange={handleMassDateTimeChange}
-              />
-            </DemoContainer>
+          <LocalizationProvider
+            dateAdapter={AdapterDayjs}
+            adapterLocale={locale.name}
+          >
+            <DateTimePicker
+              label="Date & time"
+              value={
+                localMassData.dateTime ? dayjs(localMassData.dateTime) : dayjs()
+              }
+              onChange={handleMassDateTimeChange}
+            />
           </LocalizationProvider>
 
           {localMassData.fileId && (
