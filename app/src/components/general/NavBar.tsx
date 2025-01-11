@@ -7,8 +7,6 @@ import Typography from "@mui/material/Typography";
 import { type ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { theme } from "../../theme";
-
 const navItems = ["masses", "hymns", "rankings"];
 
 export const NavBar = (): ReactElement => {
@@ -51,14 +49,7 @@ export const NavBar = (): ReactElement => {
                 </Link>
               ))}
               <Link to="massAdmin" key={`mass-admin-key`}>
-                <Button
-                  sx={{ color: "#fff" }}
-                  style={{
-                    backgroundColor: theme.palette.primary.light,
-                  }}
-                >
-                  Mass Admin
-                </Button>
+                <Button sx={{ color: "#fff" }}>Mass Admin</Button>
               </Link>
             </Box>
           </Box>

@@ -3,6 +3,7 @@ import { debounce, type SxProps, type Theme } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
@@ -138,15 +139,22 @@ export const SearchBox = <T extends Base>({
 
         return (
           <li {...props} key={option.id}>
-            {parts.map((part, index) => (
-              <Box
-                key={index}
-                component="span"
-                sx={{ fontWeight: part.highlight ? "bold" : "regular" }}
+            <Grid container alignItems="center">
+              <Grid
+                item
+                sx={{ width: "calc(100% - 44px)", wordWrap: "break-word" }}
               >
-                {part.text}
-              </Box>
-            ))}
+                {parts.map((part, index) => (
+                  <Box
+                    key={index}
+                    component="span"
+                    sx={{ fontWeight: part.highlight ? "bold" : "regular" }}
+                  >
+                    {part.text}
+                  </Box>
+                ))}
+              </Grid>
+            </Grid>
           </li>
         );
       }}
