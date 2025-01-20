@@ -10,8 +10,10 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import Button from "@mui/material/Button";
 import axios from "axios";
 import { type ReactElement, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
 import { type HymnCount, HymnCountSchema } from "../types";
@@ -55,7 +57,7 @@ export const HymnRankingsPage = (): ReactElement => {
       </Typography>
 
       <TableContainer component={Paper} sx={{ my: 2 }}>
-        <Table aria-label="simple table">
+        <Table aria-label="simple table" size={"small"}>
           <TableHead>
             <TableRow>
               <TableCell>#</TableCell>
@@ -72,7 +74,11 @@ export const HymnRankingsPage = (): ReactElement => {
                 <TableCell component="th" scope="row">
                   {i + 1}
                 </TableCell>
-                <TableCell>{hymn.name}</TableCell>
+                <TableCell>
+                  <Link to={`/hymns/${hymn.id}`}>
+                    <Button size={"small"}>{hymn.name}</Button>
+                  </Link>
+                </TableCell>
                 <TableCell align="center">{hymn.count}</TableCell>
               </TableRow>
             ))}
